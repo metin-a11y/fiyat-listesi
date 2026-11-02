@@ -133,6 +133,21 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
 .drow b{font-weight:700}
 .drow span{text-align:center;color:var(--mut);font-variant-numeric:tabular-nums;border-radius:8px;padding:4px 2px;transition:all .25s}
 .drow span.v{background:var(--acc-soft);color:var(--acc-ink);font-weight:800}
+.drow span i{display:block;font-style:normal;font-size:10px;color:var(--mut2);font-weight:700;line-height:1.1}
+.drow span.v i{color:var(--acc)}
+.drow span i u{text-decoration:none;opacity:.45}
+.drow span i u.on{opacity:1;color:var(--acc-ink)}
+.dcalc{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.dcalc .ind{display:inline-flex;gap:4px;background:#f1f5f9;border-radius:10px;padding:3px}
+.dcalc .ind button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--mut);padding:6px 10px;border-radius:8px;cursor:pointer}
+.dcalc .ind button.on{background:#fff;color:var(--acc-ink);box-shadow:0 1px 3px rgba(15,23,42,.15)}
+.dcalc label{font-size:12px;font-weight:700;color:var(--mut);display:flex;align-items:center;gap:6px}
+.dcalc input{width:110px;border:1.5px solid var(--line);border-radius:10px;padding:7px 9px;font:inherit;font-weight:700;font-size:15px;text-align:right;outline:0}
+.dcalc input:focus{border-color:var(--acc)}
+.dnet{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.dnet span{background:var(--acc-soft);border-radius:10px;padding:6px 10px;display:flex;flex-direction:column}
+.dnet small{font-size:11px;color:var(--acc-ink);font-weight:600}
+.dnet b{font-size:15px;color:var(--txt);font-variant-numeric:tabular-nums}
 .drow.h{font-size:11px;color:var(--mut2);text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:4px 0}
 .drow.h span{color:var(--mut2)}
 
@@ -287,6 +302,7 @@ const CATS = {
   IPE:    {t:"IPE Profil",            list:"HADDE", c:"#65a30d"},
 };
 const T="−100 / −100";
+const DISK={ek:0,p:0};
 const D=[];
 function add(k,n,e,p,s,extra){D.push(Object.assign({k,n,e,p,s:s||[],tag:T},extra||{}));}
 
@@ -379,7 +395,7 @@ const DISC=[
     ["1,5 – 2,5 mm Boru Profil","%35+1+1","%33+1+1","%30+1+1","%27+1+1"],
     ["3 – 6 mm Boru Profil","%35+1+1","%33+1+1","%30+1+1","%27+1+1"]]}
 ];
-const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir."];
+const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil iskontolarındaki <b>+1 +1</b> de aynı pazarlık payı; net fiyat zincirleme hesaplanır (örn. %35, sonra kalan üzerinden %1, sonra %1)."];
 const SYN={SAC:"sac saç levha siyah st37 st-37",ST52:"sac saç levha st52 st-52 kalite",ST52_2:"sac saç levha st52 st-52 kalite 2000",BAK:"baklava baklavalı sac saç",DKP:"dkp sac saç soğuk",HRP:"hrp sac saç",TDEM:"t demiri t demir te",NPU:"npu u profil",NPI:"npi i profil",LAMA:"lama silme kare",KOSE:"köşebent kosebent l profil köşe",HEA:"hea h profil",HEB:"heb h profil",IPE:"ipe i profil"};
 
 /* ========================= STOK ========================= */
@@ -499,10 +515,14 @@ function render(){
     const list=cat==="DISC"||tk.length===0?DISC:discHit;
     html+=`<div class="disc">`+list.map((d,i)=>`<div class="dcard" style="animation-delay:${100+i*60}ms"><h3><i style="background:${d.c}"></i>${d.t}</h3>
       <div class="drow h"><b>Et kalınlık</b><span>Peşin</span><span>30</span><span>60</span><span>90</span></div>
-      ${d.rows.map(r=>`<div class="drow"><b>${r[0]}</b>${r.slice(1).map((x,j)=>`<span class="${j===vade||(vade===4&&j===3)?'v':''}">${x}</span>`).join("")}</div>`).join("")}</div>`).join("")+`</div>`;
+      ${d.rows.map(r=>`<div class="drow"><b>${r[0]}</b>${r.slice(1).map((x,j)=>{const m=x.match(/%(\d+)((?:\+\d+)*)/);const baz=m?+m[1]:0;const ek=(m&&m[2])?m[2].replace(/\+/g," +").trim():"";const eks=ek.split("+").map(x=>x.trim()).filter(Boolean);return `<span class="${j===vade||(vade===4&&j===3)?'v':''}" title="Pazarlık payı: ${ek}">%${baz}<i>${eks.map((x,k)=>`<u class="${k<DISK.ek?'on':''}">+${x}</u>`).join(" ")}</i></span>`;}).join("")}</div>`).join("")}
+      <div class="dcalc"><div class="ind" data-d="${i}"><button class="${DISK.ek===0?'on':''}" data-v="0">Baz</button><button class="${DISK.ek===1?'on':''}" data-v="1">+1</button><button class="${DISK.ek===2?'on':''}" data-v="2">+1 +1</button></div>
+      <label>Liste fiyatı <input type="number" inputmode="decimal" class="dprice" placeholder="₺" value="${DISK.p||''}"></label>${DISK.p?`<div class="dnet">${d.rows.map(r=>{const x=r[1+Math.min(vade,3)];const m=x.match(/%(\d+)((?:\+\d+)*)/);const parts=m?[+m[1]].concat((m[2]||"").split("+").filter(Boolean).map(Number).slice(0,DISK.ek)):[0];let p=DISK.p;parts.forEach(q=>p*=1-q/100);return `<span><small>${r[0]}</small><b>${p.toLocaleString("tr-TR",{maximumFractionDigits:2})} ₺</b></span>`;}).join("")}</div>`:""}</div></div>`).join("")+`</div>`;
   }
   if(!res.length&&!(discHit&&discHit.length))html=`<div class="none"><b>Bulunamadı</b>"${q}" için kayıt yok. Ölçüyü farklı yaz: <i>8 1500</i>, <i>npu 160</i>, <i>st52 10</i></div>`;
   out.innerHTML=html;
+  out.querySelectorAll(".dcalc .ind button").forEach(b=>b.addEventListener("click",e=>{DISK.ek=+e.currentTarget.dataset.v;render();}));
+  out.querySelectorAll(".dprice").forEach(inp=>{inp.addEventListener("change",e=>{if(!e.target.isConnected)return;DISK.p=parseFloat(e.target.value)||0;render();});inp.addEventListener("keydown",e=>{if(e.key==="Enter"){DISK.p=parseFloat(e.target.value)||0;e.target.blur();render();}});});
   document.getElementById("meta").textContent=tk.length?`${res.length} kalem bulundu${discHit&&discHit.length?` · ${discHit.length} iskonto tablosu`:""}${vade===4?" · 120 gün = 90 gün + 2.000 TL":""}`:`${D.length} kalem · ${Object.keys(CATS).length} grup${vade===4?" · 120 gün = 90 gün + 2.000 TL":""}`;
   out._visible=visible;
   if(cursor>=0){const el=out.querySelector(".row.sel");el&&el.scrollIntoView({block:"nearest",behavior:"smooth"});}
