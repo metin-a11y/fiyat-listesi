@@ -150,6 +150,9 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
 .item .t em{font-style:normal;color:var(--acc-ink);font-weight:700;font-size:12px}
 .item input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-weight:700;font-size:15px;text-align:right;outline:0;transition:border-color .2s,box-shadow .2s}
 .item input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.item .ind{grid-column:1/-1;display:inline-flex;gap:4px;background:#f1f5f9;border-radius:10px;padding:3px;width:max-content}
+.item .ind button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--mut);padding:5px 10px;border-radius:8px;cursor:pointer;transition:all .2s}
+.item .ind button.on{background:#fff;color:var(--acc-ink);box-shadow:0 1px 3px rgba(15,23,42,.15)}
 .item .amt{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--mut)}
 .item .amt b{font-size:16px;color:var(--txt);font-variant-numeric:tabular-nums}
 .item .rm{border:0;background:transparent;color:var(--mut2);cursor:pointer;font-size:16px;padding:0 4px}
@@ -283,7 +286,7 @@ const CATS = {
   HEB:    {t:"H Profil – HEB",        list:"HADDE", c:"#0369a1"},
   IPE:    {t:"IPE Profil",            list:"HADDE", c:"#65a30d"},
 };
-const T="-100/-100";
+const T="−100 / −100";
 const D=[];
 function add(k,n,e,p,s,extra){D.push(Object.assign({k,n,e,p,s:s||[],tag:T},extra||{}));}
 
@@ -376,7 +379,7 @@ const DISC=[
     ["1,5 – 2,5 mm Boru Profil","%35+1+1","%33+1+1","%30+1+1","%27+1+1"],
     ["3 – 6 mm Boru Profil","%35+1+1","%33+1+1","%30+1+1","%27+1+1"]]}
 ];
-const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. Tolerans sütunu: -100/-100."];
+const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir."];
 const SYN={SAC:"sac saç levha siyah st37 st-37",ST52:"sac saç levha st52 st-52 kalite",ST52_2:"sac saç levha st52 st-52 kalite 2000",BAK:"baklava baklavalı sac saç",DKP:"dkp sac saç soğuk",HRP:"hrp sac saç",TDEM:"t demiri t demir te",NPU:"npu u profil",NPI:"npi i profil",LAMA:"lama silme kare",KOSE:"köşebent kosebent l profil köşe",HEA:"hea h profil",HEB:"heb h profil",IPE:"ipe i profil"};
 
 /* ========================= STOK ========================= */
@@ -480,14 +483,14 @@ function render(){
   Object.keys(groups).forEach((k,gi)=>{
     const c=CATS[k];
     html+=`<section class="group" style="animation-delay:${Math.min(gi*40,200)}ms"><div class="ghead"><h2><i style="background:${c.c}"></i>${c.t}</h2><small>${LISTS[c.list].name} · ${LISTS[c.list].date}</small></div>
-    <div class="cols"><span>Malzeme</span>${VADE.slice(0,4).map((v,i)=>`<span class="${i===vade||(vade===4&&i===3)?'v':''}">${v[0]}</span>`).join("")}<span style="text-align:right">Tolerans</span></div>`;
+    <div class="cols"><span>Malzeme</span>${VADE.slice(0,4).map((v,i)=>`<span class="${i===vade||(vade===4&&i===3)?'v':''}">${v[0]}</span>`).join("")}<span style="text-align:right">İndirim payı</span></div>`;
     groups[k].forEach(it=>{
       visible.push(it.id);
       const pv=priceAt(it,vade);
       html+=`<div class="row${cursor===visible.length-1?' sel':''}" data-id="${it.id}" data-i="${visible.length-1}"><div class="n">${hl(it.n)}${it.e?`<small>${hl(it.e)}</small>`:""}</div>`;
       if(it.p){ for(let i=0;i<4;i++){const isV=(i===vade)||(vade===4&&i===3);html+=`<div class="p${isV?' v':''}">${fmt(isV?pv:it.p[i])}</div>`;} }
       else html+=`<div class="p" style="grid-column:span 4;text-align:right;color:var(--warn);font-weight:700">Fiyat soralım</div>`;
-      html+=`<span class="tag${it.ask?' ask':''}">${it.tag}</span></div>`;
+      html+=`<span class="tag${it.ask?' ask':''}" title="Pazarlık payı: liste fiyatından 100 TL/ton inilebilir, yetmezse 100 daha">${it.tag}</span></div>`;
     });
     html+=`</section>`;
   });
@@ -510,21 +513,23 @@ function addCalc(id){
   const ex=calc.find(c=>c.id===id);
   if(ex){toast("Zaten hesapta");return;}
   const it=D[id]; if(!it.p){toast("Bu kalem için fiyat sorulmalı");return;}
-  calc.push({id,kg:1000});renderCalc(!isMobile());toast(`${it.n} ${it.e||""} eklendi`.trim());
+  calc.push({id,kg:1000,ind:0});renderCalc(!isMobile());toast(`${it.n} ${it.e||""} eklendi`.trim());
   if(isMobile()){qi.blur();openCalc(true);}
 }
 function renderCalc(focusLast){
   const b=document.getElementById("pbody");const fab=document.getElementById("fab"),fabn=document.getElementById("fabn");
   if(!calc.length){b.innerHTML=`<div class="empty">Listeden bir satıra dokun,<br>kg gir, tutarı anında gör.</div>`;fab.classList.remove("has");fabn.textContent="";return;}
   let total=0;
-  b.innerHTML=calc.map((c,i)=>{const it=D[c.id];const pr=priceAt(it,vade);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;
-    return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t}${it.e?" · "+it.e:""}</small><em>${fmt(pr)} ₺/ton · ${VADE[vade][0]}</em></div>
+  b.innerHTML=calc.map((c,i)=>{const it=D[c.id];const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;
+    return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t}${it.e?" · "+it.e:""}</small><em>${fmt(pr)} ₺/ton · ${VADE[vade][0]}${c.ind?` · liste ${fmt(priceAt(it,vade))} −${c.ind}`:""}</em></div>
     <input type="number" inputmode="decimal" value="${c.kg}" data-i="${i}" placeholder="kg">
+    <div class="ind" data-i="${i}"><button class="${!c.ind?'on':''}" data-v="0">Liste</button><button class="${c.ind===100?'on':''}" data-v="100">−100</button><button class="${c.ind===200?'on':''}" data-v="200">−200</button></div>
     <div class="amt"><span>${fmt(c.kg)} kg${kdv?" · KDV dahil":""}</span><span><b>${money(amt)}</b> <button class="rm" data-i="${i}" title="Kaldır">×</button></span></div></div>`;}).join("")+
     `<div class="total"><div><small>Toplam · ${VADE[vade][0]}${kdv?" · KDV dahil":""}</small><b>${money(total)}</b></div><div style="text-align:right"><small>${calc.length} kalem</small><b style="font-size:15px">${fmt(calc.reduce((a,c)=>a+c.kg,0))} kg</b></div></div>
     <div class="opts"><label class="tog${kdv?' on':''}" id="kdv"><i></i>KDV %20 dahil</label></div>
     <button class="copy" id="copy">Teklifi kopyala</button>`;
   b.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{calc[+e.target.dataset.i].kg=parseFloat(e.target.value)||0;updateAmounts();}));
+  b.querySelectorAll(".ind button").forEach(btn=>btn.addEventListener("click",e=>{const w=e.currentTarget.parentElement;calc[+w.dataset.i].ind=+e.currentTarget.dataset.v;renderCalc();}));
   b.querySelectorAll(".rm").forEach(btn=>btn.addEventListener("click",e=>{calc.splice(+e.currentTarget.dataset.i,1);renderCalc();}));
   b.querySelector("#kdv").addEventListener("click",()=>{kdv=!kdv;renderCalc();});
   b.querySelector("#copy").addEventListener("click",copyOffer);
@@ -533,13 +538,13 @@ function renderCalc(focusLast){
 }
 function updateAmounts(){ // kg yazarken yeniden çizmeden sadece tutarları güncelle
   let total=0;const items=document.querySelectorAll("#pbody .item");
-  calc.forEach((c,i)=>{const pr=priceAt(D[c.id],vade);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;const a=items[i].querySelector(".amt");a.querySelector("span").textContent=`${fmt(c.kg)} kg${kdv?" · KDV dahil":""}`;a.querySelector("b").textContent=money(amt);});
+  calc.forEach((c,i)=>{const pr=priceAt(D[c.id],vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;const a=items[i].querySelector(".amt");a.querySelector("span").textContent=`${fmt(c.kg)} kg${kdv?" · KDV dahil":""}`;a.querySelector("b").textContent=money(amt);});
   document.querySelector(".total b").textContent=money(total);
   document.querySelector(".total b[style]").textContent=fmt(calc.reduce((a,c)=>a+c.kg,0))+" kg";
 
 }
 function copyOffer(){
-  let total=0;const lines=calc.map(c=>{const it=D[c.id];const pr=priceAt(it,vade);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;return `${it.n}${it.e?" "+it.e:""} — ${fmt(c.kg)} kg × ${fmt(pr)} ₺/ton = ${money(amt)}`;});
+  let total=0;const lines=calc.map(c=>{const it=D[c.id];const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;return `${it.n}${it.e?" "+it.e:""} — ${fmt(c.kg)} kg × ${fmt(pr)} ₺/ton = ${money(amt)}`;});
   const txt=`FİYAT TEKLİFİ (${VADE[vade][0]}${kdv?", KDV dahil":", KDV hariç"})\n`+lines.join("\n")+`\nTOPLAM: ${money(total)}`;
   navigator.clipboard.writeText(txt).then(()=>{const b=document.getElementById("copy");b.textContent="Kopyalandı ✓";b.classList.add("done");setTimeout(()=>{b.textContent="Teklifi kopyala";b.classList.remove("done");},1600);}).catch(()=>toast("Kopyalama engellendi"));
 }
