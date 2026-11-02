@@ -426,7 +426,7 @@ function renderStok(){
 }
 function renderScats(){
   const sc=document.getElementById("scats");if(!STOK.data){sc.innerHTML="";return;}
-  const gs=[...new Set(STOK.data.kalemler.map(x=>x.g).filter(Boolean))];
+  const gs=STOK.data.gruplar&&STOK.data.gruplar.length?STOK.data.gruplar:[...new Set(STOK.data.kalemler.map(x=>x.g).filter(Boolean))];
   sc.innerHTML=`<button class="chip${STOK.grp==='ALL'?' on':''}" data-g="ALL">Tümü</button>`+gs.map(g=>`<button class="chip${STOK.grp===g?' on':''}" data-g="${g}">${g}</button>`).join("");
 }
 document.getElementById("scats").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;STOK.grp=b.dataset.g;renderScats();renderStok();});
