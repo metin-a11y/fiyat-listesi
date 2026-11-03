@@ -123,6 +123,25 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
   .tag{grid-area:t;margin-top:4px}
 }
 
+/* boru-profil rows */
+.bpbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--line);background:#fafbfd}
+.bpbar .pill{padding:4px 10px;font-size:12px}.bpbar small{color:var(--mut2);font-size:12px;font-weight:600}
+.bpbar .ind{display:inline-flex;gap:3px;background:#e2e8f0;border-radius:10px;padding:3px}
+.bpbar .ind button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--mut);padding:5px 10px;border-radius:8px;cursor:pointer}
+.bpbar .ind button.on{background:#fff;color:var(--acc-ink);box-shadow:0 1px 3px rgba(15,23,42,.15)}
+.cols.bpc{grid-template-columns:1.4fr 1fr 1fr}.cols.bpc span:not(:first-child){text-align:right}
+.row.bp{grid-template-columns:1.4fr 1fr 1fr}
+.bpcell{text-align:right;border-radius:12px;padding:6px 10px;transition:background .18s;cursor:pointer;border-left:3px solid var(--sc,#cbd5e1)}
+.bpcell:hover{background:#f1f5f9}
+.bpcell small{display:block;font-size:11px;color:var(--mut2);font-weight:600}
+.bpcell b{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.bpcell.none{color:var(--mut2);border-left-color:transparent;cursor:default;font-weight:600}
+@media(max-width:980px){
+  .cols.bpc{display:none}
+  .row.bp{grid-template-columns:1fr auto auto;grid-template-areas:"n y t";gap:6px}
+  .row.bp .n{grid-area:n}.bpcell{padding:4px 8px}.bpcell b{font-size:16px}.bpcell small{font-size:10px}
+  .bpbar{padding:8px 12px;gap:6px}.bpbar small{display:none}
+}
 /* discounts */
 .disc{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
 .dcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;animation:up .45s cubic-bezier(.2,.8,.2,1) both}
@@ -283,8 +302,286 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
    ========================================================= */
 const LISTS = {
   SAC:   {name:"Saclar",  date:"27.10.2026"},
-  HADDE: {name:"Hadde",   date:"12.10.2026"}
+  HADDE: {name:"Hadde",   date:"12.10.2026"},
+  BP:    {name:"Boru/Profil", date:"Y 28.09 · T 26.08.2026"}
 };
+/* Boru-profil: liste fiyatı TL/mt, Y=Yücel, T=Tosçelik. İskonto (Peşin/30/60/90) + pazarlık payı +1 +1 (zincirleme) */
+const BP_SUP={Y:{ad:"Yücel",isk:[35,33,30,27],c:"#059669"},T:{ad:"Tosçelik",isk:[32,30,27,24],c:"#2563eb"}};
+const BP_PROFIL=[
+  [["10x10"],1,25.98,21.32],
+  [["10x10"],1.2,30.97,25.42],
+  [["10x20", "15x15"],1,30.97,25.42],
+  [["10x20", "15x15"],1.2,38.87,33.7],
+  [["10x20", "15x15"],1.5,46.75,40.54],
+  [["10x20", "15x15"],2,58.83,null],
+  [["10x30", "15x25", "20x20"],1,40.32,33.09],
+  [["10x30", "15x25", "20x20"],1.2,48.5,42.05],
+  [["10x30", "15x25", "20x20"],1.5,55.75,48.34],
+  [["10x30", "15x25", "20x20"],2,66.64,57.79],
+  [["10x30", "15x25", "20x20"],2.5,87.28,75.68],
+  [["20x30", "25x25"],1,49.11,40.3],
+  [["20x30", "25x25"],1.2,60.91,52.82],
+  [["20x30", "25x25"],1.5,67.39,58.43],
+  [["20x30", "25x25"],2,80.26,69.6],
+  [["20x30", "25x25"],2.5,102.36,88.76],
+  [["20x30", "25x25"],3,121.07,104.99],
+  [["20x40", "30x30"],1,59.5,48.83],
+  [["20x40", "30x30"],1.2,72.39,62.77],
+  [["20x40", "30x30"],1.5,80.34,69.67],
+  [["20x40", "30x30"],2,98.81,85.68],
+  [["20x40", "30x30"],2.5,120.21,104.23],
+  [["20x40", "30x30"],3,144.1,124.95],
+  [["20x40", "30x30"],4,207.82,null],
+  [["30x40", "35x35"],1,71.73,58.87],
+  [["30x40", "35x35"],1.2,85.46,74.11],
+  [["30x40", "35x35"],1.5,96.96,84.07],
+  [["30x40", "35x35"],2,119.87,103.94],
+  [["30x40", "35x35"],2.5,144.01,124.88],
+  [["30x40", "35x35"],3,175.97,152.59],
+  [["30x50", "40x40"],1,82.23,67.48],
+  [["30x50", "40x40"],1.2,97.73,84.74],
+  [["30x50", "40x40"],1.5,106.33,92.2],
+  [["30x50", "40x40"],2,129.57,112.35],
+  [["30x50", "40x40"],2.5,156.3,135.54],
+  [["30x50", "40x40"],3,186.43,161.66],
+  [["30x50", "40x40"],4,251.36,217.96],
+  [["30x50", "40x40"],5,315.9,null],
+  [["40x60", "50x50"],1.2,128.4,102.95],
+  [["40x60", "50x50"],1.5,135.53,117.52],
+  [["40x60", "50x50"],2,164.18,142.36],
+  [["40x60", "50x50"],2.5,197.25,171.04],
+  [["40x60", "50x50"],3,235.34,204.07],
+  [["40x60", "50x50"],4,314.49,272.71],
+  [["40x60", "50x50"],5,389.45,337.71],
+  [["40x80", "50x70", "60x60"],1.2,155.79,125.7],
+  [["40x80", "50x70", "60x60"],1.5,169.29,146.79],
+  [["40x80", "50x70", "60x60"],2,200.19,173.59],
+  [["40x80", "50x70", "60x60"],2.5,240.72,208.74],
+  [["40x80", "50x70", "60x60"],3,287.29,249.12],
+  [["40x80", "50x70", "60x60"],4,385.75,334.5],
+  [["40x80", "50x70", "60x60"],5,484.8,420.39],
+  [["40x100"],1.5,209.35,null],
+  [["40x100"],2,246.47,null],
+  [["40x100"],2.5,286.67,null],
+  [["40x100"],3,342.21,null],
+  [["40x100"],4,453.59,null],
+  [["40x100"],5,573.48,null],
+  [["40x100"],6,742.91,null],
+  [["50x90", "60x80", "70x70"],1.5,209.35,181.54],
+  [["50x90", "60x80", "70x70"],2,246.47,213.72],
+  [["50x90", "60x80", "70x70"],2.5,286.67,248.58],
+  [["50x90", "60x80", "70x70"],3,342.21,296.75],
+  [["50x90", "60x80", "70x70"],4,453.59,393.33],
+  [["50x90", "60x80", "70x70"],5,573.48,497.3],
+  [["50x90", "60x80", "70x70"],6,742.91,null],
+  [["50x100"],1.5,245.45,212.84],
+  [["50x100"],2,262.12,227.29],
+  [["50x100"],2.5,307.01,266.22],
+  [["50x100"],3,365.37,316.83],
+  [["50x100"],4,476.64,413.32],
+  [["50x100"],5,596.39,517.16],
+  [["50x100"],6,755.0,654.7],
+  [["60x100", "80x80"],1.5,238.11,null],
+  [["60x100", "80x80"],2,281.75,244.32],
+  [["60x100", "80x80"],2.5,328.32,284.7],
+  [["60x100", "80x80"],3,389.74,337.97],
+  [["60x100", "80x80"],4,510.91,443.03],
+  [["60x100", "80x80"],5,643.89,558.35],
+  [["60x100", "80x80"],6,780.42,676.74],
+  [["90x90", "60x120"],2,317.83,275.61],
+  [["90x90", "60x120"],2.5,369.08,320.05],
+  [["90x90", "60x120"],3,442.64,383.84],
+  [["90x90", "60x120"],4,588.16,510.02],
+  [["90x90", "60x120"],5,724.13,627.93],
+  [["90x90", "60x120"],6,900.15,780.56],
+  [["80x100"],2,317.83,null],
+  [["80x100"],2.5,369.08,null],
+  [["80x100"],3,442.64,null],
+  [["80x100"],4,588.16,null],
+  [["80x100"],5,724.13,null],
+  [["80x100"],6,900.15,null],
+  [["100x100", "80x120"],2,360.88,312.94],
+  [["100x100", "80x120"],2.5,422.52,366.39],
+  [["100x100", "80x120"],3,498.63,432.39],
+  [["100x100", "80x120"],4,654.74,567.76],
+  [["100x100", "80x120"],5,804.85,697.93],
+  [["100x100", "80x120"],6,984.44,853.66],
+  [["100x100", "80x120"],8,1365.52,1184.12],
+  [["110x110", "80x140"],2.5,592.15,null],
+  [["110x110", "80x140"],3,597.36,null],
+  [["110x110", "80x140"],4,780.2,null],
+  [["110x110", "80x140"],5,965.75,null],
+  [["110x110", "80x140"],6,1159.63,null],
+  [["110x110", "80x140"],8,1549.26,null],
+  [["120x120", "80x160"],2.5,516.54,null],
+  [["120x120", "80x160"],3,606.72,526.12],
+  [["120x120", "80x160"],4,786.84,682.31],
+  [["120x120", "80x160"],5,987.81,856.59],
+  [["120x120", "80x160"],6,1200.01,1040.59],
+  [["120x120", "80x160"],8,1665.95,1444.64],
+  [["100x150"],3,659.2,571.63],
+  [["100x150"],4,880.52,763.55],
+  [["100x150"],5,1094.15,948.8],
+  [["100x150"],6,1343.73,1165.22],
+  [["100x150"],8,1808.16,1567.96],
+  [["100x200", "150x150"],3,895.21,776.29],
+  [["100x200", "150x150"],4,1114.94,966.83],
+  [["100x200", "150x150"],5,1357.73,1177.36],
+  [["100x200", "150x150"],6,1650.19,1430.97],
+  [["100x200", "150x150"],8,2240.93,null],
+  [["150x200", "175x175"],3,1202.88,null],
+  [["150x200", "175x175"],4,1353.89,1174.04],
+  [["150x200", "175x175"],5,1673.54,1451.22],
+  [["150x200", "175x175"],6,1986.91,1722.96],
+  [["150x200", "175x175"],8,2782.74,2413.07],
+  [["150x250", "200x200"],4,1567.78,1359.51],
+  [["150x250", "200x200"],5,1955.28,1695.54],
+  [["150x250", "200x200"],6,2359.06,2045.68],
+  [["150x250", "200x200"],8,3242.4,2811.67],
+  [["150x250", "200x200"],10,4209.58,3650.37],
+  [["200x300", "250x250"],5,2482.32,2152.56],
+  [["200x300", "250x250"],6,2946.17,2554.79],
+  [["200x300", "250x250"],8,4165.56,3612.2],
+  [["200x300", "250x250"],10,5603.27,4858.92]
+];
+const BP_BORU=[
+  [["16"],1,30.3,24.86],
+  [["16"],1.2,36.62,30.05],
+  [["16"],1.5,41.81,36.25],
+  [["16"],2,54.67,44.86],
+  [["19"],1,32.77,26.89],
+  [["19"],1.2,39.43,41.58],
+  [["19"],1.5,49.53,42.95],
+  [["19"],2,55.59,52.93],
+  [["21"],1,35.86,29.42],
+  [["21"],1.2,41.77,34.28],
+  [["21"],1.5,52.17,45.24],
+  [["21"],2,63.73,55.26],
+  [["21"],2.5,76.55,66.38],
+  [["25"],1,41.39,33.96],
+  [["25"],1.2,49.99,41.03],
+  [["25"],1.5,57.94,50.24],
+  [["25"],2,70.33,60.98],
+  [["25"],2.5,88.64,null],
+  [["25"],3,104.65,90.75],
+  [["27"],1.2,57.56,null],
+  [["27"],1.5,61.05,52.93],
+  [["27"],2,72.67,63.02],
+  [["27"],2.5,87.23,75.63],
+  [["27"],3,102.65,89.01],
+  [["32"],1,52.7,43.25],
+  [["32"],1.2,62.92,51.63],
+  [["32"],1.5,70.37,61.02],
+  [["32"],2,85.48,74.12],
+  [["32"],2.5,105.93,91.85],
+  [["32"],3,126.37,109.58],
+  [["34"],1.2,68.83,null],
+  [["34"],1.5,74.64,64.72],
+  [["34"],2,90.09,78.11],
+  [["34"],2.5,108.59,94.16],
+  [["34"],3,128.43,111.37],
+  [["34"],4,179.35,155.52],
+  [["38"],1,63.26,51.91],
+  [["38"],1.2,76.89,63.1],
+  [["38"],1.5,86.4,74.92],
+  [["38"],2,105.56,91.53],
+  [["38"],2.5,127.32,110.4],
+  [["38"],3,150.19,130.24],
+  [["38"],4,205.49,178.19],
+  [["42"],1,69.89,57.35],
+  [["42"],1.2,84.67,80.49],
+  [["42"],1.5,94.04,81.55],
+  [["42"],2,116.21,100.77],
+  [["42"],2.5,137.2,118.97],
+  [["42"],3,161.25,139.83],
+  [["42"],4,221.18,191.8],
+  [["48"],1,82.72,67.88],
+  [["48"],1.2,98.94,90.35],
+  [["48"],1.5,105.71,91.66],
+  [["48"],2,131.28,113.83],
+  [["48"],2.5,155.63,134.95],
+  [["48"],3,184.11,159.65],
+  [["48"],4,255.8,221.82],
+  [["48"],5,319.09,276.7],
+  [["51"],1,87.73,72.0],
+  [["51"],1.2,106.36,87.28],
+  [["51"],1.5,116.22,100.78],
+  [["51"],2,142.09,123.21],
+  [["51"],2.5,170.08,147.49],
+  [["51"],3,201.95,175.12],
+  [["51"],4,275.65,null],
+  [["51"],5,348.55,null],
+  [["60"],1,117.19,96.18],
+  [["60"],1.2,129.25,106.07],
+  [["60"],1.5,135.19,117.23],
+  [["60"],2,163.51,141.79],
+  [["60"],2.5,197.78,171.5],
+  [["60"],3,233.08,202.11],
+  [["60"],4,311.14,269.8],
+  [["60"],5,397.24,344.46],
+  [["76"],1.2,164.31,134.84],
+  [["76"],1.5,173.07,150.07],
+  [["76"],2,208.17,180.52],
+  [["76"],2.5,252.24,218.73],
+  [["76"],3,300.37,260.46],
+  [["76"],4,396.63,343.93],
+  [["76"],5,505.05,437.96],
+  [["89"],1.5,225.3,null],
+  [["89"],2,252.79,219.21],
+  [["89"],2.5,297.66,258.11],
+  [["89"],3,354.11,307.06],
+  [["89"],4,464.44,402.74],
+  [["89"],5,594.24,515.3],
+  [["89"],6,768.76,666.64],
+  [["102"],2,292.63,253.75],
+  [["102"],2.5,354.15,307.1],
+  [["102"],3,422.64,366.49],
+  [["102"],4,555.95,482.09],
+  [["102"],5,705.28,611.59],
+  [["102"],6,854.73,741.18],
+  [["114"],2,326.67,283.27],
+  [["114"],2.5,387.02,335.6],
+  [["114"],3,460.65,399.45],
+  [["114"],4,609.0,528.09],
+  [["114"],5,765.86,664.12],
+  [["114"],6,949.72,823.56],
+  [["127"],2.5,494.34,null],
+  [["127"],3,530.69,460.19],
+  [["127"],4,699.97,606.98],
+  [["127"],5,869.67,754.14],
+  [["127"],6,1060.14,919.31],
+  [["127"],8,1440.76,1249.37],
+  [["139"],2.5,505.16,438.05],
+  [["139"],3,587.33,509.3],
+  [["139"],4,772.22,669.63],
+  [["139"],5,959.94,832.42],
+  [["139"],6,1166.89,1011.87],
+  [["139"],8,1651.79,1432.36],
+  [["168"],3,755.35,655.0],
+  [["168"],4,945.71,820.08],
+  [["168"],5,1174.79,1018.73],
+  [["168"],6,1438.95,1247.79],
+  [["168"],8,1952.44,1693.07],
+  [["219"],3,1088.4,943.81],
+  [["219"],4,1305.9,1132.42],
+  [["219"],5,1610.08,1396.19],
+  [["219"],6,1946.31,1687.76],
+  [["219"],8,2691.7,2334.13],
+  [["273"],4,1712.07,1484.64],
+  [["273"],5,2085.77,1808.69],
+  [["273"],6,2588.75,2244.85],
+  [["273"],8,3558.78,3086.02],
+  [["273"],10,4541.36,3938.07],
+  [["323"],5,2533.81,2197.21],
+  [["323"],6,3072.63,2664.45],
+  [["323"],8,4290.37,3720.43]
+];
+
+/* Tesisat borusu (Tosçelik): inç, ölçü, siyah testli, galvanizli — TL/mt liste */
+const BP_TESISAT=[['1/2"',"21,3 x 2,60",65.76,106.97],['3/4"',"26,9 x 2,60",83.25,127.87],['1"',"33,7 x 3,20",121.01,187.60],['1 1/4"',"42,4 x 3,20",150.82,242.02],['1 1/2"',"48,3 x 3,20",171.58,272.72],['2"',"60,3 x 3,60",243.02,381.07],['2 1/2"',"76,1 x 3,60",310.32,487.93],['3"',"88,9 x 4",404.22,625.86],['4"',"114,3 x 4,50",590.42,918.59],['5"',"139,7 x 5",797.87,1248.23],['6"',"168,3 x 5",953.53,1496.14],['8"',"219,1 x 5",1444.47,null],['10"',"273 x 5",1856.16,null],['12"',"323,9 x 5,60",2398.58,null]];
+/* İskele borusu: çap → {et: TL/mt} liste */
+const BP_ISKELE=[[34,{2.5:96.63,4:162.92}],[48,{2.5:138.69,3:167.93}],[60,{2.5:178.84,3:212.69,4:283.72}],[76,{2.5:228.08,3:274.28}]];
+
 const CATS = {
   SAC:    {t:"Saclar (ST-37)",        list:"SAC",   c:"#2563eb"},
   ST52:   {t:"ST52 Kalite Saclar",    list:"SAC",   c:"#7c3aed"},
@@ -300,6 +597,10 @@ const CATS = {
   HEA:    {t:"H Profil – HEA",        list:"HADDE", c:"#0284c7"},
   HEB:    {t:"H Profil – HEB",        list:"HADDE", c:"#0369a1"},
   IPE:    {t:"IPE Profil",            list:"HADDE", c:"#65a30d"},
+  PROFIL: {t:"Kutu Profil",           list:"BP",    c:"#0f766e", bp:true},
+  BORU:   {t:"Boru",                  list:"BP",    c:"#1d4ed8", bp:true},
+  TESISAT:{t:"Tesisat Borusu",        list:"BP",    c:"#7c3aed", bp:true},
+  ISKELE: {t:"İskele Borusu",         list:"BP",    c:"#b45309", bp:true},
 };
 const T="−100 / −100";
 const DISK={ek:0,p:0};
@@ -383,6 +684,16 @@ add("LAMA","Kare 30 – 40","",[35800,37100,38400,39700],[30,40]);
  ["160 IPE",[160],[35100,36400,37700,39000]],["180 – 200 IPE",[180,200],[36300,37700,39100,40500]],["220 IPE",[220],[36800,38200,39600,41000]],["240 IPE",[240],[36800,38200,39600,41000]],
  ["270 IPE",[270],[36800,38200,39600,41000]],["300 IPE",[300],[36800,38200,39600,41000]],["330 – 500 IPE",[330,360,400,450,500],[41500,43000,44500,46000]]].forEach(([n,s,p])=>add("IPE",n,"",p,s));
 
+/* ---- BORU / PROFİL (TL/mt, liste) ---- */
+const thS=th=>String(th).replace(".",",");
+BP_PROFIL.forEach(([labels,th,y,t])=>labels.forEach(e=>{const [a,b]=e.split("x");
+  add("PROFIL",`${e} · ${thS(th)} mm`,"kutu profil",null,[+a,+b,th],{bp:{Y:y,T:t},tag:"+1 +1",alias:`${b}x${a} profil kutu`});}));
+BP_BORU.forEach(([labels,th,y,t])=>labels.forEach(e=>add("BORU",`Ø${e} · ${thS(th)} mm`,"yuvarlak boru",null,[+e,th],{bp:{Y:y,T:t},tag:"+1 +1",alias:`${e}x${thS(th)} boru ${e} mm`})));
+BP_TESISAT.forEach(([inc,olcu,siyah,galv])=>{
+  add("TESISAT",`${inc} Siyah Tesisat`,olcu,null,[parseFloat(olcu)],{bp:{T:siyah},tag:"+1 +1",alias:`${inc.replace('"','')} inç siyah testli tesisat borusu`});
+  if(galv)add("TESISAT",`${inc} Galvanizli Tesisat`,olcu,null,[parseFloat(olcu)],{bp:{T:galv},tag:"+1 +1",alias:`${inc.replace('"','')} inç galvaniz galvanizli tesisat borusu`});});
+BP_ISKELE.forEach(([cap,ths])=>Object.entries(ths).forEach(([th,pr])=>add("ISKELE",`Ø${cap} · ${thS(th)} mm`,"iskele borusu",null,[cap,+th],{bp:{L:pr},tag:"liste",alias:"iskele borusu"})));
+
 /* ---- İSKONTOLAR ---- */
 const DISC=[
   {t:"Tosçelik Profil – Boru – Tesisat Borusu İskontoları",c:"#2563eb",alias:"tosçelik tosçelik toscelik boru profil tesisat galvaniz iskonto",rows:[
@@ -395,7 +706,7 @@ const DISC=[
     ["1,5 – 2,5 mm Boru Profil","%35+1+1","%33+1+1","%30+1+1","%27+1+1"],
     ["3 – 6 mm Boru Profil","%35+1+1","%33+1+1","%30+1+1","%27+1+1"]]}
 ];
-const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil iskontolarındaki <b>+1 +1</b> de aynı pazarlık payı; net fiyat zincirleme hesaplanır (örn. %35, sonra kalan üzerinden %1, sonra %1)."];
+const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil satırlarında gösterilen rakam <b>net TL/mt</b> = liste fiyatı − seçili vadenin iskontosu (Yücel %35/33/30/27, Tosçelik %32/30/27/24) − seçilirse <b>+1 +1</b> pazarlık payı (zincirleme). Liste tarihleri: Yücel 28.09.2026, Tosçelik 26.08.2026. İskele borusu liste fiyatıdır, iskonto uygulanmaz."];
 const SYN={SAC:"sac saç levha siyah st37 st-37",ST52:"sac saç levha st52 st-52 kalite",ST52_2:"sac saç levha st52 st-52 kalite 2000",BAK:"baklava baklavalı sac saç",DKP:"dkp sac saç soğuk",HRP:"hrp sac saç",TDEM:"t demiri t demir te",NPU:"npu u profil",NPI:"npi i profil",LAMA:"lama silme kare",KOSE:"köşebent kosebent l profil köşe",HEA:"hea h profil",HEB:"heb h profil",IPE:"ipe i profil"};
 
 /* ========================= STOK ========================= */
@@ -474,15 +785,17 @@ let vade=0, cat="ALL", q="", cursor=-1, calc=[], kdv=false;
 const fmt=n=>n.toLocaleString("tr-TR",{maximumFractionDigits:0});
 const money=n=>n.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" ₺";
 const norm=s=>(s||"").toLocaleLowerCase("tr").replace(/[şŞ]/g,"s").replace(/[çÇ]/g,"c").replace(/[ğĞ]/g,"g").replace(/[ıİi̇]/g,"i").replace(/[öÖ]/g,"o").replace(/[üÜ]/g,"u").replace(/[×*]/g,"x").replace(/[,]/g,".");
-D.forEach((it,i)=>{it.id=i;it.txt=norm([CATS[it.k].t,SYN[it.k],it.n,it.e].join(" "));
+D.forEach((it,i)=>{it.id=i;it.txt=norm([CATS[it.k].t,SYN[it.k],it.n,it.e,it.alias||""].join(" "));
   it.nums=new Set(it.s.map(Number).concat(norm(it.n+" "+it.e).split(/[^0-9.]+/).filter(Boolean).map(Number)));});
 const priceAt=(it,v)=>!it.p?null:(v===4?it.p[3]+2000:it.p[v]);
+const bpNet=(list,sup,v,ek)=>{if(list==null)return null;if(sup==="L")return list;const parts=[BP_SUP[sup].isk[Math.min(v,3)]].concat(Array(ek||0).fill(1));let p=list;parts.forEach(q=>p*=1-q/100);return p;};
+const fmt2=n=>n.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2});
 
 function tokens(){return norm(q).split(/\s+/).filter(Boolean).map(t=>t.replace(/mm$/,"")).filter(Boolean);}
 function match(it,tk){
   return tk.every(t=>{
     if(/^[0-9.]+$/.test(t)){ return it.nums.has(parseFloat(t)); }          // sayı: sadece tam ölçü eşleşmesi
-    if(/^[0-9.]+x[0-9.]+$/.test(t)){ return norm(it.n+" "+it.e).includes(t); } // 1500x6000, 40x10 gibi
+    if(/^[0-9.]+x[0-9.]+$/.test(t)){ return norm(it.n+" "+it.e+" "+(it.alias||"")).includes(t); } // 1500x6000, 40x10 gibi
     return it.txt.includes(t);
   });
 }
@@ -498,6 +811,19 @@ function render(){
   const visible=[];
   Object.keys(groups).forEach((k,gi)=>{
     const c=CATS[k];
+    if(c.bp){
+      const vi=Math.min(vade,3);
+      html+=`<section class="group bpg" style="animation-delay:${Math.min(gi*40,200)}ms"><div class="ghead"><h2><i style="background:${c.c}"></i>${c.t}</h2><small>${LISTS[c.list].date} · TL/mt</small></div>
+      <div class="bpbar"><span class="pill"><span class="dot" style="background:${BP_SUP.Y.c}"></span>Yücel <b>%${BP_SUP.Y.isk[vi]}</b></span><span class="pill"><span class="dot" style="background:${BP_SUP.T.c}"></span>Tosçelik <b>%${BP_SUP.T.isk[vi]}</b></span>
+      <div class="ind bpek"><button class="${DISK.ek===0?'on':''}" data-v="0">Baz</button><button class="${DISK.ek===1?'on':''}" data-v="1">+1</button><button class="${DISK.ek===2?'on':''}" data-v="2">+1 +1</button></div><small>${VADE[vade][0]} iskontosu · net = liste − iskonto${DISK.ek?" − pay":""}</small></div>
+      <div class="cols bpc"><span>Malzeme</span><span>Yücel (Y)</span><span>Tosçelik (T)</span></div>`;
+      groups[k].forEach(it=>{
+        visible.push(it.id);
+        const cell=(sup)=>{const l=it.bp[sup];if(l==null)return `<div class="bpcell none">—</div>`;const n=bpNet(l,sup,vade,DISK.ek);return `<div class="bpcell" data-sup="${sup}" style="--sc:${(BP_SUP[sup]||{c:'#b45309'}).c}"><small>${sup==="L"?"liste":sup+" liste "+fmt2(l)}</small><b>${fmt2(n)}</b></div>`;};
+        html+=`<div class="row bp${cursor===visible.length-1?' sel':''}" data-id="${it.id}" data-i="${visible.length-1}"><div class="n">${hl(it.n)}<small>${hl(it.e)}</small></div>${it.bp.L!=null?cell("L")+`<div class="bpcell none"></div>`:cell("Y")+cell("T")}</div>`;
+      });
+      html+=`</section>`;return;
+    }
     html+=`<section class="group" style="animation-delay:${Math.min(gi*40,200)}ms"><div class="ghead"><h2><i style="background:${c.c}"></i>${c.t}</h2><small>${LISTS[c.list].name} · ${LISTS[c.list].date}</small></div>
     <div class="cols"><span>Malzeme</span>${VADE.slice(0,4).map((v,i)=>`<span class="${i===vade||(vade===4&&i===3)?'v':''}">${v[0]}</span>`).join("")}<span style="text-align:right">İndirim payı</span></div>`;
     groups[k].forEach(it=>{
@@ -521,6 +847,7 @@ function render(){
   }
   if(!res.length&&!(discHit&&discHit.length))html=`<div class="none"><b>Bulunamadı</b>"${q}" için kayıt yok. Ölçüyü farklı yaz: <i>8 1500</i>, <i>npu 160</i>, <i>st52 10</i></div>`;
   out.innerHTML=html;
+  out.querySelectorAll(".bpek button").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();DISK.ek=+e.currentTarget.dataset.v;render();}));
   out.querySelectorAll(".dcalc .ind button").forEach(b=>b.addEventListener("click",e=>{DISK.ek=+e.currentTarget.dataset.v;render();}));
   out.querySelectorAll(".dprice").forEach(inp=>{inp.addEventListener("change",e=>{if(!e.target.isConnected)return;DISK.p=parseFloat(e.target.value)||0;render();});inp.addEventListener("keydown",e=>{if(e.key==="Enter"){DISK.p=parseFloat(e.target.value)||0;e.target.blur();render();}});});
   document.getElementById("meta").textContent=tk.length?`${res.length} kalem bulundu${discHit&&discHit.length?` · ${discHit.length} iskonto tablosu`:""}${vade===4?" · 120 gün = 90 gün + 2.000 TL":""}`:`${D.length} kalem · ${Object.keys(CATS).length} grup${vade===4?" · 120 gün = 90 gün + 2.000 TL":""}`;
@@ -529,10 +856,14 @@ function render(){
 }
 
 /* ---- hesap ---- */
-function addCalc(id){
+function addCalc(id,sup){
+  const it=D[id];
+  if(it.bp){ sup=sup||(it.bp.L!=null?"L":(it.bp.Y!=null?"Y":"T")); if(it.bp[sup]==null){toast("Bu üreticide fiyat yok");return;}
+    if(calc.find(c=>c.id===id&&c.sup===sup)){toast("Zaten hesapta");return;}
+    calc.push({id,sup,kg:100,ek:DISK.ek});renderCalc(!isMobile());toast(`${it.n} (${sup==="L"?"liste":BP_SUP[sup].ad}) eklendi`);if(isMobile()){qi.blur();openCalc(true);}return;}
   const ex=calc.find(c=>c.id===id);
   if(ex){toast("Zaten hesapta");return;}
-  const it=D[id]; if(!it.p){toast("Bu kalem için fiyat sorulmalı");return;}
+  if(!it.p){toast("Bu kalem için fiyat sorulmalı");return;}
   calc.push({id,kg:1000,ind:0});renderCalc(!isMobile());toast(`${it.n} ${it.e||""} eklendi`.trim());
   if(isMobile()){qi.blur();openCalc(true);}
 }
@@ -540,16 +871,22 @@ function renderCalc(focusLast){
   const b=document.getElementById("pbody");const fab=document.getElementById("fab"),fabn=document.getElementById("fabn");
   if(!calc.length){b.innerHTML=`<div class="empty">Listeden bir satıra dokun,<br>kg gir, tutarı anında gör.</div>`;fab.classList.remove("has");fabn.textContent="";return;}
   let total=0;
-  b.innerHTML=calc.map((c,i)=>{const it=D[c.id];const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;
+  b.innerHTML=calc.map((c,i)=>{const it=D[c.id];
+    if(it.bp){const l=it.bp[c.sup];const pr=bpNet(l,c.sup,vade,c.ek||0);const amt=c.kg*pr*(kdv?1.2:1);total+=amt;const supad=c.sup==="L"?"liste":BP_SUP[c.sup].ad;
+      return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t} · ${supad}</small><em>${fmt2(pr)} ₺/mt · ${VADE[vade][0]}${c.sup!=="L"?` · liste ${fmt2(l)} %${BP_SUP[c.sup].isk[Math.min(vade,3)]}${"+1".repeat(c.ek||0)}`:""}</em></div>
+      <input type="number" inputmode="decimal" value="${c.kg}" data-i="${i}" placeholder="mt">
+      ${c.sup!=="L"?`<div class="ind ek" data-i="${i}"><button class="${!c.ek?'on':''}" data-v="0">Baz</button><button class="${c.ek===1?'on':''}" data-v="1">+1</button><button class="${c.ek===2?'on':''}" data-v="2">+1 +1</button></div>`:""}
+      <div class="amt"><span>${fmt(c.kg)} mt${kdv?" · KDV dahil":""}</span><span><b>${money(amt)}</b> <button class="rm" data-i="${i}" title="Kaldır">×</button></span></div></div>`;}
+    const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;
     return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t}${it.e?" · "+it.e:""}</small><em>${fmt(pr)} ₺/ton · ${VADE[vade][0]}${c.ind?` · liste ${fmt(priceAt(it,vade))} −${c.ind}`:""}</em></div>
     <input type="number" inputmode="decimal" value="${c.kg}" data-i="${i}" placeholder="kg">
     <div class="ind" data-i="${i}"><button class="${!c.ind?'on':''}" data-v="0">Liste</button><button class="${c.ind===100?'on':''}" data-v="100">−100</button><button class="${c.ind===200?'on':''}" data-v="200">−200</button></div>
     <div class="amt"><span>${fmt(c.kg)} kg${kdv?" · KDV dahil":""}</span><span><b>${money(amt)}</b> <button class="rm" data-i="${i}" title="Kaldır">×</button></span></div></div>`;}).join("")+
-    `<div class="total"><div><small>Toplam · ${VADE[vade][0]}${kdv?" · KDV dahil":""}</small><b>${money(total)}</b></div><div style="text-align:right"><small>${calc.length} kalem</small><b style="font-size:15px">${fmt(calc.reduce((a,c)=>a+c.kg,0))} kg</b></div></div>
+    `<div class="total"><div><small>Toplam · ${VADE[vade][0]}${kdv?" · KDV dahil":""}</small><b>${money(total)}</b></div><div style="text-align:right"><small>${calc.length} kalem</small><b style="font-size:15px">${(()=>{const kg=calc.filter(c=>!D[c.id].bp).reduce((a,c)=>a+c.kg,0),mt=calc.filter(c=>D[c.id].bp).reduce((a,c)=>a+c.kg,0);return [kg?fmt(kg)+" kg":"",mt?fmt(mt)+" mt":""].filter(Boolean).join(" · ")||"—";})()}</b></div></div>
     <div class="opts"><label class="tog${kdv?' on':''}" id="kdv"><i></i>KDV %20 dahil</label></div>
     <button class="copy" id="copy">Teklifi kopyala</button>`;
   b.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{calc[+e.target.dataset.i].kg=parseFloat(e.target.value)||0;updateAmounts();}));
-  b.querySelectorAll(".ind button").forEach(btn=>btn.addEventListener("click",e=>{const w=e.currentTarget.parentElement;calc[+w.dataset.i].ind=+e.currentTarget.dataset.v;renderCalc();}));
+  b.querySelectorAll(".ind button").forEach(btn=>btn.addEventListener("click",e=>{const w=e.currentTarget.parentElement;const c=calc[+w.dataset.i];if(w.classList.contains("ek"))c.ek=+e.currentTarget.dataset.v;else c.ind=+e.currentTarget.dataset.v;renderCalc();}));
   b.querySelectorAll(".rm").forEach(btn=>btn.addEventListener("click",e=>{calc.splice(+e.currentTarget.dataset.i,1);renderCalc();}));
   b.querySelector("#kdv").addEventListener("click",()=>{kdv=!kdv;renderCalc();});
   b.querySelector("#copy").addEventListener("click",copyOffer);
@@ -558,13 +895,13 @@ function renderCalc(focusLast){
 }
 function updateAmounts(){ // kg yazarken yeniden çizmeden sadece tutarları güncelle
   let total=0;const items=document.querySelectorAll("#pbody .item");
-  calc.forEach((c,i)=>{const pr=priceAt(D[c.id],vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;const a=items[i].querySelector(".amt");a.querySelector("span").textContent=`${fmt(c.kg)} kg${kdv?" · KDV dahil":""}`;a.querySelector("b").textContent=money(amt);});
+  calc.forEach((c,i)=>{const it=D[c.id];const bp=!!it.bp;const pr=bp?bpNet(it.bp[c.sup],c.sup,vade,c.ek||0):priceAt(it,vade)-(c.ind||0);const amt=bp?c.kg*pr*(kdv?1.2:1):c.kg*pr/1000*(kdv?1.2:1);total+=amt;const a=items[i].querySelector(".amt");a.querySelector("span").textContent=`${fmt(c.kg)} ${bp?"mt":"kg"}${kdv?" · KDV dahil":""}`;a.querySelector("b").textContent=money(amt);});
   document.querySelector(".total b").textContent=money(total);
-  document.querySelector(".total b[style]").textContent=fmt(calc.reduce((a,c)=>a+c.kg,0))+" kg";
+  {const kg=calc.filter(c=>!D[c.id].bp).reduce((a,c)=>a+c.kg,0),mt=calc.filter(c=>D[c.id].bp).reduce((a,c)=>a+c.kg,0);document.querySelector(".total b[style]").textContent=[kg?fmt(kg)+" kg":"",mt?fmt(mt)+" mt":""].filter(Boolean).join(" · ")||"—";}
 
 }
 function copyOffer(){
-  let total=0;const lines=calc.map(c=>{const it=D[c.id];const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;return `${it.n}${it.e?" "+it.e:""} — ${fmt(c.kg)} kg × ${fmt(pr)} ₺/ton = ${money(amt)}`;});
+  let total=0;const lines=calc.map(c=>{const it=D[c.id];if(it.bp){const pr=bpNet(it.bp[c.sup],c.sup,vade,c.ek||0);const amt=c.kg*pr*(kdv?1.2:1);total+=amt;return `${it.n} ${it.e} (${c.sup==="L"?"liste":BP_SUP[c.sup].ad}) — ${fmt(c.kg)} mt × ${fmt2(pr)} ₺/mt = ${money(amt)}`;}const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;return `${it.n}${it.e?" "+it.e:""} — ${fmt(c.kg)} kg × ${fmt(pr)} ₺/ton = ${money(amt)}`;});
   const txt=`FİYAT TEKLİFİ (${VADE[vade][0]}${kdv?", KDV dahil":", KDV hariç"})\n`+lines.join("\n")+`\nTOPLAM: ${money(total)}`;
   navigator.clipboard.writeText(txt).then(()=>{const b=document.getElementById("copy");b.textContent="Kopyalandı ✓";b.classList.add("done");setTimeout(()=>{b.textContent="Teklifi kopyala";b.classList.remove("done");},1600);}).catch(()=>toast("Kopyalama engellendi"));
 }
@@ -582,7 +919,7 @@ cb.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
 const qi=document.getElementById("q"),sb=document.getElementById("sbox");
 qi.addEventListener("input",()=>{q=qi.value;sb.classList.toggle("has",!!q);cursor=-1;mode==="stok"?renderStok():render();});
 document.getElementById("clr").addEventListener("click",()=>{qi.value="";q="";sb.classList.remove("has");cursor=-1;mode==="stok"?renderStok():render();qi.focus();});
-document.getElementById("out").addEventListener("click",e=>{const r=e.target.closest(".row");if(!r)return;addCalc(+r.dataset.id);});
+document.getElementById("out").addEventListener("click",e=>{const r=e.target.closest(".row");if(!r)return;const cell=e.target.closest(".bpcell[data-sup]");addCalc(+r.dataset.id,cell?cell.dataset.sup:null);});
 document.getElementById("clearCalc").addEventListener("click",()=>{calc=[];renderCalc();});
 const panel=document.getElementById("panel"),backdrop=document.getElementById("backdrop");
 const isMobile=()=>window.matchMedia("(max-width:980px)").matches;
