@@ -723,10 +723,14 @@ async function loadStok(force){
 function ago(iso){const d=(Date.now()-new Date(iso))/60000;if(isNaN(d))return "";if(d<1)return "az önce";if(d<60)return Math.round(d)+" dk önce";if(d<1440)return Math.round(d/60)+" sa önce";return Math.round(d/1440)+" gün önce";}
 function renderStokStatus(){
   const dot=document.getElementById("stokDot");dot.className="mdot";
-  if(!STOK.data){dot.classList.add(STOK.err?"err":"");return;}
+  let pill=document.getElementById("stokPill");
+  if(!pill){pill=document.createElement("span");pill.id="stokPill";pill.className="pill";document.getElementById("dates").appendChild(pill);}
+  if(!STOK.data){if(STOK.err)dot.classList.add("err");pill.innerHTML=`<span class="dot" style="background:var(--red)"></span>Stok <b>bağlı değil</b>`;return;}
   const m=(Date.now()-new Date(STOK.data.guncelleme))/60000;
   dot.classList.add(m>30?"old":"ok");
+  pill.innerHTML=`<span class="dot" style="background:${m>30?'var(--warn)':'var(--ok)'}"></span>Stok <b>${new Date(STOK.data.guncelleme).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</b> · ${ago(STOK.data.guncelleme)}`;
 }
+setInterval(()=>{if(STOK.data)renderStokStatus();},60000);
 function renderStok(){
   const out=document.getElementById("stokOut");
   if(!STOK.data){out.innerHTML=`<div class="none"><b>Stok verisi bağlı değil</b>${STOK.err?"Bilgisayardaki stok betiği henüz veri göndermemiş.":"Yükleniyor…"}</div>`;document.getElementById("meta").textContent="";return;}
