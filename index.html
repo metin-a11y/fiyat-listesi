@@ -23,8 +23,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);font-size:16px;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 400px at 10% -10%,#dbeafe 0%,transparent 60%),radial-gradient(700px 400px at 100% 0%,#e0f2fe 0%,transparent 60%);pointer-events:none;z-index:0}
-.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:20px 20px 120px}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 400px at 10% -10%,#dbeafe 0%,transparent 60%),radial-gradient(700px 400px at 100% 0%,#e0f2fe 0%,transparent 60%);pointer-events:none;z-index:-1}
+.wrap{position:relative;max-width:1240px;margin:0 auto;padding:20px 20px 120px}
 
 /* header */
 .top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;animation:fadeDown .5s ease both}
@@ -925,7 +925,7 @@ document.getElementById("out").addEventListener("click",e=>{const r=e.target.clo
 document.getElementById("clearCalc").addEventListener("click",()=>{calc=[];renderCalc();});
 const panel=document.getElementById("panel"),backdrop=document.getElementById("backdrop");
 const isMobile=()=>window.matchMedia("(max-width:980px)").matches;
-function openCalc(o){panel.classList.toggle("open",o);backdrop.classList.toggle("on",o);if(o){const inp=panel.querySelector("input");inp&&setTimeout(()=>{inp.focus();inp.select();},350);}else qi.blur();}
+function openCalc(o){panel.classList.toggle("open",o);backdrop.classList.toggle("on",o);if(o){const inp=[...panel.querySelectorAll(".item input")].pop();if(inp){inp.focus({preventScroll:true});try{inp.select();}catch(e){}}}else{document.activeElement&&document.activeElement.blur();}}
 document.getElementById("fab").addEventListener("click",()=>openCalc(!panel.classList.contains("open")));
 document.getElementById("closeCalc").addEventListener("click",()=>openCalc(false));
 backdrop.addEventListener("click",()=>openCalc(false));
