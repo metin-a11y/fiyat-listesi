@@ -876,18 +876,18 @@ function renderCalc(focusLast){
   b.innerHTML=calc.map((c,i)=>{const it=D[c.id];
     if(it.bp){const l=it.bp[c.sup];const pr=bpNet(l,c.sup,vade,c.ek||0);const amt=pr==null?0:c.kg*pr*(kdv?1.2:1);total+=amt;const supad=BP_SUP[c.sup].ad;
       return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t} · ${supad}</small><em>${pr==null?"120 gün satış yok":`${fmt2(pr)} ₺/mt · ${VADE[vade][0]} · liste ${fmt2(l)} %${BP_SUP[c.sup].isk[Math.min(vade,3)]}${"+1".repeat(c.ek||0)}`}</em></div>
-      <input type="number" inputmode="decimal" value="${c.kg}" data-i="${i}" placeholder="mt">
+      <input type="number" inputmode="decimal" enterkeyhint="done" value="${c.kg}" data-i="${i}" placeholder="mt">
       ${`<div class="ind ek" data-i="${i}"><button class="${!c.ek?'on':''}" data-v="0">Baz</button><button class="${c.ek===1?'on':''}" data-v="1">+1</button><button class="${c.ek===2?'on':''}" data-v="2">+1 +1</button></div>`}
       <div class="amt"><span>${fmt(c.kg)} mt${kdv?" · KDV dahil":""}</span><span><b>${money(amt)}</b> <button class="rm" data-i="${i}" title="Kaldır">×</button></span></div></div>`;}
     const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;
     return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t}${it.e?" · "+it.e:""}</small><em>${fmt(pr)} ₺/ton · ${VADE[vade][0]}${c.ind?` · liste ${fmt(priceAt(it,vade))} −${c.ind}`:""}</em></div>
-    <input type="number" inputmode="decimal" value="${c.kg}" data-i="${i}" placeholder="kg">
+    <input type="number" inputmode="decimal" enterkeyhint="done" value="${c.kg}" data-i="${i}" placeholder="kg">
     <div class="ind" data-i="${i}"><button class="${!c.ind?'on':''}" data-v="0">Liste</button><button class="${c.ind===100?'on':''}" data-v="100">−100</button><button class="${c.ind===200?'on':''}" data-v="200">−200</button></div>
     <div class="amt"><span>${fmt(c.kg)} kg${kdv?" · KDV dahil":""}</span><span><b>${money(amt)}</b> <button class="rm" data-i="${i}" title="Kaldır">×</button></span></div></div>`;}).join("")+
     `<div class="total"><div><small>Toplam · ${VADE[vade][0]}${kdv?" · KDV dahil":""}</small><b>${money(total)}</b></div><div style="text-align:right"><small>${calc.length} kalem</small><b style="font-size:15px">${(()=>{const kg=calc.filter(c=>!D[c.id].bp).reduce((a,c)=>a+c.kg,0),mt=calc.filter(c=>D[c.id].bp).reduce((a,c)=>a+c.kg,0);return [kg?fmt(kg)+" kg":"",mt?fmt(mt)+" mt":""].filter(Boolean).join(" · ")||"—";})()}</b></div></div>
     <div class="opts"><label class="tog${kdv?' on':''}" id="kdv"><i></i>KDV %20 dahil</label></div>
     <button class="copy" id="copy">Teklifi kopyala</button>`;
-  b.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{calc[+e.target.dataset.i].kg=parseFloat(e.target.value)||0;updateAmounts();}));
+  b.querySelectorAll("input").forEach(inp=>{inp.addEventListener("input",e=>{calc[+e.target.dataset.i].kg=parseFloat(e.target.value)||0;updateAmounts();});inp.addEventListener("keydown",e=>{if(e.key==="Enter")e.target.blur();});});
   b.querySelectorAll(".ind button").forEach(btn=>btn.addEventListener("click",e=>{const w=e.currentTarget.parentElement;const c=calc[+w.dataset.i];if(w.classList.contains("ek"))c.ek=+e.currentTarget.dataset.v;else c.ind=+e.currentTarget.dataset.v;renderCalc();}));
   b.querySelectorAll(".rm").forEach(btn=>btn.addEventListener("click",e=>{calc.splice(+e.currentTarget.dataset.i,1);renderCalc();}));
   b.querySelector("#kdv").addEventListener("click",()=>{kdv=!kdv;renderCalc();});
@@ -943,10 +943,26 @@ render();renderCalc();loadStok(false);
 setInterval(()=>{if(document.visibilityState==="visible")loadStok(false);},120000);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&Date.now()-STOK.at>120000)loadStok(true);});
 new ResizeObserver(()=>document.documentElement.style.setProperty("--dockh",document.getElementById("dock").offsetHeight+"px")).observe(document.getElementById("dock"));
-/* iOS Safari: klavye açılınca alt çubuğu klavyenin üstünde tut */
-if(window.visualViewport){const dock=document.getElementById("dock");const fix=()=>{if(!isMobile()){dock.style.transform="";return;}
-  const vv=window.visualViewport;const off=window.innerHeight-vv.height-vv.offsetTop;dock.style.transform=off>0?`translateY(-${off}px)`:"";panel.style.transform=panel.classList.contains("open")?(off>0?`translateY(-${off}px)`:""):"";};
-  visualViewport.addEventListener("resize",fix);visualViewport.addEventListener("scroll",fix);}
+/* iOS Safari: klavye açıkken görünen alanı (visualViewport) esas al */
+if(window.visualViewport){const dock=document.getElementById("dock");
+  const reset=()=>{["top","bottom","height","maxHeight","borderRadius","transform","display"].forEach(k=>{dock.style[k]="";panel.style[k]="";});};
+  const fix=()=>{
+    if(!isMobile()){reset();return;}
+    const vv=window.visualViewport,kb=(window.innerHeight-vv.height)>120;
+    reset();
+    if(!kb)return;
+    if(panel.classList.contains("open")&&panel.contains(document.activeElement)){
+      // hesap paneli: klavyenin üstündeki alanı tam kapla, arama çubuğunu gizle
+      dock.style.display="none";
+      panel.style.top=vv.offsetTop+"px";panel.style.bottom="auto";panel.style.height=vv.height+"px";panel.style.maxHeight="none";panel.style.borderRadius="0";
+      const a=document.activeElement;if(a&&a.scrollIntoView)a.scrollIntoView({block:"center"});
+    }else{
+      // arama kutusu: çubuğu klavyenin hemen üstüne yapıştır
+      dock.style.top=(vv.offsetTop+vv.height-dock.offsetHeight)+"px";dock.style.bottom="auto";
+    }
+  };
+  visualViewport.addEventListener("resize",fix);visualViewport.addEventListener("scroll",fix);
+  document.addEventListener("focusin",()=>setTimeout(fix,60));document.addEventListener("focusout",()=>setTimeout(fix,60));}
 document.addEventListener("gesturestart",e=>e.preventDefault()); // iOS pinch-zoom kapalı
 </script>
 </body>
