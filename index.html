@@ -39,6 +39,9 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
 .modes{display:inline-flex;background:#e2e8f0;border-radius:14px;padding:4px;gap:4px;margin-bottom:14px;animation:fadeDown .5s .03s ease both}
 .modes button{border:0;background:transparent;font:inherit;font-weight:800;font-size:15px;color:var(--mut);padding:9px 22px;border-radius:11px;cursor:pointer;transition:all .25s cubic-bezier(.2,.8,.2,1);display:inline-flex;align-items:center;gap:7px}
 .modes button.on{background:#fff;color:var(--txt);box-shadow:0 2px 8px rgba(15,23,42,.12)}
+.mbadge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--acc);color:#fff;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.mbadge:empty{display:none}
+.mbadge.pop{transform:scale(1.35)}
 .mdot{width:8px;height:8px;border-radius:50%;background:#cbd5e1;display:inline-block;transition:background .3s}
 .mdot.ok{background:var(--ok);box-shadow:0 0 0 3px rgba(5,150,105,.18)}
 .mdot.old{background:var(--warn)}
@@ -62,6 +65,7 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
 .search .seg{align-self:flex-start}
 .fabm{display:none}
 .closem{display:none}
+body.hesap .closem{display:inline-block;border:0;background:var(--txt);color:#fff;font:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px;cursor:pointer}
 .backdrop{display:none}
 .sbox{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:6px 10px 6px 18px;box-shadow:0 10px 30px -14px rgba(37,99,235,.35),var(--sh);transition:border-color .25s,box-shadow .25s,transform .25s}
 .sbox:focus-within{border-color:var(--acc);box-shadow:0 0 0 4px rgba(37,99,235,.12),0 14px 36px -14px rgba(37,99,235,.45);transform:translateY(-1px)}
@@ -90,6 +94,8 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
 
 /* layout */
 .grid{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+.grid.solo{grid-template-columns:minmax(0,640px);justify-content:center}
+body.hesap .panel{position:static}
 @media(max-width:980px){.grid{grid-template-columns:1fr}}
 
 /* group cards */
@@ -234,13 +240,11 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
   .rows{margin:4px 0 2px}
   .row{padding:14px 16px;min-height:64px}.row .n{font-size:17px}.row .n small{font-size:14px}
   .ghead{padding:12px 16px}
-  /* hesap paneli = alttan kayan sayfa */
-  .panel{position:fixed;left:0;right:0;bottom:var(--dockh,140px);top:auto;z-index:28;border-radius:22px 22px 0 0;max-height:calc(100dvh - var(--dockh,140px) - 70px);overflow:auto;transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.8,.2,1);animation:none;box-shadow:0 -20px 50px -20px rgba(15,23,42,.5);padding-bottom:8px}
-  .panel.open{transform:none}
-  .panel::before{content:"";display:block;width:44px;height:5px;border-radius:5px;background:#cbd5e1;margin:10px auto -6px}
-  .closem{display:inline-block;border:0;background:var(--txt);color:#fff;font:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px;cursor:pointer}
-  .backdrop{display:block;position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:25;opacity:0;pointer-events:none;transition:opacity .3s}
-  .backdrop.on{opacity:1;pointer-events:auto}
+  /* hesap: ayrı sekme, normal kart */
+  .panel{position:static;animation:none}
+  .grid{gap:0}
+  .fabm{display:none!important}
+  .backdrop{display:none!important}
   .item input{font-size:17px;padding:10px}
   input,button{-webkit-tap-highlight-color:transparent}
   .toast{bottom:calc(var(--dockh,140px) + 12px)}
@@ -260,6 +264,7 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
   <div class="modes" id="modes">
     <button class="on" data-m="fiyat">Fiyat</button>
     <button data-m="stok">Stok <span class="mdot" id="stokDot"></span></button>
+    <button data-m="hesap">Hesap <span class="mbadge" id="hesapN"></span></button>
   </div>
 
   <div class="search" id="dock">
@@ -269,7 +274,6 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
       <input id="q" type="text" placeholder="örn. 8 mm 1500 · npu 160 · köşebent 50 · hea 200 · yücel" autocomplete="off" autofocus>
       <div class="kbd"><span>↑↓</span><span>Enter</span><span>Esc</span></div>
       <button class="clear" id="clr" title="Temizle">×</button>
-      <button class="fabm" id="fab" title="Hesap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="2.5" width="16" height="19" rx="3"/><path d="M8 7h8M8 12h3M13 12h3M8 16.5h3M13 16.5h3"/></svg><b id="fabn"></b></button>
     </div>
   </div>
 
@@ -285,7 +289,7 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(900px 
       <div id="stokOut" style="display:none"></div>
     </div>
     <aside class="panel" id="panel">
-      <div class="phead"><h2>Hızlı Hesap</h2><div style="display:flex;gap:6px"><button id="clearCalc">Temizle</button><button id="closeCalc" class="closem">Kapat</button></div></div>
+      <div class="phead"><h2>Hızlı Hesap</h2><div style="display:flex;gap:6px"><button id="clearCalc">Temizle</button><button id="closeCalc" class="closem">Listeye dön</button></div></div>
       <div class="pbody" id="pbody"></div>
     </aside>
   </div>
@@ -767,18 +771,22 @@ document.getElementById("scats").addEventListener("click",e=>{const b=e.target.c
 let mode="fiyat";
 function setMode(m){
   mode=m;document.querySelectorAll("#modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));
-  const isS=m==="stok";
-  document.getElementById("out").style.display=isS?"none":"";
+  const isS=m==="stok",isH=m==="hesap",mob=isMobile();
+  document.body.classList.toggle("hesap",isH);
+  document.getElementById("out").style.display=(isS||isH)?"none":"";
   document.getElementById("stokOut").style.display=isS?"":"none";
-  document.getElementById("cats").style.display=isS?"none":"";
+  document.getElementById("cats").style.display=(isS||isH)?"none":"";
   document.getElementById("scats").style.display=isS?"":"none";
+  document.getElementById("meta").style.display=isH?"none":"";
   document.getElementById("vade").style.display=isS?"none":"";
-  document.getElementById("notes").style.display=isS?"none":"";
-  document.getElementById("panel").style.display=isS?"none":"";
-  document.getElementById("fab").style.display=isS?"none":"";
+  document.getElementById("notes").style.display=(isS||isH)?"none":"";
+  document.getElementById("sbox").style.display=isH?"none":"";
+  document.getElementById("panel").style.display=isH||(!mob&&!isS)?"":"none";
+  document.querySelector(".grid").classList.toggle("solo",isH);
   document.getElementById("q").placeholder=isS?"örn. 30x40x2 · 100.043 · boyalı · profil":"örn. 8 mm 1500 · npu 160 · köşebent 50 · hea 200 · yücel";
-  if(isS){renderScats();renderStok();if(Date.now()-STOK.at>120000)loadStok(true);}else render();
-  document.getElementById("q").focus();
+  if(isS){renderScats();renderStok();if(Date.now()-STOK.at>120000)loadStok(true);}else if(isH){renderCalc();}else render();
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(!mob&&!isH)document.getElementById("q").focus();
 }
 document.getElementById("modes").addEventListener("click",e=>{const b=e.target.closest("button");b&&setMode(b.dataset.m);});
 
@@ -858,20 +866,21 @@ function render(){
 }
 
 /* ---- hesap ---- */
+function popBadge(){const n=document.getElementById("hesapN");n.classList.add("pop");setTimeout(()=>n.classList.remove("pop"),250);}
 function addCalc(id,sup){
   const it=D[id];
   if(it.bp){ sup=sup||(it.bp.Y!=null?"Y":"T"); if(vade===4){toast("Boru/profilde 120 gün satış yok");return;} if(it.bp[sup]==null){toast("Bu üreticide fiyat yok");return;}
     if(calc.find(c=>c.id===id&&c.sup===sup)){toast("Zaten hesapta");return;}
-    calc.push({id,sup,kg:100,ek:DISK.ek});renderCalc(!isMobile());toast(`${it.n} (${BP_SUP[sup].ad}) eklendi`);if(isMobile()){qi.blur();openCalc(true);}return;}
+    calc.push({id,sup,kg:100,ek:DISK.ek});renderCalc(!isMobile());toast(`${it.n} (${BP_SUP[sup].ad}) hesaba eklendi`);popBadge();return;}
   const ex=calc.find(c=>c.id===id);
   if(ex){toast("Zaten hesapta");return;}
   if(!it.p){toast("Bu kalem için fiyat sorulmalı");return;}
-  calc.push({id,kg:1000,ind:0});renderCalc(!isMobile());toast(`${it.n} ${it.e||""} eklendi`.trim());
-  if(isMobile()){qi.blur();openCalc(true);}
+  calc.push({id,kg:1000,ind:0});renderCalc(!isMobile());toast(`${it.n} ${it.e||""} hesaba eklendi`.trim());
+  popBadge();
 }
 function renderCalc(focusLast){
-  const b=document.getElementById("pbody");const fab=document.getElementById("fab"),fabn=document.getElementById("fabn");
-  if(!calc.length){b.innerHTML=`<div class="empty">Listeden bir satıra dokun,<br>kg gir, tutarı anında gör.</div>`;fab.classList.remove("has");fabn.textContent="";return;}
+  const b=document.getElementById("pbody");const fabn=document.getElementById("hesapN");
+  if(!calc.length){b.innerHTML=`<div class="empty">Fiyat sekmesinde bir satıra dokun, buraya eklensin.<br>Sonra miktarı gir, tutar anında çıksın.</div>`;fabn.textContent="";return;}
   let total=0;
   b.innerHTML=calc.map((c,i)=>{const it=D[c.id];
     if(it.bp){const l=it.bp[c.sup];const pr=bpNet(l,c.sup,vade,c.ek||0);const amt=pr==null?0:c.kg*pr*(kdv?1.2:1);total+=amt;const supad=BP_SUP[c.sup].ad;
@@ -892,7 +901,7 @@ function renderCalc(focusLast){
   b.querySelectorAll(".rm").forEach(btn=>btn.addEventListener("click",e=>{calc.splice(+e.currentTarget.dataset.i,1);renderCalc();}));
   b.querySelector("#kdv").addEventListener("click",()=>{kdv=!kdv;renderCalc();});
   b.querySelector("#copy").addEventListener("click",copyOffer);
-  fab.classList.add("has");fabn.textContent=calc.length;
+  fabn.textContent=calc.length;
   if(focusLast){const inp=b.querySelectorAll("input");const l=inp[inp.length-1];l&&(l.focus(),l.select());}
 }
 function updateAmounts(){ // kg yazarken yeniden çizmeden sadece tutarları güncelle
@@ -925,13 +934,11 @@ document.getElementById("out").addEventListener("click",e=>{const r=e.target.clo
 document.getElementById("clearCalc").addEventListener("click",()=>{calc=[];renderCalc();});
 const panel=document.getElementById("panel"),backdrop=document.getElementById("backdrop");
 const isMobile=()=>window.matchMedia("(max-width:980px)").matches;
-function openCalc(o){panel.classList.toggle("open",o);backdrop.classList.toggle("on",o);if(o){const inp=[...panel.querySelectorAll(".item input")].pop();if(inp){inp.focus({preventScroll:true});try{inp.select();}catch(e){}}}else{document.activeElement&&document.activeElement.blur();}}
-document.getElementById("fab").addEventListener("click",()=>openCalc(!panel.classList.contains("open")));
-document.getElementById("closeCalc").addEventListener("click",()=>openCalc(false));
-backdrop.addEventListener("click",()=>openCalc(false));
+function openCalc(o){setMode(o?"hesap":"fiyat");}
+document.getElementById("closeCalc").addEventListener("click",()=>setMode("fiyat"));
 document.addEventListener("keydown",e=>{
   const vis=document.getElementById("out")._visible||[];
-  if(e.key==="Escape"){if(panel.classList.contains("open")){openCalc(false);return;}qi.value="";q="";sb.classList.remove("has");cursor=-1;render();qi.focus();return;}
+  if(e.key==="Escape"){if(mode==="hesap"){setMode("fiyat");return;}qi.value="";q="";sb.classList.remove("has");cursor=-1;render();qi.focus();return;}
   if(e.target.tagName==="INPUT"&&e.target!==qi)return;
   if(mode==="stok"&&["ArrowDown","ArrowUp","Enter"].includes(e.key))return;
   if(e.key==="ArrowDown"){e.preventDefault();cursor=Math.min(cursor+1,vis.length-1);render();}
@@ -939,23 +946,22 @@ document.addEventListener("keydown",e=>{
   else if(e.key==="Enter"){if(cursor<0&&vis.length)cursor=0;if(vis[cursor]!==undefined)addCalc(vis[cursor]);}
   else if(e.target!==qi&&e.key.length===1&&!e.ctrlKey&&!e.metaKey){qi.focus();}
 });
-render();renderCalc();loadStok(false);
+render();renderCalc();loadStok(false);setMode("fiyat");window.matchMedia("(max-width:980px)").addEventListener("change",()=>setMode(mode));
 setInterval(()=>{if(document.visibilityState==="visible")loadStok(false);},120000);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&Date.now()-STOK.at>120000)loadStok(true);});
 new ResizeObserver(()=>document.documentElement.style.setProperty("--dockh",document.getElementById("dock").offsetHeight+"px")).observe(document.getElementById("dock"));
 /* iOS Safari: klavye açıkken görünen alanı (visualViewport) esas al */
 if(window.visualViewport){const dock=document.getElementById("dock");
-  const reset=()=>{["top","bottom","height","maxHeight","borderRadius","transform","display"].forEach(k=>{dock.style[k]="";panel.style[k]="";});};
+  const reset=()=>{["top","bottom","transform","display"].forEach(k=>{dock.style[k]="";});};
   const fix=()=>{
     if(!isMobile()){reset();return;}
     const vv=window.visualViewport,kb=(window.innerHeight-vv.height)>120;
     reset();
     if(!kb)return;
-    if(panel.classList.contains("open")&&panel.contains(document.activeElement)){
-      // hesap paneli: klavyenin üstündeki alanı tam kapla, arama çubuğunu gizle
+    if(panel.contains(document.activeElement)){
+      // hesap sekmesi: alttaki vade çubuğunu gizle, yazılan kutuyu görünür alanın ortasına getir
       dock.style.display="none";
-      panel.style.top=vv.offsetTop+"px";panel.style.bottom="auto";panel.style.height=vv.height+"px";panel.style.maxHeight="none";panel.style.borderRadius="0";
-      const a=document.activeElement;if(a&&a.scrollIntoView)a.scrollIntoView({block:"center"});
+      const a=document.activeElement;setTimeout(()=>a&&a.scrollIntoView&&a.scrollIntoView({block:"center",behavior:"smooth"}),50);
     }else{
       // arama kutusu: çubuğu klavyenin hemen üstüne yapıştır
       dock.style.top=(vv.offsetTop+vv.height-dock.offsetHeight)+"px";dock.style.bottom="auto";
