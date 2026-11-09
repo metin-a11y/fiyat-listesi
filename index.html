@@ -625,6 +625,175 @@ const BP_BORU=[
   [["323"],8,4290.37,3720.43]
 ];
 
+/* Boyalı konstrüksiyon profilleri — Tosçelik boyalı liste (TL/mt), Tosçelik iskontosu uygulanır */
+const BP_BOYALI=[
+  [["15x15", "10x20"],1.2,36.36],
+  [["15x15", "10x20"],1.5,43.17],
+  [["20x20", "10x30", "15x25"],1.2,45.68],
+  [["20x20", "10x30", "15x25"],1.4,51.19],
+  [["20x20", "10x30", "15x25"],1.5,51.91],
+  [["20x20", "10x30", "15x25"],1.9,60.92],
+  [["20x20", "10x30", "15x25"],2,62.35],
+  [["20x20", "10x30", "15x25"],2.5,81.25],
+  [["25x25", "20x30"],1.2,57.4],
+  [["25x25", "20x30"],1.4,61.37],
+  [["25x25", "20x30"],1.5,62.97],
+  [["25x25", "20x30"],1.9,74.55],
+  [["25x25", "20x30"],2,75.45],
+  [["25x25", "20x30"],2.5,95.94],
+  [["25x25", "20x30"],3,113.43],
+  [["25x40"],1.5,87.05],
+  [["25x40"],2,108.81],
+  [["25x40"],2.5,131.08],
+  [["25x40"],3,155.91],
+  [["25x50"],1.5,102.02],
+  [["25x50"],2,126.46],
+  [["25x50"],2.5,151.5],
+  [["25x50"],3,182.11],
+  [["30x30", "20x40"],1.2,67.21],
+  [["30x30", "20x40"],1.4,72.28],
+  [["30x30", "20x40"],1.5,73.81],
+  [["30x30", "20x40"],1.9,88.24],
+  [["30x30", "20x40"],2,91.05],
+  [["30x30", "20x40"],2.5,110.75],
+  [["30x30", "20x40"],3,132.71],
+  [["30x40"],1.2,79.37],
+  [["30x40"],1.4,83.95],
+  [["30x40"],1.5,85.4],
+  [["30x40"],1.9,102.79],
+  [["30x40"],2,105.95],
+  [["30x40"],2.5,130.94],
+  [["30x40"],3,154.81],
+  [["30x60", "40x50", "45x45"],1.5,125.8],
+  [["30x60", "40x50", "45x45"],2,153.09],
+  [["30x60", "40x50", "45x45"],2.5,184.25],
+  [["30x60", "40x50", "45x45"],3,217.46],
+  [["30x70"],1.5,130.37],
+  [["30x70"],2,161.92],
+  [["30x70"],2.5,194.79],
+  [["30x70"],3,229.11],
+  [["35x35", "20x50"],1.5,88.92],
+  [["35x35", "20x50"],2,110.24],
+  [["35x35", "20x50"],2.5,132.75],
+  [["35x35", "20x50"],3,161.82],
+  [["40x40", "30x50"],1.2,90.81],
+  [["40x40", "30x50"],1.4,96.48],
+  [["40x40", "30x50"],1.5,97.8],
+  [["40x40", "30x50"],1.9,116.36],
+  [["40x40", "30x50"],2,119.64],
+  [["40x40", "30x50"],2.4,140.61],
+  [["40x40", "30x50"],2.5,144.47],
+  [["40x40", "30x50"],2.9,168.32],
+  [["40x40", "30x50"],3,172.25],
+  [["40x40", "30x50"],4,232.03],
+  [["50x50", "40x60"],1.4,122.54],
+  [["50x50", "40x60"],1.5,124.66],
+  [["50x50", "40x60"],1.9,147.4],
+  [["50x50", "40x60"],2,151.62],
+  [["50x50", "40x60"],2.4,177.46],
+  [["50x50", "40x60"],2.5,182.37],
+  [["50x50", "40x60"],2.9,212.48],
+  [["50x50", "40x60"],3,217.53],
+  [["50x50", "40x60"],4,290.42],
+  [["50x50", "40x60"],5,359.45],
+  [["50x70"],2,195.6],
+  [["50x70"],2.5,234.2],
+  [["50x70"],3,279.12],
+  [["50x70"],4,372.83],
+  [["50x70"],5,465.73],
+  [["50x100"],1.5,223.73],
+  [["50x100"],1.9,235.01],
+  [["50x100"],2,241.49],
+  [["50x100"],2.4,276.71],
+  [["50x100"],2.5,283.78],
+  [["50x100"],2.9,330.39],
+  [["50x100"],3,337.69],
+  [["50x100"],4,440.79],
+  [["50x100"],5,550.9],
+  [["50x100"],6,696.27],
+  [["50x150"],2,362.82],
+  [["50x150"],3,494.67],
+  [["50x150"],4,645.94],
+  [["50x150"],5,808.17],
+  [["60x60", "40x80"],1.4,152.27],
+  [["60x60", "40x80"],1.5,155.38],
+  [["60x60", "40x80"],1.9,179.67],
+  [["60x60", "40x80"],2,184.86],
+  [["60x60", "40x80"],2.4,216.32],
+  [["60x60", "40x80"],2.5,222.6],
+  [["60x60", "40x80"],2.9,260.04],
+  [["60x60", "40x80"],3,265.62],
+  [["60x60", "40x80"],4,356.08],
+  [["60x60", "40x80"],5,447.43],
+  [["70x70", "60x80", "50x90"],1.5,191.65],
+  [["70x70", "60x80", "50x90"],1.9,220.56],
+  [["70x70", "60x80", "50x90"],2,226.93],
+  [["70x70", "60x80", "50x90"],2.4,257.97],
+  [["70x70", "60x80", "50x90"],2.5,264.91],
+  [["70x70", "60x80", "50x90"],2.9,307.57],
+  [["70x70", "60x80", "50x90"],3,316.19],
+  [["70x70", "60x80", "50x90"],4,418.77],
+  [["70x70", "60x80", "50x90"],5,529.39],
+  [["75x75"],2,253.27],
+  [["75x75"],3,355.51],
+  [["80x80", "60x100"],1.9,251.5],
+  [["80x80", "60x100"],2,259.56],
+  [["80x80", "60x100"],2.4,294.15],
+  [["80x80", "60x100"],2.5,303.49],
+  [["80x80", "60x100"],2.9,350.84],
+  [["80x80", "60x100"],3,360.3],
+  [["80x80", "60x100"],4,472.41],
+  [["80x80", "60x100"],5,594.55],
+  [["80x80", "60x100"],6,720.37],
+  [["90x90", "60x120", "80x100"],2,293.01],
+  [["90x90", "60x120", "80x100"],2.4,332.62],
+  [["90x90", "60x120", "80x100"],2.5,341.3],
+  [["90x90", "60x120", "80x100"],2.9,394.63],
+  [["90x90", "60x120", "80x100"],3,409.18],
+  [["90x90", "60x120", "80x100"],4,543.42],
+  [["90x90", "60x120", "80x100"],5,669.13],
+  [["90x90", "60x120", "80x100"],6,831.47],
+  [["100x100", "80x120"],2,332.26],
+  [["100x100", "80x120"],2.4,379.37],
+  [["100x100", "80x120"],2.5,390.1],
+  [["100x100", "80x120"],2.9,448.65],
+  [["100x100", "80x120"],3,460.63],
+  [["100x100", "80x120"],4,604.89],
+  [["100x100", "80x120"],5,743.9],
+  [["100x100", "80x120"],6,909.24],
+  [["100x100", "80x120"],8,1256.69],
+  [["120x120"],3,560.26],
+  [["120x120"],4,727.32],
+  [["120x120"],5,912.41],
+  [["120x120"],6,1108.12],
+  [["120x120"],8,1534.0],
+  [["100x150"],3,607.49],
+  [["100x150"],4,810.89],
+  [["100x150"],5,1007.73],
+  [["100x150"],6,1236.6],
+  [["100x150"],8,1661.0],
+  [["140x140"],4,936.44],
+  [["140x140"],5,1145.6],
+  [["140x140"],6,1402.29],
+  [["140x140"],8,1908.14],
+  [["150x150", "100x200"],3,824.03],
+  [["150x150", "100x200"],4,1024.51],
+  [["150x150", "100x200"],5,1248.61],
+  [["150x150", "100x200"],6,1517.55],
+  [["175x175", "150x200"],4,1241.46],
+  [["175x175", "150x200"],5,1534.77],
+  [["175x175", "150x200"],6,1824.74],
+  [["175x175", "150x200"],8,2549.32],
+  [["200x200", "150x250"],4,1440.07],
+  [["200x200", "150x250"],5,1791.41],
+  [["200x200", "150x250"],6,2161.45],
+  [["200x200", "150x250"],8,2966.75],
+  [["200x200", "150x250"],10,3845.03],
+  [["250x250", "200x300"],5,2273.18],
+  [["250x250", "200x300"],6,2701.72],
+  [["250x250", "200x300"],8,3809.05],
+  [["250x250", "200x300"],10,5105.9]
+];
 /* Tesisat borusu (Tosçelik): inç, ölçü, siyah testli, galvanizli — TL/mt liste */
 const BP_TESISAT=[['1/2"',"21,3 x 2,60",65.76,106.97],['3/4"',"26,9 x 2,60",83.25,127.87],['1"',"33,7 x 3,20",121.01,187.60],['1 1/4"',"42,4 x 3,20",150.82,242.02],['1 1/2"',"48,3 x 3,20",171.58,272.72],['2"',"60,3 x 3,60",243.02,381.07],['2 1/2"',"76,1 x 3,60",310.32,487.93],['3"',"88,9 x 4",404.22,625.86],['4"',"114,3 x 4,50",590.42,918.59],['5"',"139,7 x 5",797.87,1248.23],['6"',"168,3 x 5",953.53,1496.14],['8"',"219,1 x 5",1444.47,null],['10"',"273 x 5",1856.16,null],['12"',"323,9 x 5,60",2398.58,null]];
 
@@ -645,6 +814,7 @@ const CATS = {
   IPE:    {t:"IPE Profil",            list:"HADDE", c:"#65a30d"},
   PROFIL: {t:"Kutu Profil",           list:"BP",    c:"#0f766e", bp:true},
   BORU:   {t:"Boru",                  list:"BP",    c:"#1d4ed8", bp:true},
+  BOYALI: {t:"Boyalı Profil",         list:"BP",    c:"#be123c", bp:true},
   TESISAT:{t:"Tesisat Borusu",        list:"BP",    c:"#7c3aed", bp:true},
 };
 const T="−100 / −100";
@@ -735,6 +905,8 @@ const I2=[35100,36400,37700,39000],I3=[37000,38400,39800,41200];
 const thS=th=>String(th).replace(".",",");
 BP_PROFIL.forEach(([labels,th,y,t])=>labels.forEach(e=>{const [a,b]=e.split("x");
   add("PROFIL",`${e} · ${thS(th)} mm`,"kutu profil",null,[+a,+b,th],{bp:{Y:y,T:t},tag:"+1 +1",alias:`${b}x${a} profil kutu`});}));
+BP_BOYALI.forEach(([labels,th,t])=>labels.forEach(e=>{const [a,b]=e.split("x");
+  add("BOYALI",`${e} · ${thS(th)} mm`,"boyalı profil",null,[+a,+b,th],{bp:{T:t},tag:"+1 +1",alias:`${b}x${a} boyalı profil kutu`});}));
 BP_BORU.forEach(([labels,th,y,t])=>labels.forEach(e=>add("BORU",`Ø${e} · ${thS(th)} mm`,"yuvarlak boru",null,[+e,th],{bp:{Y:y,T:t},tag:"+1 +1",alias:`${e}x${thS(th)} boru ${e} mm`})));
 BP_TESISAT.forEach(([inc,olcu,siyah,galv])=>{
   add("TESISAT",`${inc} Siyah Tesisat`,olcu,null,[parseFloat(olcu)],{bp:{T:siyah},tag:"+1 +1",alias:`${inc.replace('"','')} inç siyah testli tesisat borusu`});
@@ -753,7 +925,7 @@ const DISC=[
     ["3 – 6 mm Boru Profil","%34+1+1","%32+1+1","%29+1+1","%26+1+1"]]}
 ];
 const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil satırlarında gösterilen rakam <b>net TL/mt</b> = liste fiyatı − seçili vadenin iskontosu (Yücel %34/32/29/26, Tosçelik %31/29/26/23) − seçilirse <b>+1 +1</b> pazarlık payı (zincirleme). Liste tarihleri: Yücel 28.09.2026, Tosçelik 26.08.2026. Boru/profilde 120 gün satış yoktur."];
-const SYN={SAC:"sac saç levha siyah st37 st-37",ST52:"sac saç levha st52 st-52 kalite",ST52_2:"sac saç levha st52 st-52 kalite 2000",BAK:"baklava baklavalı sac saç",DKP:"dkp sac saç soğuk",HRP:"hrp sac saç",TDEM:"t demiri t demir te",NPU:"npu u profil",NPI:"npi i profil",LAMA:"lama silme kare",KOSE:"köşebent kosebent l profil köşe",HEA:"hea h profil",HEB:"heb h profil",IPE:"ipe i profil"};
+const SYN={BOYALI:"boyalı boyali profil kutu",SAC:"sac saç levha siyah st37 st-37",ST52:"sac saç levha st52 st-52 kalite",ST52_2:"sac saç levha st52 st-52 kalite 2000",BAK:"baklava baklavalı sac saç",DKP:"dkp sac saç soğuk",HRP:"hrp sac saç",TDEM:"t demiri t demir te",NPU:"npu u profil",NPI:"npi i profil",LAMA:"lama silme kare",KOSE:"köşebent kosebent l profil köşe",HEA:"hea h profil",HEB:"heb h profil",IPE:"ipe i profil"};
 
 /* ========================= STOK ========================= */
 const STOK={data:null,err:null,grp:"ALL",zero:false,at:0};
@@ -946,9 +1118,8 @@ function eslestir(s){ // -> {ref:D index|-1, why, mb:"KG"|"MT", per: kg veya mt 
         if(!hit)why=cands.length?`${t} mm için ${w} genişlik listede yok`:`${t} mm listede yok`;}}
   }else if(g==="PROFIL"){
     per=/12\s*mt/.test(a)?12:6;
-    if(/boyal/.test(a))why="boyalı profil listesi yok";
-    else{const m=a.match(/^(\d+)x(\d+)x([\d.]+)/);if(m){const [x,y]=[+m[1],+m[2]].sort((p,q)=>p-q),th=+m[3];
-      hit=byK("PROFIL").find(d=>d.nums.has(th)&&(d.alias.includes(`${y}x${x}`)||SN(d.n).startsWith(`${x}x${y}`)))||null;if(!hit)why="bu ölçü listede yok";}else why="ölçü okunamadı";}
+    {const PK=/boyal/.test(a)?"BOYALI":"PROFIL";const m=a.match(/^(\d+)x(\d+)x([\d.]+)/);if(m){const [x,y]=[+m[1],+m[2]].sort((p,q)=>p-q),th=+m[3];
+      hit=byK(PK).find(d=>d.nums.has(th)&&(d.alias.includes(`${y}x${x}`)||SN(d.n).startsWith(`${x}x${y}`)))||null;if(!hit)why="bu ölçü listede yok";}else why="ölçü okunamadı";}
   }else if(g==="BORU"){
     per=/12\s*mt/.test(a)?12:6;
     const m=a.match(/^([\d.]+)x([\d.]+)/);if(m){hit=byK("BORU").find(d=>SN(d.n).startsWith(`ø${+m[1]} `)&&d.nums.has(+m[2]))||null;if(!hit)why="bu ölçü listede yok";}else why="ölçü okunamadı";
@@ -1085,7 +1256,7 @@ function updateAmounts(){ // yazarken yeniden çizmeden sadece tutarları günce
 /* ===== Excel teklif: Arvaden şablonu (arvaden.xlsx) doldurulur ===== */
 const XL={firma:"",kisi:"",konu:"Fiyat Teklifi",teslim:""};
 const XL_ROWS=[20,21,22,23,24,25,26,27,28,29,30,31,32,46,55,56,57,58,59,60,61,62,63,64]; // şablondaki görünür kalem satırları (S.N. 1–24)
-const XL_AD={SAC:"SİYAH SAC",ST52:"ST-52 SAC",ST52_2:"ST-52 SAC",BAK:"BAKLAVALI SAC",DKP:"DKP SAC",HRP:"HRP SAC",PROFIL:"KUTU PROFİL",BORU:"BORU"};
+const XL_AD={BOYALI:"BOYALI PROFİL",SAC:"SİYAH SAC",ST52:"ST-52 SAC",ST52_2:"ST-52 SAC",BAK:"BAKLAVALI SAC",DKP:"DKP SAC",HRP:"HRP SAC",PROFIL:"KUTU PROFİL",BORU:"BORU"};
 function esc(t){return String(t??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function odemeSekli(){const g=[0,30,60,90,120][vade];return g?`FATURA TARİHİ İTİBARİYLE ${g} GÜN VADELİ ÇEK İLE`:"PEŞİN";}
 const trUp=t=>t.replace(/i/g,"İ").replace(/ı/g,"I").toUpperCase();
