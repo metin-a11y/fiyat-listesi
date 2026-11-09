@@ -1039,14 +1039,14 @@ function render(){
     const c=CATS[k];
     if(c.bp){
       const vi=Math.min(vade,3);
-      html+=`<section class="group bpg" style="animation-delay:${Math.min(gi*40,200)}ms"><div class="ghead"><h2><i style="background:${c.c}"></i>${c.t}</h2><small>${LISTS[c.list].date} · TL/mt</small></div>
-      <div class="bpbar">${vade===4?"":`<span class="pill"><span class="dot" style="background:${BP_SUP.Y.c}"></span>Yücel <b>%${BP_SUP.Y.isk[vi]}</b></span><span class="pill"><span class="dot" style="background:${BP_SUP.T.c}"></span>Tosçelik <b>%${BP_SUP.T.isk[vi]}</b></span>`}
+      html+=`<section class="group bpg" style="animation-delay:${Math.min(gi*40,200)}ms"><div class="ghead"><h2><i style="background:${c.c}"></i>${c.t}</h2><small>${k==="BOYALI"?"Tosçelik 26.08.2026 · TL/mt":LISTS[c.list].date+" · TL/mt"}</small></div>
+      <div class="bpbar">${vade===4||k==="BOYALI"?"":`<span class="pill"><span class="dot" style="background:${BP_SUP.Y.c}"></span>Yücel <b>%${BP_SUP.Y.isk[vi]}</b></span>`}${vade===4?"":`<span class="pill"><span class="dot" style="background:${BP_SUP.T.c}"></span>Tosçelik <b>%${BP_SUP.T.isk[vi]}</b></span>`}
       <div class="ind bpek"><button class="${DISK.ek===0?'on':''}" data-v="0">Baz</button><button class="${DISK.ek===1?'on':''}" data-v="1">+1</button><button class="${DISK.ek===2?'on':''}" data-v="2">+1 +1</button></div><small>${vade===4?"Boru/profilde 120 gün satış yok":VADE[vade][0]+" iskontosu · net = liste − iskonto"+(DISK.ek?" − pay":"")}</small></div>
-      <div class="cols bpc"><span>Malzeme</span><span>Yücel (Y)</span><span>Tosçelik (T)</span></div>`;
+      <div class="cols bpc"><span>Malzeme</span>${k==="BOYALI"?`<span>Tosçelik (T)</span><span></span>`:`<span>Yücel (Y)</span><span>Tosçelik (T)</span>`}</div>`;
       groups[k].forEach(it=>{
         visible.push(it.id);
         const cell=(sup)=>{const l=it.bp[sup];if(l==null)return `<div class="bpcell none">—</div>`;if(vade===4)return `<div class="bpcell none">120 gün yok</div>`;const n=bpNet(l,sup,vade,DISK.ek);return `<div class="bpcell" data-sup="${sup}" style="--sc:${BP_SUP[sup].c}"><small>${sup} liste ${fmt2(l)}</small><b>${fmt2(n)}</b></div>`;};
-        html+=`<div class="row bp${cursor===visible.length-1?' sel':''}" data-id="${it.id}" data-i="${visible.length-1}"><div class="n">${hl(it.n)}<small>${hl(it.e)}</small></div>${cell("Y")+cell("T")}</div>`;
+        html+=`<div class="row bp${cursor===visible.length-1?' sel':''}" data-id="${it.id}" data-i="${visible.length-1}"><div class="n">${hl(it.n)}<small>${hl(it.e)}</small></div>${k==="BOYALI"?cell("T")+`<div class="bpcell none"></div>`:cell("Y")+cell("T")}</div>`;
       });
       html+=`</section>`;return;
     }
