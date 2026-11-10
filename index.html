@@ -967,15 +967,16 @@ function renderStok(){
     if(/^[0-9.]+$/.test(t))return it.nums.has(parseFloat(t));
     return it.txt.includes(t);})));
   if(!STOK.zero&&tk.length)res=res.filter(it=>it.t!==0||it.r).concat(res.filter(it=>it.t===0&&!it.r));
+  if(STOK.borc)res=res.filter(it=>(it.t-(it.r||0))<0);
   const shown=res.slice(0,150);
-  let html=`<div class="sbar"><span class="pill"><span class="dot" style="background:${m>30?'var(--warn)':'var(--ok)'}"></span>Güncelleme <b>${new Date(j.guncelleme).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</b> · ${ago(j.guncelleme)}</span>${m>30?'<span class="pill" style="color:#92400e;background:var(--warn-soft);border-color:#fde68a">Güncel olmayabilir</span>':''}<button class="chip${STOK.zero?' on':''}" id="zeroT">Sıfır stoklar</button></div>`;
+  let html=`<div class="sbar"><span class="pill"><span class="dot" style="background:${m>30?'var(--warn)':'var(--ok)'}"></span>Güncelleme <b>${new Date(j.guncelleme).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}</b> · ${ago(j.guncelleme)}</span>${m>30?'<span class="pill" style="color:#92400e;background:var(--warn-soft);border-color:#fde68a">Güncel olmayabilir</span>':''}<button class="chip${STOK.zero?' on':''}" id="zeroT">Sıfır stoklar</button>${j.rezerve?`<button class="chip${STOK.borc?' on':''}" id="borcT">Stok yetmeyenler</button>`:""}</div>`;
   if(!shown.length)html+=`<div class="none"><b>Bulunamadı</b>"${q}" için stok kaydı yok.</div>`;
   else{
     html+=`<section class="group"><div class="ghead"><h2><i style="background:var(--ok)"></i>Depo Stokları</h2><small>adet</small></div>`;
     shown.forEach((it,i)=>{
       html+=`<div class="srow${it.t===0?' zero':''}" style="animation-delay:${Math.min(i*18,250)}ms"><div class="n">${hl(it.a)}<small>${hl(it.k)}${it.g?" · "+it.g:""}${it.m?` · ${fmt(it.m)} ${(it.mb||"").toLowerCase()}`:""}</small></div><div class="tot">${fmt(it.t)}<small>TOPLAM</small></div>
       <div class="deps">${j.depolar.map((dn,di)=>`<span class="dep${(it.d[di]||0)!==0?' has':''}">${dn} <b>${fmt(it.d[di]||0)}</b></span>`).join("")}</div>
-      ${j.rezerve&&it.r?`<div class="deps rz"><span class="dep rez" title="Satılmış, onaylı, teslim edilmemiş">REZERVE <b>${fmt(it.r)}</b></span></div>`:""}</div>`;
+      ${j.rezerve&&(it.r||it.o)?(()=>{const kal=it.t-(it.r||0);return `<div class="deps rz">${it.r?`<span class="dep rez">REZERVE <b>${fmt(it.r)}</b></span>`:""}${it.o?`<span class="dep onb">ONAY BEK. <b>${fmt(it.o)}</b></span>`:""}<span class="dep ${kal<0?"neg":"kal"}">KALAN <b>${fmt(kal)}</b></span></div>`;})():""}</div>`;
     });
     html+=`</section>`;
     if(res.length>shown.length)html+=`<div class="meta" style="text-align:center">İlk ${shown.length} kalem gösteriliyor — aramayı daraltın</div>`;
@@ -983,6 +984,7 @@ function renderStok(){
   out.innerHTML=html;
   document.getElementById("meta").textContent=`${res.length} kalem`;
   document.getElementById("zeroT").addEventListener("click",()=>{STOK.zero=!STOK.zero;renderStok();});
+  const bt=document.getElementById("borcT");if(bt)bt.addEventListener("click",()=>{STOK.borc=!STOK.borc;renderStok();});
 }
 function renderScats(){
   const sc=document.getElementById("scats");if(!STOK.data){sc.innerHTML="";return;}
@@ -1161,7 +1163,7 @@ function stokAra(){
     else{const d=D[e.ref];if(d.bp){const sup=d.bp.T!=null?"T":"Y";const n=bpNet(d.bp[sup],sup,vade,0);pr=`<span class="sp">${n==null?"120 gün yok":`${sup} ${fmt2(n)} ₺/mt`}</span>`;}
       else{const p=priceAt(d,vade);pr=`<span class="sp">${p==null?"sorulacak":fmt(p)+" ₺/ton"}</span>`;}}
     const dep=STOK.data.depolar.map((dn,i)=>(it.d[i]||0)?`${dn} ${fmt(it.d[i])}`:"").filter(Boolean).join(" · ");
-    return `<div class="sr" data-k="${esc(it.k)}"><b>${esc(it.a)}</b>${pr}<small>${esc(it.k)} · <span class="stk${it.t>0?"":" z"}">${it.t>0?fmt(it.t)+" ad stok":"stok yok"}</span>${it.r?` · <span style="color:#5b21b6;font-weight:700">rezerve ${fmt(it.r)}</span>`:""}${dep?" · "+dep:""}</small></div>`;}).join("");
+    return `<div class="sr" data-k="${esc(it.k)}"><b>${esc(it.a)}</b>${pr}<small>${esc(it.k)} · <span class="stk${it.t>0?"":" z"}">${it.t>0?fmt(it.t)+" ad stok":"stok yok"}</span>${it.r?` · <span style="color:${it.t-it.r<0?'var(--red)':'#5b21b6'};font-weight:700">rezerve ${fmt(it.r)} · kalan ${fmt(it.t-it.r)}</span>`:""}${dep?" · "+dep:""}</small></div>`;}).join("");
 }
 function stokEkle(kod){
   const s=stokBul(kod);if(!s)return;
