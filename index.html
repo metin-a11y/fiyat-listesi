@@ -359,7 +359,7 @@ const LISTS = {
   BP:    {name:"Boru/Profil", date:"Y 28.09 · T 26.08.2026"}
 };
 /* Boru-profil: liste fiyatı TL/mt, Y=Yücel, T=Tosçelik. İskonto (Peşin/30/60/90) + pazarlık payı +1 +1 (zincirleme) */
-const BP_SUP={Y:{ad:"Yücel",isk:[33,31,28,25],c:"#059669"},T:{ad:"Tosçelik",isk:[30,28,25,22],c:"#2563eb"}};
+const BP_SUP={Y:{ad:"Yücel",isk:[33,31,28,25],c:"#059669"},T:{ad:"Tosçelik",isk:[28,26,23,20],c:"#2563eb"}};
 const BP_PROFIL=[
   [["10x10"],1,25.98,21.32],
   [["10x10"],1.2,30.97,25.42],
@@ -922,16 +922,16 @@ BP_TESISAT.forEach(([inc,olcu,siyah,galv])=>{
 /* ---- İSKONTOLAR ---- */
 const DISC=[
   {t:"Tosçelik Profil – Boru – Tesisat Borusu İskontoları",c:"#2563eb",alias:"tosçelik tosçelik toscelik boru profil tesisat galvaniz iskonto",rows:[
-    ["1 – 5 mm Boru Profil","%30+1+1","%28+1+1","%25+1+1","%22+1+1"],
-    ["6 – 10 mm Boru Profil","%30+1+1","%28+1+1","%25+1+1","%22+1+1"],
-    ['1/2" – 6" Siyah Tesisat',"%30+1+1","%28+1+1","%25+1+1","%22+1+1"],
-    ['1/2" – 6" Galvanizli',"%30+1+1","%28+1+1","%25+1+1","%22+1+1"]]},
+    ["1 – 5 mm Boru Profil","%28+1+1","%26+1+1","%23+1+1","%20+1+1"],
+    ["6 – 10 mm Boru Profil","%28+1+1","%26+1+1","%23+1+1","%20+1+1"],
+    ['1/2" – 6" Siyah Tesisat',"%28+1+1","%26+1+1","%23+1+1","%20+1+1"],
+    ['1/2" – 6" Galvanizli',"%28+1+1","%26+1+1","%23+1+1","%20+1+1"]]},
   {t:"Yücel Profil – Boru – Tesisat Borusu İskontoları",c:"#059669",alias:"yücel yucel boru profil tesisat iskonto",rows:[
     ["1 – 1,2 mm Boru Profil","%33+1+1","%31+1+1","%28+1+1","%25+1+1"],
     ["1,5 – 2,5 mm Boru Profil","%33+1+1","%31+1+1","%28+1+1","%25+1+1"],
     ["3 – 6 mm Boru Profil","%33+1+1","%31+1+1","%28+1+1","%25+1+1"]]}
 ];
-const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil satırlarında gösterilen rakam <b>net TL/mt</b> = liste fiyatı − seçili vadenin iskontosu (Yücel %33/31/28/25, Tosçelik %30/28/25/22) − seçilirse <b>+1 +1</b> pazarlık payı (zincirleme). Liste tarihleri: Yücel 28.09.2026, Tosçelik 26.08.2026. Boru/profilde 120 gün satış yoktur."];
+const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil satırlarında gösterilen rakam <b>net TL/mt</b> = liste fiyatı − seçili vadenin iskontosu (Yücel %33/31/28/25, Tosçelik %28/26/23/20) − seçilirse <b>+1 +1</b> pazarlık payı (zincirleme). Liste tarihleri: Yücel 28.09.2026, Tosçelik 26.08.2026. Boru/profilde 120 gün satış yoktur."];
 const SYN={BOYALI:"boyalı boyali profil kutu",SAC:"sac saç levha siyah st37 st-37",ST52:"sac saç levha st52 st-52 kalite",ST52_2:"sac saç levha st52 st-52 kalite 2000",BAK:"baklava baklavalı sac saç",DKP:"dkp sac saç soğuk",HRP:"hrp sac saç",TDEM:"t demiri t demir te",NPU:"npu u profil",NPI:"npi i profil",LAMA:"lama silme kare",KOSE:"köşebent kosebent l profil köşe",HEA:"hea h profil",HEB:"heb h profil",IPE:"ipe i profil"};
 
 /* ========================= STOK ========================= */
