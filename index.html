@@ -354,12 +354,12 @@ body.hesap .panel{position:static}
    p: [Peşin, 30, 60, 90]  (TL/ton)   s: arama için ölçü sayıları
    ========================================================= */
 const LISTS = {
-  SAC:   {name:"Saclar",  date:"12.11.2026"},
-  HADDE: {name:"Hadde",   date:"12.11.2026"},
+  SAC:   {name:"Saclar",  date:"13.11.2026"},
+  HADDE: {name:"Hadde",   date:"13.11.2026"},
   BP:    {name:"Boru/Profil", date:"Y 28.09 · T 26.08.2026"}
 };
 /* Boru-profil: liste fiyatı TL/mt, Y=Yücel, T=Tosçelik. İskonto (Peşin/30/60/90) + pazarlık payı +1 +1 (zincirleme) */
-const BP_SUP={Y:{ad:"Yücel",isk:[28,26,23,20],c:"#059669"},T:{ad:"Tosçelik",isk:[26,24,21,19],c:"#2563eb"}};
+const BP_SUP={Y:{ad:"Yücel",isk:[27,25,22,19],c:"#059669"},T:{ad:"Tosçelik",isk:[25,23,20,17],c:"#2563eb"}};
 const BP_PROFIL=[
   [["10x10"],1,25.98,21.32],
   [["10x10"],1.2,30.97,25.42],
@@ -827,112 +827,112 @@ const DISK={ek:0,p:0};
 const D=[];
 function add(k,n,e,p,s,extra){D.push(Object.assign({k,n,e,p,s:s||[],tag:T},extra||{}));}
 
-/* ---- SACLAR (ST-37) ---- 12.11.2026 */
+/* ---- SACLAR (ST-37) ---- 13.11.2026 */
 const sac=(n,s,rows)=>rows.forEach(([e,p])=>add("SAC",n,e,p,s));
-const A=[36500,37800,39100,40400],A2=[37400,38700,40000,41300];
-sac("1.5 mm",[1.5],[["1000x2000",[39000,40400,41800,43200]],["1250x2500",[39000,40400,41800,43200]],["1500x3000",[39300,40700,42100,43500]]]);
-sac("2 mm",[2],[["1000x2000",[37000,38400,39800,41200]],["1200x2400",[37000,38400,39800,41200]],["1250x2500",[37000,38400,39800,41200]]]);
+const A=[36500,37900,39300,40800],A2=[37400,38800,40200,41700];
+sac("1.5 mm",[1.5],[["1000x2000",[39000,40500,42000,43600]],["1250x2500",[39000,40500,42000,43600]],["1500x3000",[39300,40800,42300,43900]]]);
+sac("2 mm",[2],[["1000x2000",[37000,38500,40000,41600]],["1200x2400",[37000,38500,40000,41600]],["1250x2500",[37000,38500,40000,41600]]]);
 sac("2.5 – 3 mm",[2.5,3],[["1000x2000",A],["1200x2400",A],["1250x2500",A],["1500x6000",A]]);
 sac("4 – 5 – 6 mm",[4,5,6],[["1000x2000",A],["1200x2400",A],["1250x2500",A],["1500x6000",A],["2000x6000",A2]]);
 sac("7 mm",[7],[["1500x6000",A]]);
 sac("8 – 12 mm",[8,12],[["1000x2000",A],["1200x2400",A],["1250x2500",A],["1500x6000",A],["2000x6000",A2]]);
-sac("15 – 16 mm",[15,16],[["1500x6000",A],["2000x6000",[37600,38900,40200,41500]]]);
-sac("18 – 20 mm",[18,20],[["1500x6000",[37000,38400,39800,41200]],["2000x6000",[38200,39600,41000,42400]]]);
-sac("25 – 50 mm",[25,30,40,50],[["1500x6000",[40600,42200,43800,45400]]]);
-sac("60 – 100 mm",[60,70,80,90,100],[["1500x6000",[40600,42200,43800,45400]]]);
-sac("25 mm",[25],[["1500 x RULO",[37600,39000,40400,41800]]]);
+sac("15 – 16 mm",[15,16],[["1500x6000",A],["2000x6000",[37600,39000,40400,41900]]]);
+sac("18 – 20 mm",[18,20],[["1500x6000",[37000,38500,40000,41600]],["2000x6000",[38200,39700,41200,42800]]]);
+sac("25 – 50 mm",[25,30,40,50],[["1500x6000",[40600,42300,44000,45800]]]);
+sac("60 – 100 mm",[60,70,80,90,100],[["1500x6000",[40600,42300,44000,45800]]]);
+sac("25 mm",[25],[["1500 x RULO",[37600,39100,40600,42200]]]);
 
 /* ---- ST52 ---- */
-const S52=[38500,39900,41300,42700];
+const S52=[38500,40000,41500,43100];
 add("ST52","3 mm","1500x6000",S52,[3]);
 add("ST52","4 – 5 – 6 – 8 – 10 mm","1500x6000",S52,[4,5,6,8,10]);
 add("ST52","12 – 15 mm","1500x6000",S52,[12,15]);
-add("ST52","16 – 18 – 20 mm","1500x6000",[38800,40200,41600,43000],[16,18,20]);
-add("ST52","25 mm","1500x6000",[43700,45400,47100,48800],[25]);
-add("ST52","40 mm","1500x6000",[43700,45400,47100,48800],[40]);
-add("ST52","50 mm","1500x6000",[43700,45400,47100,48800],[50]);
+add("ST52","16 – 18 – 20 mm","1500x6000",[38800,40300,41800,43400],[16,18,20]);
+add("ST52","25 mm","1500x6000",[43700,45500,47300,49200],[25]);
+add("ST52","40 mm","1500x6000",[43700,45500,47300,49200],[40]);
+add("ST52","50 mm","1500x6000",[43700,45500,47300,49200],[50]);
 add("ST52","50 mm üzeri","1500x6000",null,[60,70,80,100],{tag:"FİYAT SORALIM",ask:true});
 /* ---- ST52 2000 ---- */
-add("ST52_2","4 – 5 – 6 mm","2000x6000",[41800,43300,44800,46300],[4,5,6]);
-add("ST52_2","8 – 10 mm","2000x6000",[40300,41800,43300,44800],[8,10]);
-add("ST52_2","12 mm","2000x6000",[40300,41800,43300,44800],[12]);
-add("ST52_2","15 – 20 mm","2000x6000",[41100,42600,44100,45600],[15,16,18,20]);
+add("ST52_2","4 – 5 – 6 mm","2000x6000",[41800,43400,45000,46700],[4,5,6]);
+add("ST52_2","8 – 10 mm","2000x6000",[40300,41900,43500,45200],[8,10]);
+add("ST52_2","12 mm","2000x6000",[40300,41900,43500,45200],[12]);
+add("ST52_2","15 – 20 mm","2000x6000",[41100,42700,44300,46000],[15,16,18,20]);
 /* ---- BAKLAVALI ---- */
-const B1=[42400,43900,45400,46900],B2=[41500,43000,44500,46000];
+const B1=[42700,44300,45900,47600],B2=[41800,43400,45000,46700];
 add("BAK","2/3 mm","1000x2000",B1,[2,3]);
 add("BAK","2/3 mm","1200x2400",B1,[2,3]);
 add("BAK","3/4 mm","1000x2000",B2,[3,4]);
 add("BAK","3/4 mm","1200x2400",B2,[3,4]);
 add("BAK","5/6 mm","1000x2000",B2,[5,6]);
 add("BAK","5/6 mm","1200x2400",B2,[5,6]);
-add("BAK","3/4 – 4/5 – 5/6 mm","1500 genişlik",[42000,43500,45000,46500],[3,4,5,6,1500]);
+add("BAK","3/4 – 4/5 – 5/6 mm","1500 genişlik",[42300,43900,45500,47200],[3,4,5,6,1500]);
 /* ---- DKP / HRP ---- */
-add("DKP","0.80 – 2 mm","",[42900,44400,45900,47400],[0.8,1,1.2,1.5,2]);
-add("DKP","1.50 – 2 mm","1500x3000",[42900,44400,45900,47400],[1.5,2]);
-add("HRP","3 – 5 mm","",[39900,41400,42900,44400],[3,4,5]);
+add("DKP","0.80 – 2 mm","",[42900,44500,46100,47800],[0.8,1,1.2,1.5,2]);
+add("DKP","1.50 – 2 mm","1500x3000",[42900,44500,46100,47800],[1.5,2]);
+add("HRP","3 – 5 mm","",[40100,41700,43300,45000],[3,4,5]);
 /* ---- T DEMİRİ ---- */
-add("TDEM","30 T Demiri","",[38300,39800,41300,42800],[30]);
-add("TDEM","40 T Demiri","",[38300,39800,41300,42800],[40]);
-add("TDEM","50 T Demiri","",[38900,40400,41900,43400],[50]);
+add("TDEM","30 T Demiri","",[38600,40200,41800,43500],[30]);
+add("TDEM","40 T Demiri","",[38600,40200,41800,43500],[40]);
+add("TDEM","50 T Demiri","",[39200,40800,42400,44100],[50]);
 
-/* ---- NPU ---- 12.11.2026 */
-const N1=[36500,37900,39300,40700],N2=[37000,38400,39800,41200];
-[["40 NPU",[40],[37100,38400,39700,41000]],["50 NPU",[50],[35400,36700,38000,39300]],["65 – 80 NPU",[65,80],[35100,36400,37700,39000]],
- ["100 – 120 – 140 NPU",[100,120,140],[34800,36100,37400,38700]],["160 NPU",[160],[34500,35800,37100,38400]],["180 NPU",[180],N1],
+/* ---- NPU ---- 13.11.2026 */
+const N1=[36500,38000,39500,41100],N2=[37000,38500,40000,41600];
+[["40 NPU",[40],[37100,38500,39900,41400]],["50 NPU",[50],[35400,36800,38200,39700]],["65 – 80 NPU",[65,80],[35100,36500,37900,39400]],
+ ["100 – 120 – 140 NPU",[100,120,140],[34800,36200,37600,39100]],["160 NPU",[160],[34500,35900,37300,38800]],["180 NPU",[180],N1],
  ["200 NPU",[200],N1],["220 NPU",[220],N2],["240 NPU",[240],N2],["260 NPU",[260],N2],["300 NPU",[300],N2]].forEach(([n,s,p])=>add("NPU",n,"",p,s));
-/* ---- NPI ---- */
-const P1=[35000,36300,37600,38900],P2=[36300,37700,39100,40500],P3=[36800,38200,39600,41000];
-[["80 NPI",[80],[35900,37200,38500,39800]],["100 NPI",[100],[35400,36700,38000,39300]],["120 – 140 NPI",[120,140],P1],
+/* ---- NPI ---- (380 NPI 90 gün listede 75.300 basılı; 57.300 olarak alındı) */
+const P1=[35000,36400,37800,39300],P2=[36300,37800,39300,40900],P3=[36800,38300,39800,41400];
+[["80 NPI",[80],[35900,37300,38700,40200]],["100 NPI",[100],[35400,36800,38200,39700]],["120 – 140 NPI",[120,140],P1],
  ["160 NPI",[160],P1],["180 NPI",[180],P2],["200 NPI",[200],P2],["220 NPI",[220],P3],["240 NPI",[240],P3],["260 NPI",[260],P3],
- ["300 NPI",[300],P3],["380 NPI",[380],[51500,53300,55100,56900]]].forEach(([n,s,p])=>add("NPI",n,"",p,s));
+ ["300 NPI",[300],P3],["380 NPI",[380],[51500,53400,55300,57300]]].forEach(([n,s,p])=>add("NPI",n,"",p,s));
 /* ---- LAMA / SİLME / KARE ---- */
-const L1=[35200,36500,37800,39100],L2=[35600,36900,38200,39500];
+const L1=[35200,36600,38000,39500],L2=[35600,37000,38400,39900];
 add("LAMA","Lama 20x10 – 50x10","20x10 · 25x10 · 30x10 · 40x10 · 50x10",L1,[10,20,25,30,40,50]);
 add("LAMA","Silme 20x5 – 50x5","20x5 · 25x5 · 30x5 · 40x5 · 50x5",L1,[5,20,25,30,40,50]);
 add("LAMA","Lama 60x10 – 100x10","60x10 · 70x10 · 80x10 · 100x10",L2,[10,60,70,80,100]);
 add("LAMA","Lama 100x15","",L2,[15,100]);
 add("LAMA","Kare 10 – 12 – 16 – 20","",L1,[10,12,16,20]);
-add("LAMA","Kare 30 – 40","",[36200,37500,38800,40100],[30,40]);
+add("LAMA","Kare 30 – 40","",[36200,37600,39000,40500],[30,40]);
 /* ---- KÖŞEBENT ---- */
-const K1=[34800,36100,37400,38700];
-[[25,[35800,37100,38400,39700]],[30,[35300,36600,37900,39200]],[40,K1],[50,K1],[60,K1],[70,K1],[80,K1],[90,K1],[100,K1],[120,K1],
- [150,[39900,41400,42900,44400]]].forEach(([s,p])=>add("KOSE",s+" Köşebent","",p,[s]));
+const K1=[34800,36200,37600,39100];
+[[25,[35800,37200,38600,40100]],[30,[35300,36700,38100,39600]],[40,K1],[50,K1],[60,K1],[70,K1],[80,K1],[90,K1],[100,K1],[120,K1],
+ [150,[39900,41500,43100,44800]]].forEach(([s,p])=>add("KOSE",s+" Köşebent","",p,[s]));
 /* ---- HEA / HEB ---- */
-const H1=[37200,38600,40000,41400],H2=[41900,43400,44900,46400],H3=[43400,44900,46400,47900];
+const H1=[37200,38700,40200,41800],H2=[41900,43500,45100,46800],H3=[43400,45000,46600,48300];
 [["100 HEA",[100],H1],["120 HEA",[120],H1],["140 HEA",[140],H1],["160 HEA",[160],H1],["180 HEA",[180],H1],["200 HEA",[200],H1],
  ["220 HEA",[220],H2],["240 – 260 HEA",[240,260],H2],["280 – 300 HEA",[280,300],H3]].forEach(([n,s,p])=>add("HEA",n,"",p,s));
 [["100 HEB",[100],H1],["120 – 140 HEB",[120,140],H1],["160 HEB",[160],H1],["180 HEB",[180],H1],["200 HEB",[200],H1],
  ["220 – 260 HEB",[220,240,260],H2],["280 – 300 HEB",[280,300],H3]].forEach(([n,s,p])=>add("HEB",n,"",p,s));
 /* ---- IPE ---- */
-const I2=[35400,36700,38000,39300],I3=[37000,38400,39800,41200];
-[["80 IPE",[80],[36400,37700,39000,40300]],["100 IPE",[100],I2],["120 IPE",[120],I2],["140 IPE",[140],I2],["160 IPE",[160],I2],
- ["180 – 200 IPE",[180,200],[36500,37900,39300,40700]],["220 IPE",[220],I3],["240 IPE",[240],I3],["270 IPE",[270],I3],["300 IPE",[300],I3],
- ["330 – 500 IPE",[330,360,400,450,500],[42000,43500,45000,46500]]].forEach(([n,s,p])=>add("IPE",n,"",p,s));
+const I2=[35400,36800,38200,39700],I3=[37000,38500,40000,41600];
+[["80 IPE",[80],[36400,37800,39200,40700]],["100 IPE",[100],I2],["120 IPE",[120],I2],["140 IPE",[140],I2],["160 IPE",[160],I2],
+ ["180 – 200 IPE",[180,200],[36500,38000,39500,41100]],["220 IPE",[220],I3],["240 IPE",[240],I3],["270 IPE",[270],I3],["300 IPE",[300],I3],
+ ["330 – 500 IPE",[330,360,400,450,500],[42000,43600,45200,46900]]].forEach(([n,s,p])=>add("IPE",n,"",p,s));
 
 /* ---- BORU / PROFİL (TL/mt, liste) ---- */
 const thS=th=>String(th).replace(".",",");
 BP_PROFIL.forEach(([labels,th,y,t])=>labels.forEach(e=>{const [a,b]=e.split("x");
-  add("PROFIL",`${e} · ${thS(th)} mm`,"kutu profil",null,[+a,+b,th],{bp:{Y:y,T:t},tag:"+1 +1",alias:`${b}x${a} profil kutu`});}));
+  add("PROFIL",`${e} · ${thS(th)} mm`,"kutu profil",null,[+a,+b,th],{bp:{Y:y,T:t},tag:"+1 +1 +1",alias:`${b}x${a} profil kutu`});}));
 BP_BOYALI.forEach(([labels,th,t])=>labels.forEach(e=>{const [a,b]=e.split("x");
-  add("BOYALI",`${e} · ${thS(th)} mm`,"boyalı profil",null,[+a,+b,th],{bp:{T:t},tag:"+1 +1",alias:`${b}x${a} boyalı profil kutu`});}));
-BP_BORU.forEach(([labels,th,y,t])=>labels.forEach(e=>add("BORU",`Ø${e} · ${thS(th)} mm`,"yuvarlak boru",null,[+e,th],{bp:{Y:y,T:t},tag:"+1 +1",alias:`${e}x${thS(th)} boru ${e} mm`})));
+  add("BOYALI",`${e} · ${thS(th)} mm`,"boyalı profil",null,[+a,+b,th],{bp:{T:t},tag:"+1 +1 +1",alias:`${b}x${a} boyalı profil kutu`});}));
+BP_BORU.forEach(([labels,th,y,t])=>labels.forEach(e=>add("BORU",`Ø${e} · ${thS(th)} mm`,"yuvarlak boru",null,[+e,th],{bp:{Y:y,T:t},tag:"+1 +1 +1",alias:`${e}x${thS(th)} boru ${e} mm`})));
 BP_TESISAT.forEach(([inc,olcu,siyah,galv])=>{
-  add("TESISAT",`${inc} Siyah Tesisat`,olcu,null,[parseFloat(olcu)],{bp:{T:siyah},tag:"+1 +1",alias:`${inc.replace('"','')} inç siyah testli tesisat borusu`});
-  if(galv)add("TESISAT",`${inc} Galvanizli Tesisat`,olcu,null,[parseFloat(olcu)],{bp:{T:galv},tag:"+1 +1",alias:`${inc.replace('"','')} inç galvaniz galvanizli tesisat borusu`});});
+  add("TESISAT",`${inc} Siyah Tesisat`,olcu,null,[parseFloat(olcu)],{bp:{T:siyah},tag:"+1 +1 +1",alias:`${inc.replace('"','')} inç siyah testli tesisat borusu`});
+  if(galv)add("TESISAT",`${inc} Galvanizli Tesisat`,olcu,null,[parseFloat(olcu)],{bp:{T:galv},tag:"+1 +1 +1",alias:`${inc.replace('"','')} inç galvaniz galvanizli tesisat borusu`});});
 
 /* ---- İSKONTOLAR ---- */
 const DISC=[
   {t:"Tosçelik Profil – Boru – Tesisat Borusu İskontoları",c:"#2563eb",alias:"tosçelik tosçelik toscelik boru profil tesisat galvaniz iskonto",rows:[
-    ["1 – 5 mm Boru Profil","%26+1+1","%24+1+1","%21+1+1","%19+1+1"],
-    ["6 – 10 mm Boru Profil","%26+1+1","%24+1+1","%21+1+1","%19+1+1"],
-    ['1/2" – 6" Siyah Tesisat',"%26+1+1","%24+1+1","%21+1+1","%19+1+1"],
-    ['1/2" – 6" Galvanizli',"%26+1+1","%24+1+1","%21+1+1","%19+1+1"]]},
+    ["1 – 5 mm Boru Profil","%25+1+1+1","%23+1+1+1","%20+1+1+1","%17+1+1+1"],
+    ["6 – 10 mm Boru Profil","%25+1+1+1","%23+1+1+1","%20+1+1+1","%17+1+1+1"],
+    ['1/2" – 6" Siyah Tesisat',"%25+1+1+1","%23+1+1+1","%20+1+1+1","%17+1+1+1"],
+    ['1/2" – 6" Galvanizli',"%25+1+1+1","%23+1+1+1","%20+1+1+1","%17+1+1+1"]]},
   {t:"Yücel Profil – Boru – Tesisat Borusu İskontoları",c:"#059669",alias:"yücel yucel boru profil tesisat iskonto",rows:[
-    ["1 – 1,2 mm Boru Profil","%28+1+1","%26+1+1","%23+1+1","%20+1+1"],
-    ["1,5 – 2,5 mm Boru Profil","%28+1+1","%26+1+1","%23+1+1","%20+1+1"],
-    ["3 – 6 mm Boru Profil","%28+1+1","%26+1+1","%23+1+1","%20+1+1"]]}
+    ["1 – 1,2 mm Boru Profil","%27+1+1+1","%25+1+1+1","%22+1+1+1","%19+1+1+1"],
+    ["1,5 – 2,5 mm Boru Profil","%27+1+1+1","%25+1+1+1","%22+1+1+1","%19+1+1+1"],
+    ["3 – 6 mm Boru Profil","%27+1+1+1","%25+1+1+1","%22+1+1+1","%19+1+1+1"]]}
 ];
-const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil satırlarında gösterilen rakam <b>net TL/mt</b> = liste fiyatı − seçili vadenin iskontosu (Yücel %28/26/23/20, Tosçelik %26/24/21/19) − seçilirse <b>+1 +1</b> pazarlık payı (zincirleme). Liste tarihleri: Yücel 28.09.2026, Tosçelik 26.08.2026. Boru/profilde 120 gün satış yoktur."];
+const NOTES=["<b>120 gün vadeli satışımız yoktur.</b>","Zaruri durumlarda 120 gün satışta 90 gün fiyatına <b>+2.000 TL</b> eklenir (sayfadaki 120 seçeneği bunu otomatik uygular).","Fiyatlar TL/ton. <b>−100 / −100</b>: pazarlık payı — liste fiyatından 100 TL/ton inilebilir, olmadı bir 100 daha (en fazla −200). Hesapta kalem başına seçilir. Boru/profil satırlarında gösterilen rakam <b>net TL/mt</b> = liste fiyatı − seçili vadenin iskontosu (Yücel %27/25/22/19, Tosçelik %25/23/20/17) − seçilirse <b>+1 +1 +1</b> pazarlık payı (zincirleme). Liste tarihleri: Yücel 28.09.2026, Tosçelik 26.08.2026. Boru/profilde 120 gün satış yoktur."];
 const SYN={BOYALI:"boyalı boyali profil kutu",SAC:"sac saç levha siyah st37 st-37",ST52:"sac saç levha st52 st-52 kalite",ST52_2:"sac saç levha st52 st-52 kalite 2000",BAK:"baklava baklavalı sac saç",DKP:"dkp sac saç soğuk",HRP:"hrp sac saç",TDEM:"t demiri t demir te",NPU:"npu u profil",NPI:"npi i profil",LAMA:"lama silme kare",KOSE:"köşebent kosebent l profil köşe",HEA:"hea h profil",HEB:"heb h profil",IPE:"ipe i profil"};
 
 /* ========================= STOK ========================= */
@@ -1052,7 +1052,7 @@ function render(){
       const vi=Math.min(vade,3);
       html+=`<section class="group bpg" style="animation-delay:${Math.min(gi*40,200)}ms"><div class="ghead"><h2><i style="background:${c.c}"></i>${c.t}</h2><small>${k==="BOYALI"?"Tosçelik 26.08.2026 · TL/mt":LISTS[c.list].date+" · TL/mt"}</small></div>
       <div class="bpbar">${vade===4||k==="BOYALI"?"":`<span class="pill"><span class="dot" style="background:${BP_SUP.Y.c}"></span>Yücel <b>%${BP_SUP.Y.isk[vi]}</b></span>`}${vade===4?"":`<span class="pill"><span class="dot" style="background:${BP_SUP.T.c}"></span>Tosçelik <b>%${BP_SUP.T.isk[vi]}</b></span>`}
-      <div class="ind bpek"><button class="${DISK.ek===0?'on':''}" data-v="0">Baz</button><button class="${DISK.ek===1?'on':''}" data-v="1">+1</button><button class="${DISK.ek===2?'on':''}" data-v="2">+1 +1</button></div><small>${vade===4?"Boru/profilde 120 gün satış yok":VADE[vade][0]+" iskontosu · net = liste − iskonto"+(DISK.ek?" − pay":"")}</small></div>
+      <div class="ind bpek"><button class="${DISK.ek===0?'on':''}" data-v="0">Baz</button><button class="${DISK.ek===1?'on':''}" data-v="1">+1</button><button class="${DISK.ek===2?'on':''}" data-v="2">+1 +1</button><button class="${DISK.ek===3?'on':''}" data-v="3">+1 +1 +1</button></div><small>${vade===4?"Boru/profilde 120 gün satış yok":VADE[vade][0]+" iskontosu · net = liste − iskonto"+(DISK.ek?" − pay":"")}</small></div>
       <div class="cols bpc"><span>Malzeme</span>${k==="BOYALI"?`<span>Tosçelik (T)</span><span></span>`:`<span>Yücel (Y)</span><span>Tosçelik (T)</span>`}</div>`;
       groups[k].forEach(it=>{
         visible.push(it.id);
@@ -1079,7 +1079,7 @@ function render(){
     html+=`<div class="disc">`+list.map((d,i)=>`<div class="dcard" style="animation-delay:${100+i*60}ms"><h3><i style="background:${d.c}"></i>${d.t}</h3>
       <div class="drow h"><b>Et kalınlık</b><span>Peşin</span><span>30</span><span>60</span><span>90</span></div>
       ${d.rows.map(r=>`<div class="drow"><b>${r[0]}</b>${r.slice(1).map((x,j)=>{const m=x.match(/%(\d+)((?:\+\d+)*)/);const baz=m?+m[1]:0;const ek=(m&&m[2])?m[2].replace(/\+/g," +").trim():"";const eks=ek.split("+").map(x=>x.trim()).filter(Boolean);return `<span class="${j===vade||(vade===4&&j===3)?'v':''}" title="Pazarlık payı: ${ek}">%${baz}<i>${eks.map((x,k)=>`<u class="${k<DISK.ek?'on':''}">+${x}</u>`).join(" ")}</i></span>`;}).join("")}</div>`).join("")}
-      <div class="dcalc"><div class="ind" data-d="${i}"><button class="${DISK.ek===0?'on':''}" data-v="0">Baz</button><button class="${DISK.ek===1?'on':''}" data-v="1">+1</button><button class="${DISK.ek===2?'on':''}" data-v="2">+1 +1</button></div>
+      <div class="dcalc"><div class="ind" data-d="${i}"><button class="${DISK.ek===0?'on':''}" data-v="0">Baz</button><button class="${DISK.ek===1?'on':''}" data-v="1">+1</button><button class="${DISK.ek===2?'on':''}" data-v="2">+1 +1</button><button class="${DISK.ek===3?'on':''}" data-v="3">+1 +1 +1</button></div>
       <label>Liste fiyatı <input type="number" inputmode="decimal" class="dprice" placeholder="₺" value="${DISK.p||''}"></label>${DISK.p?`<div class="dnet">${d.rows.map(r=>{const x=r[1+Math.min(vade,3)];const m=x.match(/%(\d+)((?:\+\d+)*)/);const parts=m?[+m[1]].concat((m[2]||"").split("+").filter(Boolean).map(Number).slice(0,DISK.ek)):[0];let p=DISK.p;parts.forEach(q=>p*=1-q/100);return `<span><small>${r[0]}</small><b>${p.toLocaleString("tr-TR",{maximumFractionDigits:2})} ₺</b></span>`;}).join("")}</div>`:""}</div></div>`).join("")+`</div>`;
   }
   if(!res.length&&!(discHit&&discHit.length))html=`<div class="none"><b>Bulunamadı</b>"${q}" için kayıt yok. Ölçüyü farklı yaz: <i>8 1500</i>, <i>npu 160</i>, <i>st52 10</i></div>`;
@@ -1198,7 +1198,7 @@ function stokSatir(c,i){
   const l=L(c),d=c.ref>=0?D[c.ref]:null,unitLbl=l.kind==="kg"?"₺/ton":"₺/mt";
   const fiyatVal=l.unit==null?"":(l.kind==="kg"?Math.round(l.unit):Math.round(l.unit*100)/100);
   let chips="";
-  if(c.man==null&&d&&d.bp)chips=`<div class="yt" data-i="${i}"><button data-v="T" class="${l.ye==="T"?"on":""}" ${d.bp.T==null?"disabled":""}>Tosçelik</button><button data-v="Y" class="${l.ye==="Y"?"on":""}" ${d.bp.Y==null?"disabled":""}>Yücel</button></div><div class="ind ek" data-i="${i}"><button class="${!c.ek?'on':''}" data-v="0">Baz</button><button class="${c.ek===1?'on':''}" data-v="1">+1</button><button class="${c.ek===2?'on':''}" data-v="2">+1 +1</button></div>`;
+  if(c.man==null&&d&&d.bp)chips=`<div class="yt" data-i="${i}"><button data-v="T" class="${l.ye==="T"?"on":""}" ${d.bp.T==null?"disabled":""}>Tosçelik</button><button data-v="Y" class="${l.ye==="Y"?"on":""}" ${d.bp.Y==null?"disabled":""}>Yücel</button></div><div class="ind ek" data-i="${i}"><button class="${!c.ek?'on':''}" data-v="0">Baz</button><button class="${c.ek===1?'on':''}" data-v="1">+1</button><button class="${c.ek===2?'on':''}" data-v="2">+1 +1</button><button class="${c.ek===3?'on':''}" data-v="3">+1 +1 +1</button></div>`;
   else if(c.man==null&&d)chips=`<div class="ind" data-i="${i}"><button class="${!c.ind?'on':''}" data-v="0">Liste</button><button class="${c.ind===100?'on':''}" data-v="100">−100</button><button class="${c.ind===200?'on':''}" data-v="200">−200</button></div>`;
   if(c.man!=null&&d)chips+=`<button class="reset" data-i="${i}">↺ Liste fiyatına dön</button>`;
   const perTxt=c.per?`1 ad ≈ ${fmt2(c.per)} ${l.kind}`:`adet başı ${l.kind} bilinmiyor, miktarı yaz`;
@@ -1218,7 +1218,7 @@ function renderCalc(focusLast){
     if(it.bp){const l=it.bp[c.sup];const pr=bpNet(l,c.sup,vade,c.ek||0);const amt=pr==null?0:c.kg*pr*(kdv?1.2:1);total+=amt;const supad=BP_SUP[c.sup].ad;
       return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t} · ${supad}</small><em>${pr==null?"120 gün satış yok":`${fmt2(pr)} ₺/mt · ${VADE[vade][0]} · liste ${fmt2(l)} %${BP_SUP[c.sup].isk[Math.min(vade,3)]}${"+1".repeat(c.ek||0)}`}</em></div>
       <input type="number" inputmode="decimal" enterkeyhint="done" value="${c.kg}" data-i="${i}" placeholder="mt">
-      ${`<div class="ind ek" data-i="${i}"><button class="${!c.ek?'on':''}" data-v="0">Baz</button><button class="${c.ek===1?'on':''}" data-v="1">+1</button><button class="${c.ek===2?'on':''}" data-v="2">+1 +1</button></div>`}
+      ${`<div class="ind ek" data-i="${i}"><button class="${!c.ek?'on':''}" data-v="0">Baz</button><button class="${c.ek===1?'on':''}" data-v="1">+1</button><button class="${c.ek===2?'on':''}" data-v="2">+1 +1</button><button class="${c.ek===3?'on':''}" data-v="3">+1 +1 +1</button></div>`}
       <div class="amt"><span>${fmt(c.kg)} mt${kdv?" · KDV dahil":""}</span><span><b>${money(amt)}</b> <button class="rm" data-i="${i}" title="Kaldır">×</button></span></div></div>`;}
     const pr=priceAt(it,vade)-(c.ind||0);const amt=c.kg*pr/1000*(kdv?1.2:1);total+=amt;
     return `<div class="item"><div class="t">${it.n}<small>${CATS[it.k].t}${it.e?" · "+it.e:""}</small><em>${fmt(pr)} ₺/ton · ${VADE[vade][0]}${c.ind?` · liste ${fmt(priceAt(it,vade))} −${c.ind}`:""}</em></div>
