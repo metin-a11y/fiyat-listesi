@@ -554,7 +554,7 @@ $('#aPrint').addEventListener('click',()=>doPrint(`Navlun listesi — ${trDate($
 /* ---------- kullanıcılar ---------- */
 async function loadPub(){
   try{const j=await api('/api/yayin');const a=$('#pubA');
-    $('#pubS').textContent=!j.aktif?"Kapalı: navlun_ayar.json dosyasına GitHub token'ı yazıp programı yeniden başlatın.":j.hata?'Son gönderim başarısız: '+j.hata:j.son?`Son gönderim: ${trDate(j.son)} ${j.son.slice(11,16)} · dışarıdan engellenen bağlantı: ${j.engellenen}`:'Gönderiliyor…';
+    $('#pubS').textContent=!j.aktif?"Kapalı: navlun_ayar.json dosyasına GitHub token'ı yazıp programı yeniden başlatın.":j.hata?'Son gönderim başarısız: '+j.hata:j.son?`Son gönderim: ${trDate(j.son)} ${j.son.slice(11,16)} · dışarıdan engellenen bağlantı: ${j.engellenen}${j.sonEngellenen?' (son: '+j.sonEngellenen+')':''}`:'Gönderiliyor…';
     if(/^https:\/\//.test(j.adres||'')){a.href=j.adres;a.textContent=j.adres}else{a.removeAttribute('href');a.textContent=''}
     $('#pubBtn').hidden=!j.aktif}catch(err){$('#pubS').textContent=err.msg}}
 $('#pubBtn').addEventListener('click',async()=>{try{await api('/api/yayin',{});toast('Gönderim başlatıldı');setTimeout(loadPub,6000)}catch(err){toast(err.msg)}});
