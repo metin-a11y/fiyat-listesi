@@ -103,6 +103,9 @@ td.when{white-space:nowrap;color:var(--mute)}td .sub{display:block;color:var(--m
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;transition:.3s;z-index:20;pointer-events:none;max-width:92vw;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .printhead{display:none}
+.pr{flex-wrap:wrap;justify-content:flex-end}.fx{flex-basis:100%;text-align:right;font-size:13.5px;font-weight:600;color:#0f766e;white-space:nowrap;margin-top:1px}
+.kurinfo{margin-top:6px!important;display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13.5px!important;color:#0f766e!important;font-weight:600;background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:4px 12px}
+.hero .fxh{display:block;font-size:15px;font-weight:700;color:#0f766e;margin-top:4px}
 .wm{position:fixed;inset:0;background:center 60%/min(1000px,86vw) auto no-repeat;opacity:.11;pointer-events:none;z-index:40;mix-blend-mode:multiply}
 .wms{position:fixed;top:76px;bottom:0;width:calc((100vw - 1240px)/2 - 8px);pointer-events:none;z-index:1;opacity:.16;background-repeat:space;background-position:center;background-size:min(80%,200px) auto;display:none}
 .wmL{left:0}.wmR{right:0}
@@ -289,7 +292,7 @@ body.bulk .toast{bottom:104px}
     </div>
     <div class="bar bar2">
       <div class="bhead">
-        <div><h2>Ankara dışı navlunlar</h2><p>Şehirler arası, Ankara'ya teslim. Güzergâha dokunursanız tonaja göre karşılaştırma açılır.</p></div>
+        <div><h2>Ankara dışı navlunlar</h2><p>Şehirler arası, Ankara'ya teslim. Güzergâha dokunursanız tonaja göre karşılaştırma açılır.</p><p class="kurinfo" id="kurInfo" hidden></p></div>
         <button class="btn go bulkbtn" id="bBulk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span class="bulkT">Fiyatları güncelle</span></button>
       </div>
       <div class="bctl">
@@ -537,6 +540,9 @@ $('.top h1').addEventListener('click',()=>setView('home'));
 
 /* ---------- navlunlar ---------- */
 function chipsFor(x){return (x.profilEk?`<span class="chip p">Profil +${fmt(x.profilEk)} TL</span>`:'')+(x.ikiNokta?'<span class="chip t">İki teslim noktası</span>':'')}
+const f4=n=>Number(n).toLocaleString('tr-TR',{minimumFractionDigits:4,maximumFractionDigits:4});
+const KUR=()=>meta.kur&&meta.kur.usd&&meta.kur.eur?meta.kur:null;
+const fxTxt=tl=>{const k=KUR();return k?`$ ${fmt2(tl/k.usd)} · € ${fmt2(tl/k.eur)}`:''};
 function liveChip(x,v){if(v===undefined||v==='')return '';const n=+v;if(n===x.fiyat)return '';const d=n-x.fiyat;return `<span class="chip ${d>0?'up':'dn'}">${fmt(x.fiyat)} → ${fmt(n)} TL (${d>0?'+':'−'}${fmt(Math.abs(d))})</span>`}
 function row(x){
   const d=x.onceki!=null&&x.onceki!==x.fiyat?x.fiyat-x.onceki:0;
@@ -547,12 +553,13 @@ function row(x){
     <button class="ed" type="button" data-ed="${esc(x.id)}" aria-label="${esc(x.bolge+' – '+x.varis)} düzenle">${PEN}</button>
     <div class="chips">${chipsFor(x)}<span class="live">${liveChip(x,v)}</span></div></li>`}
   return `<li class="click nopen" data-var="${esc(x.varis)}"><div class="rt"><span class="arr">→</span>${esc(x.varis)}</div>
-  <div class="pr"><span class="tl${flashIds.has(x.id)?' flash':''}">${fmt(x.fiyat)} TL</span><span class="kdv">+ KDV</span></div>
+  <div class="pr"><span class="tl${flashIds.has(x.id)?' flash':''}">${fmt(x.fiyat)} TL</span><span class="kdv">+ KDV</span>${KUR()?`<span class="fx">${fxTxt(x.fiyat)}</span>`:''}</div>
   <div class="chips">${chipsFor(x)}${chg}</div></li>`;
 }
 const card=(r,list,i,rowFn)=>`<section class="reg" style="--c:${colorOf(r)};animation-delay:${i*60}ms"><header><span class="ico">${TRUCK}</span><div><small>ÇIKIŞ BÖLGESİ</small><h3>${esc(r)}</h3></div><span class="cnt">${list.length} hat</span></header><ul>${list.map(rowFn).join('')}</ul></section>`;
 function render(){
   const regs=regionsOf(routes);
+  {const k=KUR(),el=$('#kurInfo');el.hidden=!k;if(k)el.textContent=`Döviz karşılıkları: TCMB ${k.tarih} döviz satış kuru · 1 USD = ${f4(k.usd)} TL · 1 EUR = ${f4(k.eur)} TL`}
   $('#sReg').textContent=regs.length;$('#sRoute').textContent=routes.length;$('#sDate').textContent=meta.guncelleme||'–';
   $('#disMeta').textContent=routes.length?`${routes.length} güzergâh · ${regs.length} çıkış bölgesi${meta.guncelleme?' · güncelleme '+meta.guncelleme:''}`:'';
   for(const id of ['#fReg','#hReg']){const sel=$(id),cur=sel.value,R=id==='#fReg'?regs:regionsOf(allR());sel.innerHTML=`<option value="">${id==='#fReg'?'Tümü':'Tüm bölgeler'}</option>`+R.map(r=>`<option>${esc(r)}</option>`).join('');sel.value=R.includes(cur)?cur:''}
@@ -633,7 +640,7 @@ function calc(){
   const opts=routes.filter(r=>r.varis===v).map(r=>({...r,birim:r.fiyat+(tip==='profil'?r.profilEk:0)})).sort((a,b)=>a.birim-b.birim);
   if(!opts.length){$('#cRes').innerHTML='<p class="sub">Bu varış için güzergâh yok.</p>';return}
   const b=opts[0],tot=b.birim*ton;
-  $('#cRes').innerHTML=`<div class="hero"><div><small>En uygun: ${esc(b.bolge)} → ${esc(b.varis)}</small><div class="big">${fmt2(tot)} TL</div><small>KDV hariç · ${fmt2(ton)} ton × ${fmt(b.birim)} TL</small></div><div style="text-align:right"><small>KDV dahil</small><div style="font-weight:800;font-size:20px;white-space:nowrap">${fmt2(tot*(1+kdv))} TL</div></div></div>`+
+  $('#cRes').innerHTML=`<div class="hero"><div><small>En uygun: ${esc(b.bolge)} → ${esc(b.varis)}</small><div class="big">${fmt2(tot)} TL</div><small>KDV hariç · ${fmt2(ton)} ton × ${fmt(b.birim)} TL</small>${KUR()?`<span class="fxh">≈ ${fxTxt(tot)}</span>`:''}</div><div style="text-align:right"><small>KDV dahil</small><div style="font-weight:800;font-size:20px;white-space:nowrap">${fmt2(tot*(1+kdv))} TL</div></div></div>`+
   opts.map((o,i)=>`<div class="opt" style="animation-delay:${i*40}ms"><b>${esc(o.bolge)}</b><span class="r">${fmt2(o.birim*ton)} TL</span><span class="s">${fmt(o.birim)} TL/ton${tip==='profil'&&o.profilEk?` (profil +${fmt(o.profilEk)})`:''}${o.ikiNokta?' · iki teslim noktası':''}</span><span class="s r">${i?`<span class="chip up">+${fmt2((o.birim-b.birim)*ton)} TL</span>`:'<span class="chip best">En uygun</span>'}</span></div>`).join('');
 }
 ['input','change'].forEach(ev=>['#cVar','#cTon','#cKdv'].forEach(s=>$(s).addEventListener(ev,calc)));
@@ -644,7 +651,7 @@ function doPrint(title,sub){$('#phT').textContent=title;$('#phS').textContent=su
 $('#bPrint').addEventListener('click',()=>doPrint('Navlun Karar Paneli — Güncel navlunlar',`TL/ton, KDV hariç · Son güncelleme: ${meta.guncelleme||'–'} · Tarih: ${new Date().toLocaleDateString('tr-TR')}`));
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0;top:0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch{}ta.remove();return ok}}
 $('#bCopy').addEventListener('click',async()=>{
-  const t=`NAVLUN LİSTESİ — ${meta.guncelleme||''}\n(TL/ton, KDV hariç)\n`+regionsOf(routes).map(r=>`\n${r.toLocaleUpperCase('tr')}\n`+routes.filter(x=>x.bolge===r).sort(sortR).map(x=>`• ${x.varis}: ${fmt(x.fiyat)} TL${x.profilEk?` (profil +${fmt(x.profilEk)})`:''}${x.ikiNokta?' – iki teslim noktası':''}`).join('\n')).join('\n');
+  const t=`NAVLUN LİSTESİ — ${meta.guncelleme||''}\n(TL/ton, KDV hariç)\n`+regionsOf(routes).map(r=>`\n${r.toLocaleUpperCase('tr')}\n`+routes.filter(x=>x.bolge===r).sort(sortR).map(x=>`• ${x.varis}: ${fmt(x.fiyat)} TL${KUR()?` (≈ ${fxTxt(x.fiyat)})`:''}${x.profilEk?` (profil +${fmt(x.profilEk)})`:''}${x.ikiNokta?' – iki teslim noktası':''}`).join('\n')).join('\n')+(KUR()?`\n\nDöviz karşılıkları TCMB ${KUR().tarih} döviz satış kuruyla hesaplanmıştır.`:'');
   toast(await copyText(t)?'Liste kopyalandı — WhatsApp/e-postaya yapıştırabilirsiniz':'Kopyalanamadı');
 });
 
