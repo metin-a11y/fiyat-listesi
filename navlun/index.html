@@ -103,6 +103,14 @@ td.when{white-space:nowrap;color:var(--mute)}td .sub{display:block;color:var(--m
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;transition:.3s;z-index:20;pointer-events:none;max-width:92vw;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .printhead{display:none}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:14px;align-items:start}.fcard{align-content:start}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;box-shadow:0 1px 2px #0f172a0d,0 8px 24px -16px #0f172a33;display:grid;gap:6px;animation:rise .4s cubic-bezier(.2,.7,.2,1) both;position:relative}
+.fcard .fr{font:700 18px/1.25 "Inter Tight",Inter,sans-serif}.fcard .fr .arr{color:#ea580c}
+.fcard .fp{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}.fcard .fp b{font:800 24px "Inter Tight",Inter,sans-serif}.fcard .fp span{color:var(--mute);font-size:14px;font-weight:600}
+.fcard .fx2{color:#0f766e;font-size:13.5px;font-weight:600}.fcard .fm{color:var(--mute);font-size:14px}.fcard .fn{font-size:15px;background:var(--soft);border-radius:10px;padding:8px 10px;white-space:pre-line}
+.fcard .ed{position:absolute;top:12px;right:12px}
+.fhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#v-fark .bar .btn{min-width:max-content}@media(max-width:600px){#v-fark .bar .btn{flex:1 1 auto}}
 .pr{flex-wrap:wrap;justify-content:flex-end}.fx{flex-basis:100%;text-align:right;font-size:13.5px;font-weight:600;color:#0f766e;white-space:nowrap;margin-top:1px}
 .kurinfo{margin-top:6px!important;display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13.5px!important;color:#0f766e!important;font-weight:600;background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:4px 12px}
 .hero .fxh{display:block;font-size:15px;font-weight:700;color:#0f766e;margin-top:4px}
@@ -299,6 +307,7 @@ body.bulk .toast{bottom:104px}
         <select class="ctl" id="fReg" aria-label="Çıkış bölgesi"><option value="">Tümü</option></select>
         <input class="ctl" id="q" type="search" placeholder="Varış yeri ara…" aria-label="Varış yeri ara">
         <span class="sp"></span>
+        <button class="btn" data-go="fark">Farklı güzergâhlar</button>
         <button class="btn" id="bCalc">Hesapla</button>
         <button class="btn pri" id="bPrint">PDF / Yazdır</button>
         <button class="btn" id="bCopy">Kopyala</button>
@@ -307,6 +316,17 @@ body.bulk .toast{bottom:104px}
     <div class="bulknote">Fiyat güncelleme modu: yeni fiyatları kutulara yazın (Enter ile sonrakine geçer). Değişenler sarı işaretlenir; en alttaki <b>Kaydet</b> ile hepsi birlikte kaydedilir. Kalem düğmesiyle güzergâhın adını, profil farkını değiştirebilir veya silebilirsiniz.</div>
     <section class="grid" id="grid"></section>
     <p class="foot">Fiyatlar TL/ton üzerinden ve KDV hariç gösterilir. Sevkiyat öncesinde güzergâh koşullarını kontrol ediniz. <span id="yayinNote"></span></p>
+  </section>
+
+  <!-- FARKLI GÜZERGÂHLAR -->
+  <section class="view" id="v-fark" hidden>
+    <div class="bar">
+      <div class="grow"><h2>Farklı güzergâhlar</h2><p>Listede olmayan, ayrıca fiyat alınmış güzergâhlar. En yeni kayıt en üstte.</p><p class="kurinfo" id="kurInfo2" hidden></p></div>
+      <input class="ctl" id="fQ" type="search" placeholder="Çıkış, varış, nakliyeci ara…" aria-label="Ara" style="width:min(260px,100%)">
+      <button class="btn" data-go="nav">← Ankara dışı</button>
+      <button class="btn go" id="fAdd">+ Güzergâh ekle</button>
+    </div>
+    <div id="fList"></div>
   </section>
 
   <!-- TARİHÇE -->
@@ -401,6 +421,23 @@ body.bulk .toast{bottom:104px}
   <div class="acts"><span class="sp"></span><button type="button" class="btn" data-close>Kapat</button></div>
 </div></div>
 
+<!-- farklı güzergâh -->
+<div class="ov" id="ovFark"><form class="modal" id="fFark">
+  <h2 id="fkTitle">Farklı güzergâh</h2><p class="sub">Listede olmayan bir güzergâh için aldığınız fiyatı girin. Herkese açık sayfada da görünür.</p>
+  <div class="fl">
+    <label>Tarih<input class="ctl" id="fkTarih" type="date" required></label>
+    <label>Araç<select class="ctl" id="fkArac"><option>Tır</option><option>Kamyon</option><option>Kamyonet</option><option>Diğer</option></select></label>
+    <label>Çıkış yeri<input class="ctl" id="fkCikis" required maxlength="60" placeholder="ör. Kocaeli"></label>
+    <label>Varış yeri<input class="ctl" id="fkVaris" required maxlength="60" placeholder="ör. Ankara Sincan"></label>
+    <label>Fiyat (TL)<input class="ctl" id="fkFiyat" type="number" min="0" step="1" inputmode="numeric" required></label>
+    <label>Birim<select class="ctl" id="fkBirim"><option value="ton">TL / ton</option><option value="sefer">TL / sefer</option></select></label>
+    <label class="full">Nakliyeci / firma (isteğe bağlı)<input class="ctl" id="fkNak" maxlength="80"></label>
+    <label class="full">Not (isteğe bağlı)<textarea class="ctl dta" id="fkNot" rows="3" maxlength="500" style="min-height:90px"></textarea></label>
+  </div>
+  <div class="merr" id="fkErr"></div>
+  <div class="acts"><button type="button" class="btn del" id="fkDel">Sil</button><span class="sp"></span><button type="button" class="btn" data-close>Vazgeç</button><button class="btn acc" type="submit" id="fkSave">Kaydet</button></div>
+</form></div>
+
 <!-- kullanıcı -->
 <div class="ov" id="ovUser"><form class="modal" id="fUser" autocomplete="off">
   <h2 id="uTitle">Kullanıcı</h2><p class="sub">Kullanıcı adında Türkçe karakter ve boşluk kullanmayın. Şifre en az 6 karakter.</p>
@@ -445,7 +482,7 @@ const COLORS=['#1e3a8a','#14532d','#7c2d12','#581c87','#155e75','#9f1239','#713f
 const TRUCK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>';
 const PEN='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 const ISLEM={ilk:'İlk kayıt',fiyat:'Fiyat değişti',yeni:'Yeni güzergâh',duzenle:'Bilgi düzenlendi',sil:'Silindi'};
-let icRoutes=[],icSube=null,vadeSel=0,draft2={},draft3={},editKat='dis',bulk=false,draft={},pendingBulk=false,me=null,routes=[],meta={},rev=null,q='',editId=null,tip='boru',view='nav',users=[],editUid=null;
+let farkli=[],editFk=null,pendingFark=false,icRoutes=[],icSube=null,vadeSel=0,draft2={},draft3={},editKat='dis',bulk=false,draft={},pendingBulk=false,me=null,routes=[],meta={},rev=null,q='',editId=null,tip='boru',view='nav',users=[],editUid=null;
 const lastPrice={};let flashIds=new Set();
 const isTam=()=>!!me;
 const allR=()=>routes.concat(icRoutes);
@@ -471,7 +508,7 @@ async function sdApi(path,body){
   const p=new URLSearchParams(path.split('?')[1]||'');
   if(path.startsWith('/api/rev')){const d=await sdFetch();return {rev:d.meta.rev}}
   if(!SD)await sdFetch();
-  if(path.startsWith('/api/veri'))return {ben:null,meta:SD.meta,routes:SD.routes};
+  if(path.startsWith('/api/veri'))return {ben:null,meta:SD.meta,routes:SD.routes,farkli:SD.farkli||[]};
   if(path.startsWith('/api/tarihce'))return {kayitlar:sdHist(p)};
   if(path.startsWith('/api/arsiv'))return {liste:sdArc(p.get('tarih'),p.get('kategori'))};
   throw {code:404,msg:'Bu sayfada yok.'};
@@ -497,10 +534,10 @@ async function openLogin(){
   try{const j=await api('/api/editorler');const s=$('#lKadi'),cur=s.value;s.innerHTML=j.editorler.map(e=>`<option value="${esc(e.kadi)}">${esc(e.ad)}</option>`).join('');if(cur)s.value=cur}catch(err){$('#lErr').textContent=err.msg}
   setTimeout(()=>$('#lSifre').focus(),80);
 }
-$('#bSet').addEventListener('click',()=>{pendingBulk=false;if(me)setView('users');else openLogin()});
+$('#bSet').addEventListener('click',()=>{pendingBulk=false;pendingFark=false;if(me)setView('users');else openLogin()});
 $('#fLogin').addEventListener('submit',async e=>{
   e.preventDefault();const b=$('#lBtn');b.disabled=true;$('#lErr').textContent='';
-  try{const j=await api('/api/giris',{kadi:$('#lKadi').value,sifre:$('#lSifre').value});me=j.ben;$('#lSifre').value='';$('#ovLogin').classList.remove('on');setMe();render();if(pendingBulk){pendingBulk=false;setBulk(true);toast(`Hoş geldiniz ${me.ad} — yeni fiyatları yazın`)}else toast(`Hoş geldiniz ${me.ad} — düzenleme açık`)}
+  try{const j=await api('/api/giris',{kadi:$('#lKadi').value,sifre:$('#lSifre').value});me=j.ben;$('#lSifre').value='';$('#ovLogin').classList.remove('on');setMe();render();if(pendingFark){pendingFark=false;openFark(null)}else if(pendingBulk){pendingBulk=false;setBulk(true);toast(`Hoş geldiniz ${me.ad} — yeni fiyatları yazın`)}else toast(`Hoş geldiniz ${me.ad} — düzenleme açık`)}
   catch(err){$('#lErr').textContent=err.msg}finally{b.disabled=false}
 });
 $('#bOut').addEventListener('click',async()=>{try{await api('/api/cikis',{})}catch{}me=null;setMe();render();if(view==='users')setView('nav');toast('Düzenleme kapatıldı')});
@@ -515,23 +552,23 @@ function setMe(){
 /* ---------- veri ---------- */
 async function load(){
   const j=await api('/api/veri');me=j.ben;meta=j.meta||{};rev=meta.rev;
-  const all=j.routes||[];routes=all.filter(r=>r.kategori!=='ic');icRoutes=all.filter(r=>r.kategori==='ic');
+  farkli=j.farkli||[];const all=j.routes||[];routes=all.filter(r=>r.kategori!=='ic');icRoutes=all.filter(r=>r.kategori==='ic');
   if(!icSube)icSube=icRoutes.some(r=>r.bolge==='Ostim'&&!r.ek)||!icRoutes.some(r=>r.bolge==='Temelli')?'ostim':'temelli';
   routes.forEach(r=>{if(lastPrice[r.id]!=null&&lastPrice[r.id]!==r.fiyat)flashIds.add(r.id);lastPrice[r.id]=r.fiyat});
   setMe();render();renderIc();
   if(STATIK&&meta.yayin)$('#yayinNote').textContent=`Bu sayfa salt okunurdur; son güncelleme ${trDate(meta.yayin)} ${meta.yayin.slice(11,16)}.`;
-  if(view==='hist')loadHist();if(view==='arc')loadArc();if($('#ovCalc').classList.contains('on'))calc();
+  if(view==='hist')loadHist();if(view==='arc')loadArc();if($('#ovCalc').classList.contains('on'))calc();renderFark();
 }
 setInterval(async()=>{if(document.hidden)return;try{const j=await api('/api/rev');if(j.rev!==rev)await load()}catch{}},STATIK?60000:10000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)api('/api/rev').then(j=>{if(j.rev!==rev)load()}).catch(()=>{})});
 
 /* ---------- görünümler ---------- */
 function setView(v){
-  if(!['home','ic','nav','hist','arc','users'].includes(v)||(v==='users'&&!isTam()))v='home';
+  if(!['home','ic','nav','fark','hist','arc','users'].includes(v)||(v==='users'&&!isTam()))v='home';
   view=v;$$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
   $$('.view').forEach(s=>s.hidden=s.id!=='v-'+v);
   if(location.hash.slice(1)!==v)history.replaceState(null,'','#'+v);
-  if(v==='hist')loadHist();if(v==='arc')loadArc();if(v==='users'){loadUsers();loadPub();loadVade()}if(v==='ic')renderIc();
+  if(v==='hist')loadHist();if(v==='arc')loadArc();if(v==='users'){loadUsers();loadPub();loadVade()}if(v==='ic')renderIc();if(v==='fark')renderFark();
 }
 $$('.tab').forEach(t=>t.addEventListener('click',()=>setView(t.dataset.view)));
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){setView(g.dataset.go);scrollTo({top:0,behavior:'smooth'})}});
@@ -748,6 +785,38 @@ function arcIc(d,L){
   const cmp=a=>{const c=now[a.routeId];if(!c)return '<span class="chip gray">Listede yok</span>';if(c.fiyat===a.fiyat&&c.fiyat2===a.fiyat2&&(c.fiyat3??null)===(a.fiyat3??null))return '<span class="chip gray">Aynı</span>';const x=c.fiyat-a.fiyat;return `<span class="chip ${x>0?'up':'dn'}">K ${fmt(c.fiyat)} · T ${fmt(c.fiyat2)}</span>`};
   $('#aGrid').innerHTML=regionsOf(L).map(S=>`<div class="panel icard" style="break-inside:avoid;margin-bottom:16px"><div class="ichead"><div><small>ŞEHİR İÇİ · PEŞİN</small><h3>${esc(S)}'den gidilen yer</h3></div></div>${icTable(S,L.filter(a=>a.bolge===S&&!a.ek).sort((a,b)=>a.varis.localeCompare(b.varis,'tr')),L.filter(a=>a.bolge===S&&a.ek),false,[{ad:'Peşin',oran:0}],cmp)}</div>`).join('')||'<div class="empty">Bu tarih için kayıt yok.</div>';
 }
+/* ---------- farklı güzergâhlar ---------- */
+function renderFark(){
+  const k=KUR(),el=$('#kurInfo2');el.hidden=!k;if(k)el.textContent=`TL/ton fiyatların döviz karşılığı: TCMB ${k.tarih} döviz satış · 1 USD = ${f4(k.usd)} TL · 1 EUR = ${f4(k.eur)} TL`;
+  const qq=tr($('#fQ').value.trim());const L=farkli.filter(f=>!qq||[f.cikis,f.varis,f.nakliyeci,f.arac,f.not].some(x=>tr(x).includes(qq)));
+  $('#fAdd').hidden=STATIK;
+  $('#fList').innerHTML=L.length?`<div class="fgrid">${L.map((f,i)=>`<div class="fcard" style="animation-delay:${Math.min(i,12)*40}ms">
+    ${me?`<button class="ed" type="button" data-fk="${esc(f.id)}" aria-label="Düzenle">${PEN}</button>`:''}
+    <div class="fhead"><span class="chip gray">${esc(trDate(f.tarih))}</span>${f.arac?`<span class="chip t">${esc(f.arac)}</span>`:''}</div>
+    <div class="fr">${esc(f.cikis)} <span class="arr">→</span> ${esc(f.varis)}</div>
+    <div class="fp"><b>${fmt(f.fiyat)} TL</b><span>/ ${f.birim==='sefer'?'sefer':'ton'}</span></div>
+    ${f.birim==='ton'&&k?`<div class="fx2">$ ${fmt2(f.fiyat/k.usd)} · € ${fmt2(f.fiyat/k.eur)} / ton</div>`:''}
+    ${f.nakliyeci?`<div class="fm">Nakliyeci: <b>${esc(f.nakliyeci)}</b></div>`:''}
+    ${f.not?`<div class="fn">${esc(f.not)}</div>`:''}
+    <div class="fm" style="font-size:12.5px">Giren: ${esc(f.guncelleyen||f.olusturan)}</div></div>`).join('')}</div>`
+    :`<div class="panel icempty"><h3>${farkli.length?'Aramaya uyan kayıt yok':'Henüz farklı güzergâh girilmedi'}</h3><p>Listede olmayan bir güzergâh için fiyat aldığınızda "+ Güzergâh ekle" ile buraya girin.</p></div>`;
+}
+$('#fQ').addEventListener('input',renderFark);
+function openFark(id){
+  editFk=id;const f=farkli.find(x=>x.id===id);$('#fkErr').textContent='';const del=$('#fkDel');del.hidden=!f;del.classList.remove('sure');del.textContent='Sil';
+  $('#fkTitle').textContent=f?'Farklı güzergâhı düzenle':'Yeni farklı güzergâh';
+  $('#fkTarih').value=f?f.tarih:isoToday();$('#fkArac').value=f&&f.arac?f.arac:'Tır';$('#fkCikis').value=f?f.cikis:'';$('#fkVaris').value=f?f.varis:'';
+  $('#fkFiyat').value=f?f.fiyat:'';$('#fkBirim').value=f?f.birim:'ton';$('#fkNak').value=f?f.nakliyeci:'';$('#fkNot').value=f?f.not:'';
+  $('#ovFark').classList.add('on');setTimeout(()=>$(f?'#fkFiyat':'#fkCikis').focus(),60);
+}
+$('#fAdd').addEventListener('click',()=>{if(!me){pendingFark=true;openLogin();return}openFark(null)});
+$('#fList').addEventListener('click',e=>{const b=e.target.closest('[data-fk]');if(b)openFark(+b.dataset.fk)});
+$('#fFark').addEventListener('submit',async e=>{e.preventDefault();$('#fkErr').textContent='';const b=$('#fkSave');b.disabled=true;
+  try{await api('/api/farkli',{id:editFk||undefined,tarih:$('#fkTarih').value,arac:$('#fkArac').value,cikis:$('#fkCikis').value,varis:$('#fkVaris').value,fiyat:$('#fkFiyat').value,birim:$('#fkBirim').value,nakliyeci:$('#fkNak').value,not:$('#fkNot').value});
+    $('#ovFark').classList.remove('on');toast(editFk?'Kayıt güncellendi':'Farklı güzergâh eklendi');await load()}catch(err){$('#fkErr').textContent=err.msg}finally{b.disabled=false}});
+$('#fkDel').addEventListener('click',async e=>{const b=e.currentTarget;if(!b.classList.contains('sure')){b.classList.add('sure');b.textContent='Emin misiniz? Sil';return}
+  try{await api('/api/farkli/sil',{id:editFk});$('#ovFark').classList.remove('on');toast('Kayıt silindi');await load()}catch(err){$('#fkErr').textContent=err.msg}});
+
 /* ---------- vadeler (ayarlar) ---------- */
 function vRow(v){return `<div class="vrow"><input class="ctl va" maxlength="20" value="${esc(v.ad)}" aria-label="Vade adı"><input class="ctl vo" type="number" min="0" max="100" step="0.5" value="${esc(v.oran)}" aria-label="Oran"><span>%</span><button class="btn sm vdel" type="button">Sil</button></div>`}
 function loadVade(){$('#vRows').innerHTML=vadeler().map(vRow).join('');$('#dText').value=meta.duyuru||''}
