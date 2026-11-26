@@ -125,6 +125,10 @@ td.when{white-space:nowrap;color:var(--mute)}td .sub{display:block;color:var(--m
 .ictab th.vh{text-align:center;border-left:1px solid var(--line);color:#0f766e;font-size:14px}.ictab td.bl,.ictab th.bl{border-left:1px solid var(--line)}
 .ictab tr.ekrow td{background:var(--soft)}.ictab tr.ekrow td.vn{color:var(--mute);font-weight:600}
 .ictab tr.chg td{background:#fffbeb}.ictab .pin{width:112px}.ictab td.ed-c{width:52px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:auto}
+.scroll::-webkit-scrollbar{height:12px}.scroll::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:8px;border:3px solid var(--card)}.scroll::-webkit-scrollbar-track{background:var(--soft)}
+.ictab.compact th,.ictab.compact td{padding:9px 7px}.ictab.compact td.n{font-size:15px;white-space:nowrap}.ictab.compact th{font-size:12px;white-space:nowrap}
+.ictab.compact th.vh{font-size:14px}.ictab.compact td.vn{position:sticky;left:0;z-index:1;background:var(--card);box-shadow:1px 0 0 var(--line)}.ictab.compact thead tr:first-child th:first-child{position:sticky;left:0;z-index:2;background:var(--soft);box-shadow:1px 0 0 var(--line)}.ictab .tlu{font-weight:500;opacity:.7;font-size:12px}.ictab.compact td.vn{white-space:nowrap}
 .icnote{margin:0;padding:10px 18px;color:var(--mute);font-size:14px;border-top:1px solid var(--line)}
 .vpanel{padding:16px 18px;margin-bottom:16px}.vpanel h3{margin:0 0 4px;font-size:17px}.vpanel p{margin:0 0 8px;color:var(--mute);font-size:15px}
 .vrow{display:flex;gap:8px;align-items:center;margin:6px 0;flex-wrap:wrap}.vrow .va{flex:1 1 160px}.vrow .vo{width:96px}
@@ -690,7 +694,7 @@ function icTable(S,list,ek,edit,colsIn,cmp){
   const T=[...(hasK?[['fiyat3','Kamyonet','pid3',draft3]]:[]),['fiyat','Kamyon','pid',draft],['fiyat2','Tır','pid2',draft2]],nt=T.length;
   const cols=edit?[{ad:'Peşin (temel)',oran:0}]:colsIn,multi=cols.length>1;
   const yer=`${esc(S.toLocaleUpperCase('tr'))}'DEN GİDİLEN YER`;
-  const head=multi?`<tr><th rowspan="2">${yer}</th>${cols.map(c=>`<th colspan="${nt}" class="vh">${esc(c.ad)}</th>`).join('')}</tr><tr>${cols.map(()=>T.map((t,j)=>`<th class="n${j===0?' bl':''}">${t[1]}</th>`).join('')).join('')}</tr>`
+  const head=multi?`<tr><th rowspan="2">${yer}</th>${cols.map(c=>`<th colspan="${nt}" class="vh">${esc(c.ad)} <span class="tlu">(TL)</span></th>`).join('')}</tr><tr>${cols.map(()=>T.map((t,j)=>`<th class="n${j===0?' bl':''}">${t[1]}</th>`).join('')).join('')}</tr>`
     :`<tr><th>${yer}</th>${T.map(t=>`<th class="n">${t[1]}</th>`).join('')}${edit?'<th></th>':''}${cmp?'<th>Bugün</th>':''}</tr>`;
   const row=(x,isEk)=>{
     if(edit){const ch=T.some(t=>{const v=t[3][x.id];return v!==undefined&&v!==''&&+v!==x[t[0]]});
@@ -699,8 +703,8 @@ function icTable(S,list,ek,edit,colsIn,cmp){
     const d=!isEk&&x.onceki!=null&&x.onceki!==x.fiyat?x.fiyat-x.onceki:0;
     const chg=d?` <span class="chip ${d>0?'up':'dn'}">${d>0?'▲':'▼'} ${fmt(Math.abs(d))}${x.degisim?' · '+esc(x.degisim):''}</span>`:'';
     const pre=isEk?'+':'';
-    return `<tr class="${isEk?'ekrow':''}"><td class="vn">${esc(x.varis)}${chg}</td>${cols.map(c=>T.map((t,j)=>`<td class="n${multi&&j===0?' bl':''}">${x[t[0]]!=null?pre+fmt(vf(x[t[0]],c.oran))+' TL':''}</td>`).join('')).join('')}${cmp?`<td>${cmp(x)}</td>`:''}</tr>`};
-  return `<div class="scroll"><table class="ictab"><thead>${head}</thead><tbody>${list.map(x=>row(x,false)).join('')}${ek.map(x=>row(x,true)).join('')}</tbody></table></div>`;
+    return `<tr class="${isEk?'ekrow':''}"><td class="vn">${esc(x.varis)}${chg}</td>${cols.map(c=>T.map((t,j)=>`<td class="n${multi&&j===0?' bl':''}">${x[t[0]]!=null?pre+fmt(vf(x[t[0]],c.oran))+(multi?'':' TL'):''}</td>`).join('')).join('')}${cmp?`<td>${cmp(x)}</td>`:''}</tr>`};
+  return `<div class="scroll"><table class="ictab${multi?' compact':''}"><thead>${head}</thead><tbody>${list.map(x=>row(x,false)).join('')}${ek.map(x=>row(x,true)).join('')}</tbody></table></div>`;
 }
 function renderIc(){
   {const t=(meta.duyuru||'').trim();$('#icNotice').hidden=!t;$('#icNoticeT').replaceChildren(...t.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const e=document.createElement('p');e.textContent=x;return e}))}
