@@ -103,6 +103,30 @@ td.when{white-space:nowrap;color:var(--mute)}td .sub{display:block;color:var(--m
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;transition:.3s;z-index:20;pointer-events:none;max-width:92vw;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .printhead{display:none}
+.notice{border:1px solid #fcd34d;background:linear-gradient(180deg,#fffbeb,#fff);padding:18px 20px;margin-bottom:16px;box-shadow:0 10px 28px -20px #b45309;animation:rise .45s cubic-bezier(.2,.7,.2,1) both}
+.nhead{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}.nhead svg{flex:none;color:#fff;background:#d97706;border-radius:12px;padding:8px;width:42px;height:42px}
+.nhead small{color:#b45309;font-weight:800;font-size:12px;letter-spacing:.04em}.nhead h3{margin:2px 0 0;font-size:clamp(18px,2.4vw,22px);line-height:1.25;color:#78350f}
+.ntext p{margin:0 0 9px}.ntext p:last-child{margin:0}.ntext{font-size:16.5px;line-height:1.65;color:#292524;max-width:95ch}
+.nkey{margin-top:12px;padding:10px 14px;border-radius:12px;background:#fef3c7;color:#78350f;font-weight:700;font-size:15.5px}
+.dta{width:100%;height:auto;min-height:180px;padding:12px;line-height:1.5;resize:vertical;color:var(--ink)}
+@media print{.notice{box-shadow:none;border:1px solid #d97706;break-inside:avoid}.ntext{font-size:12px}.nkey{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+/* ankara içi */
+.vseg{display:flex;flex-wrap:wrap;gap:4px;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:4px}
+.vseg button{border:0;background:none;border-radius:10px;padding:9px 14px;font-weight:700;font-size:15px;cursor:pointer;color:var(--mute);transition:background .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.vseg button:hover{color:var(--ink)}.vseg button.on{background:#0f766e;color:#fff;box-shadow:0 6px 14px -8px #0f766e}.vseg small{font-weight:600;opacity:.8;font-size:12px}
+.icard{overflow:hidden;animation:rise .4s cubic-bezier(.2,.7,.2,1) both}
+.ichead{background:linear-gradient(140deg,#0f766e,#064e3b);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ichead h3{margin:0;font-size:21px;line-height:1.15}.ichead small{opacity:.8;font-weight:600;font-size:12px;display:block;letter-spacing:.02em}
+.ichead .cnt{margin-left:auto}
+.ictab td{vertical-align:middle}.ictab td.n{font:700 17px "Inter Tight",Inter,sans-serif}.ictab td.vn{font-weight:600;font-size:16px}
+.ictab th.vh{text-align:center;border-left:1px solid var(--line);color:#0f766e;font-size:14px}.ictab td.bl,.ictab th.bl{border-left:1px solid var(--line)}
+.ictab tr.ekrow td{background:var(--soft)}.ictab tr.ekrow td.vn{color:var(--mute);font-weight:600}
+.ictab tr.chg td{background:#fffbeb}.ictab .pin{width:112px}.ictab td.ed-c{width:52px}
+.icnote{margin:0;padding:10px 18px;color:var(--mute);font-size:14px;border-top:1px solid var(--line)}
+.vpanel{padding:16px 18px;margin-bottom:16px}.vpanel h3{margin:0 0 4px;font-size:17px}.vpanel p{margin:0 0 8px;color:var(--mute);font-size:15px}
+.vrow{display:flex;gap:8px;align-items:center;margin:6px 0;flex-wrap:wrap}.vrow .va{flex:1 1 160px}.vrow .vo{width:96px}
+@media(max-width:600px){.vseg{width:100%}.vseg button{flex:1 1 auto;padding:9px 8px}
+ .ictab th,.ictab td{padding:9px 8px}.ictab th{white-space:normal;font-size:12px}.ictab td.n{font-size:15px;white-space:nowrap}.ictab td.vn{font-size:15px}.ictab td.vn .chip{display:table;margin-top:3px;font-size:11px}.ictab .pin{width:84px;font-size:16px}.ichead h3{font-size:18px}}
 /* ana sayfa */
 .hhead{margin:6px 0 16px}.hhead h2{margin:0;font-size:clamp(24px,3.4vw,32px);line-height:1.15}.hhead p{margin:4px 0 0;color:var(--mute)}
 .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
@@ -119,9 +143,9 @@ td.when{white-space:nowrap;color:var(--mute)}td .sub{display:block;color:var(--m
 .ch-m{display:inline-block;align-self:flex-start;margin-top:6px;font-size:13px;font-weight:700;background:#ffffff26;border-radius:99px;padding:4px 12px}.ch-m:empty{display:none}
 .ch-go{margin-top:auto;padding-top:14px;font-weight:700;font-size:16px}.ch-go b{display:inline-block;transition:transform .25s}.choice:hover .ch-go b{transform:translateX(6px)}
 .subtabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.sub{border:2px solid var(--line);background:var(--card);border-radius:18px;padding:16px 18px;text-align:left;cursor:pointer;display:grid;gap:2px;transition:border-color .2s,box-shadow .2s,transform .2s}
-.sub:hover{transform:translateY(-2px)}.sub.on{border-color:#0f766e;box-shadow:0 10px 24px -16px #0f766e;background:linear-gradient(140deg,#f0fdfa,#fff)}
-.sub-t{font:800 24px/1.1 "Inter Tight",Inter,sans-serif}.sub.on .sub-t{color:#0f766e}.sub-s{color:var(--mute);font-size:14px}
+.subt{border:2px solid var(--line);background:var(--card);border-radius:18px;padding:16px 18px;text-align:left;cursor:pointer;display:grid;gap:2px;transition:border-color .2s,box-shadow .2s,transform .2s}
+.subt:hover{transform:translateY(-2px)}.subt.on{border-color:#0f766e;box-shadow:0 10px 24px -16px #0f766e;background:linear-gradient(140deg,#f0fdfa,#fff)}
+.sub-t{font:800 24px/1.1 "Inter Tight",Inter,sans-serif}.subt.on .sub-t{color:#0f766e}.sub-s{color:var(--mute);font-size:14px}
 .icempty.swap{animation:rise .35s cubic-bezier(.2,.7,.2,1)}
 .icempty{text-align:center;padding:44px 20px;display:grid;justify-items:center;gap:8px;color:var(--mute)}.icempty svg{color:#0f766e}
 .icempty h3{margin:6px 0 0;color:var(--ink);font-size:20px}.icempty p{margin:0 0 10px;max-width:52ch}
@@ -213,17 +237,30 @@ body.bulk .toast{bottom:104px}
 
   <!-- ANKARA İÇİ -->
   <section class="view" id="v-ic" hidden>
-    <div class="bar"><div class="grow"><h2>Ankara içi navlunlar</h2><p>Şehir içi nakliye fiyatları.</p></div><button class="btn" data-go="home">← Ana sayfa</button></div>
+    <div class="bar bar2">
+      <div class="bhead">
+        <div><h2>Ankara içi navlunlar</h2><p>Şehir içi, sefer başı kamyon ve tır fiyatları. Vadeli faturalar için vadeyi seçin.</p></div>
+        <button class="btn go bulkbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span class="bulkT">Fiyatları güncelle</span></button>
+      </div>
+      <div class="bctl">
+        <div class="vseg" id="vSeg" role="tablist" aria-label="Vade"></div>
+        <span class="sp"></span>
+        <button class="btn pri" id="icPrint">PDF / Yazdır</button>
+        <button class="btn" id="icCopy">Kopyala</button>
+      </div>
+    </div>
+    <div class="bulknote">Fiyat güncelleme modu: <b>peşin</b> kamyon ve tır fiyatlarını yazın; vadeli fiyatlar oranlarla otomatik hesaplanır. Enter ile sonraki kutuya geçilir; en alttaki <b>Kaydet</b> ile hepsi birlikte kaydedilir.</div>
+    <div class="panel notice" id="icNotice" hidden>
+      <div class="nhead"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <div><small>ÖNEMLİ DUYURU</small><h3>Nakliye bedeli müşterinin ödeme vadesine göre faturalandırılır</h3></div></div>
+      <div class="ntext" id="icNoticeT"></div>
+      <div class="nkey">Siparişte: müşterinin ödeme vadesini yukarıdan seçin ve o vadedeki kamyon/tır fiyatını siparişe yazın. Peşin fiyat yalnızca peşin ödemede kullanılır.</div>
+    </div>
     <div class="subtabs" role="tablist">
-      <button class="sub on" data-ic="ostim"><span class="sub-t">Ostim</span><span class="sub-s">Ostim şehir içi fiyatları</span></button>
-      <button class="sub" data-ic="temelli"><span class="sub-t">Temelli</span><span class="sub-s">Temelli şehir içi fiyatları</span></button>
+      <button class="subt" data-ic="ostim"><span class="sub-t">Ostim</span><span class="sub-s">Ostim şehir içi fiyatları</span></button>
+      <button class="subt" data-ic="temelli"><span class="sub-t">Temelli</span><span class="sub-s">Temelli şehir içi fiyatları</span></button>
     </div>
-    <div class="panel icempty" id="icPanel">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l5-3v16"/><path d="M10 21V3l9 4v14"/><path d="M14 9h2M14 13h2M14 17h2"/></svg>
-      <h3 id="icTitle">Ostim şehir içi fiyat listesi burada yer alacak</h3>
-      <p>Liste eklendiğinde fiyatlar, hesaplayıcı, tarihçe ve arşiv bu bölümde görünecek.</p>
-      <button class="btn go" data-go="nav">Ankara dışı listeye geç →</button>
-    </div>
+    <div id="icBody"></div>
   </section>
 
   <!-- ANKARA DIŞI -->
@@ -236,7 +273,7 @@ body.bulk .toast{bottom:104px}
     <div class="bar bar2">
       <div class="bhead">
         <div><h2>Ankara dışı navlunlar</h2><p>Şehirler arası, Ankara'ya teslim. Güzergâha dokunursanız tonaja göre karşılaştırma açılır.</p></div>
-        <button class="btn go" id="bBulk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span id="bBulkT">Fiyatları güncelle</span></button>
+        <button class="btn go bulkbtn" id="bBulk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span class="bulkT">Fiyatları güncelle</span></button>
       </div>
       <div class="bctl">
         <select class="ctl" id="fReg" aria-label="Çıkış bölgesi"><option value="">Tümü</option></select>
@@ -256,6 +293,7 @@ body.bulk .toast{bottom:104px}
   <section class="view" id="v-hist" hidden>
     <div class="bar">
       <div class="grow"><h2>Fiyat tarihçesi</h2><p id="hSum">Her değişiklik kimin yaptığı ve saatiyle kayıtlıdır; kayıtlar silinmez.</p></div>
+      <select class="ctl" id="hKat" aria-label="Liste"><option value="">Tüm listeler</option><option value="dis">Ankara dışı</option><option value="ic">Ankara içi</option></select>
       <select class="ctl" id="hReg" aria-label="Çıkış bölgesi"><option value="">Tüm bölgeler</option></select>
       <input class="ctl" id="hQ" type="search" placeholder="Varış / kullanıcı ara…" aria-label="Ara">
       <input class="ctl" id="hBas" type="date" aria-label="Başlangıç tarihi">
@@ -271,6 +309,7 @@ body.bulk .toast{bottom:104px}
   <section class="view" id="v-arc" hidden>
     <div class="bar">
       <div class="grow"><h2>Arşiv: geçmiş tarihteki fiyat listesi</h2><p>Bir tarih seçin; o gün sonunda geçerli olan fiyatlar, bugünkü fiyatla farkıyla gösterilir.</p></div>
+      <select class="ctl" id="aKat" aria-label="Liste"><option value="dis">Ankara dışı</option><option value="ic">Ankara içi</option></select>
       <input class="ctl" id="aDate" type="date" aria-label="Arşiv tarihi">
       <button class="btn pri" id="aPrint">PDF / Yazdır</button>
     </div>
@@ -285,6 +324,12 @@ body.bulk .toast{bottom:104px}
       <button class="btn" id="bPw">Şifremi değiştir</button>
     </div>
     <div class="panel pubp"><div><h3>Herkese açık izleme sayfası</h3><p id="pubS">Durum alınıyor…</p><a id="pubA" target="_blank" rel="noopener"></a></div><button class="btn" id="pubBtn">Şimdi yayınla</button></div>
+    <div class="panel vpanel"><h3>Şehir içi duyurusu</h3><p>Ostim ve Temelli fiyatlarının üstünde görünür. Boş bırakılırsa gizlenir.</p>
+      <textarea class="ctl dta" id="dText" rows="9" maxlength="4000"></textarea>
+      <div class="acts"><span class="sp"></span><button class="btn acc" id="dSave">Duyuruyu kaydet</button></div></div>
+    <div class="panel vpanel"><h3>Vadeler (Ankara içi)</h3><p>Peşin fiyata eklenecek oranlar. Gelen listedeki 4 tablo: %0, %4, %8, %12. Adları kendi vadelerinize göre düzeltin.</p>
+      <div id="vRows"></div>
+      <div class="acts"><button class="btn sm" id="vAdd">+ Vade ekle</button><span class="sp"></span><button class="btn acc" id="vSave">Vadeleri kaydet</button></div></div>
     <div class="panel"><table class="stack"><thead><tr><th>Ad</th><th>Kullanıcı adı</th><th>Yetki</th><th></th></tr></thead><tbody id="uBody"></tbody></table></div>
     <p class="foot">Şifre değiştirildiğinde o kullanıcının açık oturumu kapanır. İki kullanıcının şifresi farklı olabilir.</p>
   </section>
@@ -309,10 +354,12 @@ body.bulk .toast{bottom:104px}
   <div class="fl">
     <label>Çıkış bölgesi<input class="ctl" id="eReg" list="regList" required maxlength="40"></label>
     <label>Varış yeri<input class="ctl" id="eVar" required maxlength="60"></label>
-    <label class="full">Yeni fiyat (TL/ton + KDV)<input class="ctl" id="ePrice" type="number" min="0" step="1" inputmode="numeric" required></label>
-    <label>Profil farkı (TL/ton)<input class="ctl" id="eProf" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+    <label class="full"><span id="ePriceL">Yeni fiyat (TL/ton + KDV)</span><input class="ctl" id="ePrice" type="number" min="0" step="1" inputmode="numeric" required></label>
+    <label class="full icOnly">Tır fiyatı (sefer, peşin)<input class="ctl" id="eTir" type="number" min="0" step="1" inputmode="numeric"></label>
+    <label class="disOnly">Profil farkı (TL/ton)<input class="ctl" id="eProf" type="number" min="0" step="1" inputmode="numeric" placeholder="0"></label>
     <label>Sıra<input class="ctl" id="eSira" type="number" step="1" placeholder="0"></label>
-    <label class="chk"><input type="checkbox" id="eIki"> İki teslim noktası</label>
+    <label class="chk disOnly"><input type="checkbox" id="eIki"> İki teslim noktası</label>
+    <label class="chk icOnly"><input type="checkbox" id="eEk"> Ek teslim noktası ücreti satırı (2. yer)</label>
   </div>
   <datalist id="regList"></datalist>
   <div class="merr" id="eErr"></div>
@@ -377,9 +424,10 @@ const COLORS=['#1e3a8a','#14532d','#7c2d12','#581c87','#155e75','#9f1239','#713f
 const TRUCK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>';
 const PEN='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 const ISLEM={ilk:'İlk kayıt',fiyat:'Fiyat değişti',yeni:'Yeni güzergâh',duzenle:'Bilgi düzenlendi',sil:'Silindi'};
-let bulk=false,draft={},pendingBulk=false,me=null,routes=[],meta={},rev=null,q='',editId=null,tip='boru',view='nav',users=[],editUid=null;
+let icRoutes=[],icSube=null,vadeSel=0,draft2={},editKat='dis',bulk=false,draft={},pendingBulk=false,me=null,routes=[],meta={},rev=null,q='',editId=null,tip='boru',view='nav',users=[],editUid=null;
 const lastPrice={};let flashIds=new Set();
 const isTam=()=>!!me;
+const allR=()=>routes.concat(icRoutes);
 const toast=t=>{const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2800)};
 const sortR=(a,b)=>a.sira-b.sira||a.varis.localeCompare(b.varis,'tr');
 const regionsOf=list=>[...new Set(list.map(r=>r.bolge))].sort((a,b)=>a.localeCompare(b,'tr'));
@@ -390,13 +438,13 @@ const STATIK=!!window.NAVLUN_STATIK;let SD=null;
 async function sdFetch(){let r;try{r=await fetch('navlun.json?t='+Date.now(),{cache:'no-store'})}catch{throw {code:0,msg:'Liste yüklenemedi. İnternet bağlantınızı kontrol edin.'}}
   if(!r.ok)throw {code:r.status,msg:'Liste henüz yayınlanmamış.'};SD=await r.json();return SD}
 function sdHist(p){const g=k=>(p.get(k)||'').trim();let L=SD.tarihce.slice();const D=/^\d{4}-\d{2}-\d{2}$/;
-  if(g('route_id'))L=L.filter(h=>h.routeId===+g('route_id'));if(g('bolge'))L=L.filter(h=>h.bolge===g('bolge'));
+  if(g('route_id'))L=L.filter(h=>h.routeId===+g('route_id'));if(g('bolge'))L=L.filter(h=>h.bolge===g('bolge'));if(['dis','ic'].includes(g('kategori')))L=L.filter(h=>(h.kategori||'dis')===g('kategori'));
   if(D.test(g('bas')))L=L.filter(h=>h.zaman>=g('bas')+' 00:00:00');if(D.test(g('bit')))L=L.filter(h=>h.zaman<=g('bit')+' 23:59:59');
   if(g('ilk')!=='1')L=L.filter(h=>h.islem!=='ilk');const q=tr(g('q'));if(q)L=L.filter(h=>tr(h.varis).includes(q)||tr(h.bolge).includes(q)||tr(h.kullanici).includes(q));
   L.sort((a,b)=>a.zaman<b.zaman?1:a.zaman>b.zaman?-1:b.id-a.id);return L.slice(0,+g('limit')||3000)}
-function sdArc(t){if(!/^\d{4}-\d{2}-\d{2}$/.test(t||''))throw {code:400,msg:'Tarih geçersiz.'};const lim=t+' 23:59:59',last={};
+function sdArc(t,kat){kat=kat==='ic'?'ic':'dis';const EK=Object.fromEntries(SD.routes.map(r=>[r.id,!!r.ek]));if(!/^\d{4}-\d{2}-\d{2}$/.test(t||''))throw {code:400,msg:'Tarih geçersiz.'};const lim=t+' 23:59:59',last={};
   for(const h of SD.tarihce){if(h.zaman>lim)continue;const c=last[h.routeId];if(!c||h.zaman>c.zaman||(h.zaman===c.zaman&&h.id>c.id))last[h.routeId]=h}
-  return Object.values(last).filter(h=>h.islem!=='sil').map(h=>({routeId:h.routeId,bolge:h.bolge,varis:h.varis,fiyat:h.yeni,profilEk:h.profilYeni||0,ikiNokta:h.ikiNokta,zaman:h.zaman}))}
+  return Object.values(last).filter(h=>h.islem!=='sil'&&(h.kategori||'dis')===kat).map(h=>({routeId:h.routeId,kategori:kat,bolge:h.bolge,varis:h.varis,fiyat:h.yeni,fiyat2:h.yeni2,ek:!!EK[h.routeId],profilEk:h.profilYeni||0,ikiNokta:h.ikiNokta,zaman:h.zaman}))}
 async function sdApi(path,body){
   if(body!==undefined)throw {code:403,msg:'Bu sayfa yalnızca görüntüleme içindir.'};
   const p=new URLSearchParams(path.split('?')[1]||'');
@@ -404,12 +452,12 @@ async function sdApi(path,body){
   if(!SD)await sdFetch();
   if(path.startsWith('/api/veri'))return {ben:null,meta:SD.meta,routes:SD.routes};
   if(path.startsWith('/api/tarihce'))return {kayitlar:sdHist(p)};
-  if(path.startsWith('/api/arsiv'))return {liste:sdArc(p.get('tarih'))};
+  if(path.startsWith('/api/arsiv'))return {liste:sdArc(p.get('tarih'),p.get('kategori'))};
   throw {code:404,msg:'Bu sayfada yok.'};
 }
-function csvText(rows){const head=['Tarih','Saat','Kullanıcı','Çıkış bölgesi','Varış yeri','İşlem','Eski fiyat (TL/ton)','Yeni fiyat (TL/ton)','Fark','Açıklama'];
+function csvText(rows){const head=['Tarih','Saat','Kullanıcı','Liste','Çıkış / şube','Varış yeri','İşlem','Eski fiyat','Yeni fiyat','Fark','Eski tır (şehir içi)','Yeni tır (şehir içi)','Açıklama'];
   const q=v=>{v=String(v??'');return /[;"\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-  return '﻿'+[head,...rows.map(k=>[trDate(k.zaman),k.zaman.slice(11,16),k.kullanici,k.bolge,k.varis,ISLEM[k.islem]||k.islem,k.eski??'',k.yeni??'',k.eski!=null&&k.yeni!=null?k.yeni-k.eski:'',k.aciklama])].map(r=>r.map(q).join(';')).join('\r\n')}
+  return '﻿'+[head,...rows.map(k=>[trDate(k.zaman),k.zaman.slice(11,16),k.kullanici,k.kategori==='ic'?'Ankara içi (TL/sefer, peşin)':'Ankara dışı (TL/ton)',k.bolge,k.varis,ISLEM[k.islem]||k.islem,k.eski??'',k.yeni??'',k.eski!=null&&k.yeni!=null?k.yeni-k.eski:'',k.eski2??'',k.yeni2??'',k.aciklama])].map(r=>r.map(q).join(';')).join('\r\n')}
 
 async function api(path,body){
   if(STATIK)return sdApi(path,body);
@@ -446,9 +494,10 @@ function setMe(){
 /* ---------- veri ---------- */
 async function load(){
   const j=await api('/api/veri');me=j.ben;meta=j.meta||{};rev=meta.rev;
-  routes=j.routes||[];
+  const all=j.routes||[];routes=all.filter(r=>r.kategori!=='ic');icRoutes=all.filter(r=>r.kategori==='ic');
+  if(!icSube)icSube=icRoutes.some(r=>r.bolge==='Ostim'&&!r.ek)||!icRoutes.some(r=>r.bolge==='Temelli')?'ostim':'temelli';
   routes.forEach(r=>{if(lastPrice[r.id]!=null&&lastPrice[r.id]!==r.fiyat)flashIds.add(r.id);lastPrice[r.id]=r.fiyat});
-  setMe();render();
+  setMe();render();renderIc();
   if(STATIK&&meta.yayin)$('#yayinNote').textContent=`Bu sayfa salt okunurdur; son güncelleme ${trDate(meta.yayin)} ${meta.yayin.slice(11,16)}.`;
   if(view==='hist')loadHist();if(view==='arc')loadArc();if($('#ovCalc').classList.contains('on'))calc();
 }
@@ -461,14 +510,12 @@ function setView(v){
   view=v;$$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
   $$('.view').forEach(s=>s.hidden=s.id!=='v-'+v);
   if(location.hash.slice(1)!==v)history.replaceState(null,'','#'+v);
-  if(v==='hist')loadHist();if(v==='arc')loadArc();if(v==='users'){loadUsers();loadPub()}
+  if(v==='hist')loadHist();if(v==='arc')loadArc();if(v==='users'){loadUsers();loadPub();loadVade()}if(v==='ic')renderIc();
 }
 $$('.tab').forEach(t=>t.addEventListener('click',()=>setView(t.dataset.view)));
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){setView(g.dataset.go);scrollTo({top:0,behavior:'smooth'})}});
 $('.top h1').addEventListener('click',()=>setView('home'));
-$$('.sub').forEach(b=>b.addEventListener('click',()=>{$$('.sub').forEach(x=>x.classList.toggle('on',x===b));
-  $('#icTitle').textContent=(b.dataset.ic==='ostim'?'Ostim':'Temelli')+' şehir içi fiyat listesi burada yer alacak';
-  const p=$('#icPanel');p.classList.remove('swap');void p.offsetWidth;p.classList.add('swap')}));
+
 
 /* ---------- navlunlar ---------- */
 function chipsFor(x){return (x.profilEk?`<span class="chip p">Profil +${fmt(x.profilEk)} TL</span>`:'')+(x.ikiNokta?'<span class="chip t">İki teslim noktası</span>':'')}
@@ -490,7 +537,8 @@ function render(){
   const regs=regionsOf(routes);
   $('#sReg').textContent=regs.length;$('#sRoute').textContent=routes.length;$('#sDate').textContent=meta.guncelleme||'–';
   $('#disMeta').textContent=routes.length?`${routes.length} güzergâh · ${regs.length} çıkış bölgesi${meta.guncelleme?' · güncelleme '+meta.guncelleme:''}`:'';
-  for(const id of ['#fReg','#hReg']){const sel=$(id),cur=sel.value;sel.innerHTML=`<option value="">${id==='#fReg'?'Tümü':'Tüm bölgeler'}</option>`+regs.map(r=>`<option>${esc(r)}</option>`).join('');sel.value=regs.includes(cur)?cur:''}
+  for(const id of ['#fReg','#hReg']){const sel=$(id),cur=sel.value,R=id==='#fReg'?regs:regionsOf(allR());sel.innerHTML=`<option value="">${id==='#fReg'?'Tümü':'Tüm bölgeler'}</option>`+R.map(r=>`<option>${esc(r)}</option>`).join('');sel.value=R.includes(cur)?cur:''}
+  {const c=b=>icRoutes.filter(r=>r.bolge===b&&!r.ek).length,oc=c('Ostim'),tc=c('Temelli');$('#icMeta').textContent=`Ostim: ${oc?oc+' varış':'liste bekleniyor'} · Temelli: ${tc?tc+' varış':'liste bekleniyor'}`}
   $('#regList').innerHTML=regs.map(r=>`<option value="${esc(r)}">`).join('');
   const f=$('#fReg').value,qq=tr(q);
   const groups=regs.filter(r=>!f||r===f).map(r=>({r,list:routes.filter(x=>x.bolge===r&&(!qq||tr(x.varis).includes(qq))).sort(sortR)})).filter(g=>g.list.length);
@@ -500,18 +548,22 @@ function render(){
 }
 $('#grid').addEventListener('click',e=>{const ed=e.target.closest('[data-ed]');if(ed){openEdit(+ed.dataset.ed);return}if(bulk)return;const li=e.target.closest('li[data-var]');if(li)openCalc(li.dataset.var)});
 /* ---------- toplu fiyat güncelleme ---------- */
-const changes=()=>routes.filter(r=>draft[r.id]!==undefined&&draft[r.id]!==''&&+draft[r.id]!==r.fiyat).map(r=>({id:r.id,fiyat:+draft[r.id]}));
-function updBar(){const n=changes().length;$('#bkN').textContent=n?`${n} fiyat değişti`:'Henüz değişiklik yok';$('#bkSave').textContent=n?`Kaydet (${n})`:'Kaydet';
+const changes=()=>allR().map(r=>{const a=draft[r.id],b=draft2[r.id];const f=a!==undefined&&a!==''?+a:r.fiyat,f2=b!==undefined&&b!==''?+b:r.fiyat2;
+  return f!==r.fiyat||(r.kategori==='ic'&&f2!==r.fiyat2)?(r.kategori==='ic'?{id:r.id,fiyat:f,fiyat2:f2}:{id:r.id,fiyat:f}):null}).filter(Boolean);
+function updBar(){const n=changes().length;$('#bkN').textContent=n?`${n} satırda değişiklik var`:'Henüz değişiklik yok';$('#bkSave').textContent=n?`Kaydet (${n})`:'Kaydet';
   const c=$('#bkCancel');c.classList.remove('sure');c.textContent='Vazgeç'}
-function setBulk(on){bulk=on;if(!on)draft={};document.body.classList.toggle('bulk',on);$('#bulkBar').hidden=!on;
-  $('#bBulk').classList.toggle('on',on);$('#bBulkT').textContent=on?'Güncelleme modunda':'Fiyatları güncelle';render();updBar();
-  if(on)setTimeout(()=>{const f=$('.pin');if(f){f.focus();f.select()}},80)}
-$('#bBulk').addEventListener('click',()=>{if(bulk){$('#bkCancel').click();return}if(view!=='nav')setView('nav');if(!me){pendingBulk=true;openLogin();return}setBulk(true)});
-$('#grid').addEventListener('input',e=>{const t=e.target;if(!t.matches('.pin'))return;const v=t.value.replace(/[^0-9]/g,'');if(v!==t.value)t.value=v;
-  const id=+t.dataset.pid,x=routes.find(r=>r.id===id);if(!x)return;draft[id]=v;const li=t.closest('li');
-  li.classList.toggle('chg',v!==''&&+v!==x.fiyat);li.querySelector('.live').innerHTML=liveChip(x,v);updBar()});
-$('#grid').addEventListener('keydown',e=>{if(!e.target.matches('.pin')||e.key!=='Enter')return;e.preventDefault();const all=$$('.pin');const i=all.indexOf(e.target);const n=all[i+(e.shiftKey?-1:1)];if(n){n.focus();n.select()}else $('#bkSave').focus()});
-$('#grid').addEventListener('focusin',e=>{if(e.target.matches('.pin'))e.target.select()});
+function setBulk(on){bulk=on;if(!on){draft={};draft2={}}document.body.classList.toggle('bulk',on);$('#bulkBar').hidden=!on;
+  $$('.bulkbtn').forEach(b=>b.classList.toggle('on',on));$$('.bulkT').forEach(t=>t.textContent=on?'Güncelleme modunda':'Fiyatları güncelle');render();renderIc();updBar();
+  if(on)setTimeout(()=>{const f=$('#v-'+view+' .pin');if(f){f.focus();f.select()}},80)}
+$$('.bulkbtn').forEach(btn=>btn.addEventListener('click',()=>{if(bulk){$('#bkCancel').click();return}if(view!=='nav'&&view!=='ic')setView('nav');if(!me){pendingBulk=true;openLogin();return}setBulk(true)}));
+const mainEl=$('main');
+mainEl.addEventListener('input',e=>{const t=e.target;if(!t.matches('.pin'))return;const v=t.value.replace(/[^0-9]/g,'');if(v!==t.value)t.value=v;
+  const two=t.dataset.pid2!==undefined,id=+(two?t.dataset.pid2:t.dataset.pid),x=allR().find(r=>r.id===id);if(!x)return;(two?draft2:draft)[id]=v;
+  const row=t.closest('li,tr');const a=draft[id],b=draft2[id];
+  const ch=(a!==undefined&&a!==''&&+a!==x.fiyat)||(b!==undefined&&b!==''&&+b!==x.fiyat2);row.classList.toggle('chg',ch);
+  const lv=row.querySelector('.live');if(lv)lv.innerHTML=liveChip(x,a);updBar()});
+mainEl.addEventListener('keydown',e=>{if(!e.target.matches('.pin')||e.key!=='Enter')return;e.preventDefault();const all=$$('#v-'+view+' .pin');const i=all.indexOf(e.target);const n=all[i+(e.shiftKey?-1:1)];if(n){n.focus();n.select()}else $('#bkSave').focus()});
+mainEl.addEventListener('focusin',e=>{if(e.target.matches('.pin'))e.target.select()});
 $('#bkCancel').addEventListener('click',e=>{const b=$('#bkCancel');if(changes().length&&!b.classList.contains('sure')){b.classList.add('sure');b.textContent='Değişiklikler silinsin mi?';return}setBulk(false)});
 $('#bkSave').addEventListener('click',async()=>{const list=changes();if(!list.length){toast('Değişiklik yok');setBulk(false);return}
   const b=$('#bkSave');b.disabled=true;try{const j=await api('/api/toplu',{degisiklikler:list});setBulk(false);toast(`${j.guncellenen} fiyat güncellendi, eski fiyatlar tarihçeye yazıldı`);await load()}
@@ -519,27 +571,29 @@ $('#bkSave').addEventListener('click',async()=>{const list=changes();if(!list.le
 window.addEventListener('beforeunload',e=>{if(bulk&&changes().length){e.preventDefault();e.returnValue=''}});
 $('#fReg').addEventListener('change',render);
 $('#q').addEventListener('input',e=>{q=e.target.value;render()});
-$('#bAdd').addEventListener('click',()=>openEdit(null));
+$('#bAdd').addEventListener('click',()=>openEdit(null,view==='ic'?'ic':'dis'));
 $('#bCalc').addEventListener('click',()=>openCalc());
 
 /* ---------- düzenleme ---------- */
 const ovE=$('#ovEdit');
-async function openEdit(id){
-  editId=id;const x=routes.find(r=>r.id===id);const del=$('#eDel');del.classList.remove('sure');del.textContent='Sil';del.hidden=!x;$('#eErr').textContent='';
+async function openEdit(id,kat){
+  editId=id;const x=allR().find(r=>r.id===id);editKat=x?x.kategori:(kat||'dis');const IC=editKat==='ic';
+  $$('#fEdit .icOnly').forEach(e=>e.hidden=!IC);$$('#fEdit .disOnly').forEach(e=>e.hidden=IC);$('#eTir').required=IC;
+  $('#ePriceL').textContent=IC?'Kamyon fiyatı (sefer, peşin)':'Yeni fiyat (TL/ton + KDV)';$('#eTir').value=x&&x.fiyat2!=null?x.fiyat2:'';$('#eEk').checked=!!(x&&x.ek);const del=$('#eDel');del.classList.remove('sure');del.textContent='Sil';del.hidden=!x;$('#eErr').textContent='';
   $('#eTitle').textContent=x?'Navlun fiyatını güncelle':'Yeni güzergâh';$('#eSave').textContent=x?'Fiyatı kaydet':'Güzergâhı ekle';
-  $('#eSub').textContent=x?`${x.bolge} → ${x.varis} güzergâhının yeni TL/ton fiyatını girin. Eski fiyat tarihçeye kaydedilir.`:'Çıkış bölgesi, varış yeri ve TL/ton fiyatını girin.';
-  $('#eReg').value=x?x.bolge:($('#fReg').value||'');$('#eVar').value=x?x.varis:'';$('#ePrice').value=x?x.fiyat:'';
+  $('#eSub').textContent=IC?(x?`${x.bolge} → ${x.varis}: peşin kamyon ve tır fiyatlarını girin; vadeler otomatik hesaplanır. Eski fiyat tarihçeye kaydedilir.`:'Şube (Ostim/Temelli), varış yeri ve peşin kamyon/tır fiyatlarını girin.'):(x?`${x.bolge} → ${x.varis} güzergâhının yeni TL/ton fiyatını girin. Eski fiyat tarihçeye kaydedilir.`:'Çıkış bölgesi, varış yeri ve TL/ton fiyatını girin.');
+  $('#eReg').value=x?x.bolge:(IC?(icSube==='temelli'?'Temelli':'Ostim'):($('#fReg').value||''));$('#eVar').value=x?x.varis:'';$('#ePrice').value=x?x.fiyat:'';
   $('#eProf').value=x&&x.profilEk?x.profilEk:'';$('#eSira').value=x&&x.sira?x.sira:'';$('#eIki').checked=!!(x&&x.ikiNokta);
   const h=$('#eHist');h.hidden=true;h.innerHTML='';
   ovE.classList.add('on');setTimeout(()=>{const p=$(x?'#ePrice':'#eReg');p.focus();p.select&&p.select()},60);
   if(x){try{const j=await api('/api/tarihce?ilk=1&limit=8&route_id='+x.id);if(editId!==id)return;
-    h.innerHTML='<h3>Son kayıtlar</h3>'+j.kayitlar.map(k=>`<div><span>${esc(trDate(k.zaman))} ${esc(k.zaman.slice(11,16))}</span><span>${k.eski!=null&&k.yeni!=null&&k.eski!==k.yeni?`${fmt(k.eski)} → <b>${fmt(k.yeni)} TL</b>`:`<b>${k.yeni!=null?fmt(k.yeni)+' TL':''}</b>`} · ${esc(ISLEM[k.islem]||k.islem)} · ${esc(k.kullanici)}</span></div>`).join('');h.hidden=!j.kayitlar.length}catch{}}
+    h.innerHTML='<h3>Son kayıtlar</h3>'+j.kayitlar.map(k=>`<div><span>${esc(trDate(k.zaman))} ${esc(k.zaman.slice(11,16))}</span><span>${k.eski!=null&&k.yeni!=null&&k.eski!==k.yeni?`${fmt(k.eski)} → <b>${fmt(k.yeni)} TL</b>`:`<b>${k.yeni!=null?fmt(k.yeni)+' TL':''}</b>`}${k.kategori==='ic'&&k.yeni2!=null?` · tır ${k.eski2!=null&&k.eski2!==k.yeni2?fmt(k.eski2)+' → ':''}<b>${fmt(k.yeni2)} TL</b>`:''} · ${esc(ISLEM[k.islem]||k.islem)} · ${esc(k.kullanici)}</span></div>`).join('');h.hidden=!j.kayitlar.length}catch{}}
 }
 $('#fEdit').addEventListener('submit',async e=>{
   e.preventDefault();const b=$('#eSave');b.disabled=true;$('#eErr').textContent='';
-  const data={id:editId||undefined,bolge:$('#eReg').value,varis:$('#eVar').value,fiyat:$('#ePrice').value,profilEk:$('#eProf').value||0,ikiNokta:$('#eIki').checked,sira:$('#eSira').value||0};
+  const data={id:editId||undefined,kategori:editKat,bolge:$('#eReg').value,varis:$('#eVar').value,fiyat:$('#ePrice').value,fiyat2:$('#eTir').value||0,ek:$('#eEk').checked,profilEk:$('#eProf').value||0,ikiNokta:$('#eIki').checked,sira:$('#eSira').value||0};
   try{const j=await api('/api/guzergah',data);ovE.classList.remove('on');
-    toast(!j.degisiklik?'Değişiklik yok':editId?`${data.bolge.trim()} → ${data.varis.trim()}: ${fmt(data.fiyat)} TL kaydedildi`:'Güzergâh eklendi');await load()}
+    toast(!j.degisiklik?'Değişiklik yok':editId?(editKat==='ic'?`${data.bolge.trim()} → ${data.varis.trim()} kaydedildi`:`${data.bolge.trim()} → ${data.varis.trim()}: ${fmt(data.fiyat)} TL kaydedildi`):'Güzergâh eklendi');await load()}
   catch(err){$('#eErr').textContent=err.msg}finally{b.disabled=false}
 });
 $('#eDel').addEventListener('click',async e=>{
@@ -576,23 +630,24 @@ $('#bCopy').addEventListener('click',async()=>{
 });
 
 /* ---------- tarihçe ---------- */
-function histParams(){const p=new URLSearchParams();const r=$('#hReg').value,qq=$('#hQ').value.trim(),b=$('#hBas').value,t=$('#hBit').value;
+function histParams(){const p=new URLSearchParams();if($('#hKat').value)p.set('kategori',$('#hKat').value);const r=$('#hReg').value,qq=$('#hQ').value.trim(),b=$('#hBas').value,t=$('#hBit').value;
   if(r)p.set('bolge',r);if(qq)p.set('q',qq);if(b)p.set('bas',b);if(t)p.set('bit',t);if($('#hIlk').checked)p.set('ilk','1');return p}
 let histSeq=0;
 async function loadHist(){
   const my=++histSeq;let j;try{j=await api('/api/tarihce?'+histParams())}catch(err){$('#hBody').innerHTML=`<tr><td colspan="7" class="empty">${esc(err.msg)}</td></tr>`;return}
   if(my!==histSeq)return;const ks=j.kayitlar;
-  const fy=ks.filter(k=>k.islem==='fiyat');const ups=fy.filter(k=>k.yeni>k.eski).length;
-  $('#hSum').textContent=ks.length?`${ks.length} kayıt · ${fy.length} fiyat değişikliği (${ups} artış, ${fy.length-ups} indirim). Kayıtlar silinmez.`:'Bu filtreye uyan kayıt yok.';
+  const fy=ks.filter(k=>k.islem==='fiyat');const yon=k=>((k.yeni??0)-(k.eski??0))||((k.yeni2??0)-(k.eski2??0));const ups=fy.filter(k=>yon(k)>0).length,downs=fy.filter(k=>yon(k)<0).length;
+  $('#hSum').textContent=ks.length?`${ks.length} kayıt · ${fy.length} fiyat değişikliği (${ups} artış, ${downs} indirim). Kayıtlar silinmez.`:'Bu filtreye uyan kayıt yok.';
   $('#hBody').innerHTML=ks.map((k,i)=>{const d=k.eski!=null&&k.yeni!=null?k.yeni-k.eski:null;
     return `<tr style="animation-delay:${Math.min(i,20)*20}ms"><td class="when" data-l="Tarih">${esc(trDate(k.zaman))}<span class="sub">${esc(k.zaman.slice(11,16))}</span></td>
-    <td data-l="Güzergâh"><b>${esc(k.bolge)}</b> → ${esc(k.varis)}${k.aciklama?`<span class="sub">${esc(k.aciklama)}</span>`:''}</td>
+    <td data-l="Güzergâh">${k.kategori==='ic'?'<span class="chip t" style="margin-right:6px">Şehir içi</span>':''}<b>${esc(k.bolge)}</b> → ${esc(k.varis)}${k.aciklama?`<span class="sub">${esc(k.aciklama)}</span>`:''}</td>
     <td data-l="İşlem"><span class="chip k-${esc(k.islem)}">${esc(ISLEM[k.islem]||k.islem)}</span></td>
-    <td class="n" data-l="Eski">${k.eski!=null?fmt(k.eski)+' TL':''}</td><td class="n" data-l="Yeni">${k.yeni!=null?'<b>'+fmt(k.yeni)+' TL</b>':''}</td>
-    <td class="n" data-l="Fark">${d?`<span class="${d>0?'up-t':'dn-t'}">${d>0?'+':'−'}${fmt(Math.abs(d))} TL</span>`:''}</td>
+    <td class="n" data-l="Eski">${k.eski!=null?(k.kategori==='ic'?'K ':'')+fmt(k.eski)+' TL':''}${k.kategori==='ic'&&k.eski2!=null?`<span class="sub">T ${fmt(k.eski2)} TL</span>`:''}</td>
+    <td class="n" data-l="Yeni">${k.yeni!=null?'<b>'+(k.kategori==='ic'?'K ':'')+fmt(k.yeni)+' TL</b>':''}${k.kategori==='ic'&&k.yeni2!=null?`<span class="sub"><b>T ${fmt(k.yeni2)} TL</b></span>`:''}</td>
+    <td class="n" data-l="Fark">${d?`<span class="${d>0?'up-t':'dn-t'}">${d>0?'+':'−'}${fmt(Math.abs(d))} TL</span>`:''}${k.kategori==='ic'&&k.eski2!=null&&k.yeni2!=null&&k.yeni2!==k.eski2?`<span class="sub ${k.yeni2>k.eski2?'up-t':'dn-t'}">T ${k.yeni2>k.eski2?'+':'−'}${fmt(Math.abs(k.yeni2-k.eski2))} TL</span>`:''}</td>
     <td data-l="Yapan">${esc(k.kullanici)}</td></tr>`}).join('')||'<tr><td colspan="7" class="empty">Kayıt yok. Fiyat değiştikçe burada görünecek.</td></tr>';
 }
-let hT;['#hReg','#hBas','#hBit','#hIlk'].forEach(s=>$(s).addEventListener('change',loadHist));
+let hT;['#hKat','#hReg','#hBas','#hBit','#hIlk'].forEach(s=>$(s).addEventListener('change',loadHist));
 $('#hQ').addEventListener('input',()=>{clearTimeout(hT);hT=setTimeout(loadHist,250)});
 $('#hCsv').addEventListener('click',()=>{const p=histParams();p.set('ilk',$('#hIlk').checked?'1':'0');
   if(!STATIK){location.href='/api/tarihce.csv?'+p;return}
@@ -604,11 +659,13 @@ $('#hPrint').addEventListener('click',()=>doPrint('Navlun fiyat tarihçesi',($('
 let arcSeq=0;
 async function loadArc(){
   const d=$('#aDate').value||isoToday();$('#aDate').value=d;const my=++arcSeq;let j;
-  try{j=await api('/api/arsiv?tarih='+d)}catch(err){$('#aGrid').innerHTML=`<div class="empty">${esc(err.msg)}</div>`;return}
+  const kat=$('#aKat').value;
+  try{j=await api('/api/arsiv?tarih='+d+'&kategori='+kat)}catch(err){$('#aGrid').innerHTML=`<div class="empty">${esc(err.msg)}</div>`;return}
   if(my!==arcSeq)return;const L=j.liste;
+  if(kat==='ic'){arcIc(d,L);return}
   const now=Object.fromEntries(routes.map(r=>[r.id,r]));
   let diff=0;L.forEach(a=>{const c=now[a.routeId];if(!c||c.fiyat!==a.fiyat)diff++});
-  $('#aNote').textContent=L.length?`${trDate(d)} gün sonunda geçerli ${L.length} güzergâh. Bugüne göre ${diff} güzergâhta fark var.`:`${trDate(d)} tarihinde kayıtlı fiyat yok (kayıtlar 25.11.2026'dan başlıyor).`;
+  $('#aNote').textContent=L.length?`${trDate(d)} gün sonunda geçerli ${L.length} güzergâh. Bugüne göre ${diff} güzergâhta fark var.`:`${trDate(d)} tarihinde kayıtlı fiyat yok (Ankara dışı kayıtları 18.11.2026'dan başlıyor).`;
   const arow=a=>{const c=now[a.routeId];let cmp;
     if(!c)cmp='<span class="chip gray">Bugün listede yok</span>';
     else if(c.fiyat!==a.fiyat){const x=c.fiyat-a.fiyat;cmp=`<span class="chip ${x>0?'up':'dn'}">Bugün ${fmt(c.fiyat)} TL (${x>0?'▲':'▼'} ${fmt(Math.abs(x))})</span>`}
@@ -617,8 +674,62 @@ async function loadArc(){
   const regs=regionsOf(L);
   $('#aGrid').innerHTML=regs.map((r,i)=>card(r,L.filter(a=>a.bolge===r).sort((a,b)=>a.varis.localeCompare(b.varis,'tr')),i,arow)).join('')||'<div class="empty">Bu tarih için kayıt yok.</div>';
 }
-$('#aDate').addEventListener('change',loadArc);
+$('#aDate').addEventListener('change',loadArc);$('#aKat').addEventListener('change',loadArc);
 $('#aPrint').addEventListener('click',()=>doPrint(`Navlun listesi — ${trDate($('#aDate').value)} tarihli (arşiv)`,'TL/ton, KDV hariç'));
+
+/* ---------- ankara içi ---------- */
+const vadeler=()=>meta.vadeler&&meta.vadeler.length?meta.vadeler:[{ad:'Peşin',oran:0}];
+const vf=(x,o)=>x==null?null:Math.round(x*(1+(+o||0)/100));
+const subeAd=k=>k==='temelli'?'Temelli':'Ostim';
+function icTable(S,list,ek,edit,colsIn,cmp){
+  const cols=edit?[{ad:'Peşin (temel)',oran:0}]:colsIn,multi=cols.length>1;
+  const head=multi?`<tr><th rowspan="2">${esc(S.toLocaleUpperCase('tr'))}'DEN GİDİLEN YER</th>${cols.map(c=>`<th colspan="2" class="vh">${esc(c.ad)}${c.oran?` (+%${esc(c.oran)})`:''}</th>`).join('')}</tr><tr>${cols.map(()=>'<th class="n bl">Kamyon</th><th class="n">Tır</th>').join('')}</tr>`
+    :`<tr><th>${esc(S.toLocaleUpperCase('tr'))}'DEN GİDİLEN YER</th><th class="n">Kamyon</th><th class="n">Tır</th>${edit?'<th></th>':''}${cmp?'<th>Bugün</th>':''}</tr>`;
+  const row=(x,isEk)=>{
+    if(edit){const a=draft[x.id],b=draft2[x.id],ch=(a!==undefined&&a!==''&&+a!==x.fiyat)||(b!==undefined&&b!==''&&+b!==x.fiyat2);
+      return `<tr class="${isEk?'ekrow ':''}${ch?'chg':''}"><td class="vn">${esc(x.varis)}</td>
+      <td class="n"><input class="pin" data-pid="${esc(x.id)}" inputmode="numeric" autocomplete="off" value="${esc(a!==undefined?a:x.fiyat)}" aria-label="${esc(x.varis)} kamyon"></td>
+      <td class="n"><input class="pin" data-pid2="${esc(x.id)}" inputmode="numeric" autocomplete="off" value="${esc(b!==undefined?b:(x.fiyat2??''))}" aria-label="${esc(x.varis)} tır"></td>
+      <td class="ed-c"><button class="ed" type="button" data-ed="${esc(x.id)}" aria-label="${esc(x.varis)} düzenle">${PEN}</button></td></tr>`}
+    const d=!isEk&&x.onceki!=null&&x.onceki!==x.fiyat?x.fiyat-x.onceki:0;
+    const chg=d?` <span class="chip ${d>0?'up':'dn'}">${d>0?'▲':'▼'} ${fmt(Math.abs(d))}${x.degisim?' · '+esc(x.degisim):''}</span>`:'';
+    const pre=isEk?'+':'';
+    return `<tr class="${isEk?'ekrow':''}"><td class="vn">${esc(x.varis)}${chg}</td>${cols.map((c,i)=>`<td class="n${multi?' bl':''}">${pre}${fmt(vf(x.fiyat,c.oran))} TL</td><td class="n">${x.fiyat2!=null?pre+fmt(vf(x.fiyat2,c.oran))+' TL':''}</td>`).join('')}${cmp?`<td>${cmp(x)}</td>`:''}</tr>`};
+  return `<div class="scroll"><table class="ictab">${'<thead>'+head+'</thead>'}<tbody>${list.map(x=>row(x,false)).join('')}${ek.map(x=>row(x,true)).join('')}</tbody></table></div>`;
+}
+function renderIc(){
+  {const t=(meta.duyuru||'').trim();$('#icNotice').hidden=!t;$('#icNoticeT').replaceChildren(...t.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const e=document.createElement('p');e.textContent=x;return e}))}
+  if(!icSube)return;const V=vadeler();if(vadeSel!=='all'&&vadeSel>=V.length)vadeSel=0;
+  $('#vSeg').innerHTML=V.map((v,i)=>`<button class="${vadeSel===i?'on':''}" data-v="${i}">${esc(v.ad)}${v.oran?` <small>+%${esc(v.oran)}</small>`:''}</button>`).join('')+(V.length>1?`<button class="${vadeSel==='all'?'on':''}" data-v="all">Tümü</button>`:'');
+  $$('.subt').forEach(b=>{const S=subeAd(b.dataset.ic),n=icRoutes.filter(r=>r.bolge===S&&!r.ek).length;b.classList.toggle('on',b.dataset.ic===icSube);b.querySelector('.sub-s').textContent=n?`${n} varış noktası`:'Liste bekleniyor'});
+  const S=subeAd(icSube),list=icRoutes.filter(r=>r.bolge===S&&!r.ek).sort(sortR),ek=icRoutes.filter(r=>r.bolge===S&&r.ek).sort(sortR);
+  if(!list.length&&!ek.length){$('#icBody').innerHTML=`<div class="panel icempty"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l5-3v16"/><path d="M10 21V3l9 4v14"/><path d="M14 9h2M14 13h2M14 17h2"/></svg><h3>${esc(S)} şehir içi fiyat listesi henüz eklenmedi</h3><p>Liste eklendiğinde kamyon ve tır fiyatları vadelere göre burada görünecek.</p>${bulk&&isTam()?'<button class="btn go" data-new-ic>+ İlk varış noktasını ekle</button>':''}</div>`;return}
+  const edit=bulk&&isTam(),cols=vadeSel==='all'?V:[V[vadeSel]];
+  const vt=edit?'Peşin (temel) fiyatlar düzenleniyor':(vadeSel==='all'?'Tüm vadeler':V[vadeSel].ad+(V[vadeSel].oran?` · peşin +%${V[vadeSel].oran}`:''));
+  $('#icBody').innerHTML=`<div class="panel icard"><div class="ichead"><div><small>ŞEHİR İÇİ · SEFER BAŞI</small><h3>${esc(S)}'den gidilen yer</h3></div><span class="cnt">${esc(vt)}</span></div>${icTable(S,list,ek,edit,cols)}
+    <p class="icnote">Fiyatlar sefer başıdır. Vadeli fiyatlar peşin fiyata vade oranı eklenerek hesaplanır${ek.length?'; "2. yer" satırı ek teslim noktası için eklenecek tutardır':''}.</p></div>`;
+}
+$('#vSeg').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;vadeSel=b.dataset.v==='all'?'all':+b.dataset.v;renderIc()});
+$$('.subt').forEach(b=>b.addEventListener('click',()=>{icSube=b.dataset.ic;renderIc();const c=$('#icBody .icard,#icBody .icempty');if(c){c.style.animation='none';void c.offsetWidth;c.style.animation=''}}));
+$('#icBody').addEventListener('click',e=>{const ed=e.target.closest('[data-ed]');if(ed){openEdit(+ed.dataset.ed);return}if(e.target.closest('[data-new-ic]'))openEdit(null,'ic')});
+function icText(){const S=subeAd(icSube),V=vadeler(),cols=vadeSel==='all'?V:[V[vadeSel]];const list=icRoutes.filter(r=>r.bolge===S&&!r.ek).sort(sortR),ek=icRoutes.filter(r=>r.bolge===S&&r.ek);
+  return cols.map(c=>`${S.toLocaleUpperCase('tr')}'DEN ŞEHİR İÇİ NAKLİYE — ${c.ad} (sefer başı)\n`+list.map(x=>`• ${x.varis}: Kamyon ${fmt(vf(x.fiyat,c.oran))} TL · Tır ${fmt(vf(x.fiyat2,c.oran))} TL`).join('\n')+(ek.length?'\n'+ek.map(x=>`• ${x.varis}: +${fmt(vf(x.fiyat,c.oran))} TL`).join('\n'):'')).join('\n\n')}
+$('#icCopy').addEventListener('click',async()=>toast(await copyText(icText())?'Liste kopyalandı':'Kopyalanamadı'));
+$('#icPrint').addEventListener('click',()=>{const V=vadeler();doPrint(`Ankara içi navlun — ${subeAd(icSube)} (${vadeSel==='all'?'tüm vadeler':V[vadeSel].ad})`,'Sefer başı fiyatlar · Tarih: '+new Date().toLocaleDateString('tr-TR'))});
+function arcIc(d,L){
+  const now=Object.fromEntries(icRoutes.map(r=>[r.id,r]));let diff=0;L.forEach(a=>{const c=now[a.routeId];if(!c||c.fiyat!==a.fiyat||c.fiyat2!==a.fiyat2)diff++});
+  $('#aNote').textContent=L.length?`${trDate(d)} gün sonunda geçerli ${L.length} şehir içi satır (peşin fiyatlar). Bugüne göre ${diff} satırda fark var.`:`${trDate(d)} tarihinde şehir içi kayıt yok (şehir içi kayıtlar 26.11.2026'dan başlıyor).`;
+  const cmp=a=>{const c=now[a.routeId];if(!c)return '<span class="chip gray">Listede yok</span>';if(c.fiyat===a.fiyat&&c.fiyat2===a.fiyat2)return '<span class="chip gray">Aynı</span>';const x=c.fiyat-a.fiyat;return `<span class="chip ${x>0?'up':'dn'}">K ${fmt(c.fiyat)} · T ${fmt(c.fiyat2)}</span>`};
+  $('#aGrid').innerHTML=regionsOf(L).map(S=>`<div class="panel icard" style="break-inside:avoid;margin-bottom:16px"><div class="ichead"><div><small>ŞEHİR İÇİ · PEŞİN</small><h3>${esc(S)}'den gidilen yer</h3></div></div>${icTable(S,L.filter(a=>a.bolge===S&&!a.ek).sort((a,b)=>a.varis.localeCompare(b.varis,'tr')),L.filter(a=>a.bolge===S&&a.ek),false,[{ad:'Peşin',oran:0}],cmp)}</div>`).join('')||'<div class="empty">Bu tarih için kayıt yok.</div>';
+}
+/* ---------- vadeler (ayarlar) ---------- */
+function vRow(v){return `<div class="vrow"><input class="ctl va" maxlength="20" value="${esc(v.ad)}" aria-label="Vade adı"><input class="ctl vo" type="number" min="0" max="100" step="0.5" value="${esc(v.oran)}" aria-label="Oran"><span>%</span><button class="btn sm vdel" type="button">Sil</button></div>`}
+function loadVade(){$('#vRows').innerHTML=vadeler().map(vRow).join('');$('#dText').value=meta.duyuru||''}
+$('#dSave').addEventListener('click',async()=>{try{await api('/api/duyuru',{metin:$('#dText').value});toast('Duyuru kaydedildi');await load()}catch(err){toast(err.msg)}});
+$('#vAdd').addEventListener('click',()=>{if($$('.vrow').length>=6){toast('En fazla 6 vade');return}$('#vRows').insertAdjacentHTML('beforeend',vRow({ad:'',oran:''}))});
+$('#vRows').addEventListener('click',e=>{const b=e.target.closest('.vdel');if(b&&$$('.vrow').length>1)b.closest('.vrow').remove()});
+$('#vSave').addEventListener('click',async()=>{const L=$$('.vrow').map(r=>({ad:r.querySelector('.va').value.trim(),oran:r.querySelector('.vo').value}));
+  try{await api('/api/vadeler',{vadeler:L});toast('Vadeler kaydedildi');await load();loadVade()}catch(err){toast(err.msg)}});
 
 /* ---------- kullanıcılar ---------- */
 async function loadPub(){
@@ -657,8 +768,8 @@ $$('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o||e.target.cl
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.ov.on').forEach(o=>o.classList.remove('on'))});
 window.addEventListener('hashchange',()=>setView(location.hash.slice(1)));
 $('#aDate').value=isoToday();
-if(STATIK){$('#bSet').hidden=true;$('#bBulk').hidden=true}
-start().catch(err=>{$('#grid').innerHTML=`<div class="empty">${esc(err.msg)}</div>`});
+if(STATIK){$('#bSet').hidden=true;$$('.bulkbtn').forEach(b=>b.hidden=true)}
+start().catch(err=>{console.error(err);$('#grid').innerHTML=`<div class="empty">${esc(err.msg||err.message||err)}</div>`});
 }
 </script>
 </body>
