@@ -28,7 +28,8 @@ button,input,select{font:inherit;color:inherit}
 .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-size:13px;font-weight:700}
 .role{font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px}.role.tam{background:#dcfce7;color:#166534}.role.izleyici{background:#e0e7ff;color:#3730a3}
 .tabs{display:flex;gap:6px;padding:10px max(4vw,16px) 0;max-width:1240px;margin:0 auto;overflow-x:auto}
-.tab{border:0;background:none;padding:10px 16px;border-radius:12px;font-weight:600;color:var(--mute);cursor:pointer;white-space:nowrap;position:relative;transition:color .2s,background .2s}
+.tabs{scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:0;background:none;padding:10px 16px;border-radius:12px;font-weight:600;color:var(--mute);cursor:pointer;white-space:nowrap;position:relative;transition:color .2s,background .2s}
 .tab:hover{background:#ffffff99}.tab.on{color:var(--ink);background:var(--card);box-shadow:0 1px 3px #0f172a1a}
 .wrap{max-width:1240px;margin:0 auto;padding:14px max(4vw,16px) 40px}
 .view{animation:rise .35s cubic-bezier(.2,.7,.2,1)}
@@ -102,6 +103,30 @@ td.when{white-space:nowrap;color:var(--mute)}td .sub{display:block;color:var(--m
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;transition:.3s;z-index:20;pointer-events:none;max-width:92vw;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .printhead{display:none}
+/* ana sayfa */
+.hhead{margin:6px 0 16px}.hhead h2{margin:0;font-size:clamp(24px,3.4vw,32px);line-height:1.15}.hhead p{margin:4px 0 0;color:var(--mute)}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.choice{position:relative;overflow:hidden;text-align:left;border:0;border-radius:24px;padding:26px 26px 22px;min-height:300px;color:#fff;cursor:pointer;display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 20px 40px -22px #0f172a88;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+.choice:nth-child(2){animation-delay:90ms}
+.choice:hover{transform:translateY(-4px);box-shadow:0 28px 50px -24px #0f172aaa}.choice:focus-visible{outline:4px solid #2563eb88;outline-offset:3px}
+.c-ic{background:radial-gradient(500px 260px at 90% 0%,#22c55e55,transparent 60%),linear-gradient(140deg,#0f766e,#064e3b)}
+.c-dis{background:radial-gradient(500px 260px at 90% 0%,#60a5fa55,transparent 60%),linear-gradient(140deg,#1d4ed8,#0f2a6b)}
+.ch-art{width:min(260px,70%);height:auto;margin:-6px 0 8px auto;display:block}
+.choice:hover .truck{transform:translateX(10px)}.truck{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.ch-t{font:800 clamp(30px,4.4vw,42px)/1.05 "Inter Tight",Inter,sans-serif}
+.ch-s{font-size:16px;opacity:.85;max-width:34ch}
+.ch-m{display:inline-block;align-self:flex-start;margin-top:6px;font-size:13px;font-weight:700;background:#ffffff26;border-radius:99px;padding:4px 12px}.ch-m:empty{display:none}
+.ch-go{margin-top:auto;padding-top:14px;font-weight:700;font-size:16px}.ch-go b{display:inline-block;transition:transform .25s}.choice:hover .ch-go b{transform:translateX(6px)}
+.subtabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.sub{border:2px solid var(--line);background:var(--card);border-radius:18px;padding:16px 18px;text-align:left;cursor:pointer;display:grid;gap:2px;transition:border-color .2s,box-shadow .2s,transform .2s}
+.sub:hover{transform:translateY(-2px)}.sub.on{border-color:#0f766e;box-shadow:0 10px 24px -16px #0f766e;background:linear-gradient(140deg,#f0fdfa,#fff)}
+.sub-t{font:800 24px/1.1 "Inter Tight",Inter,sans-serif}.sub.on .sub-t{color:#0f766e}.sub-s{color:var(--mute);font-size:14px}
+.icempty.swap{animation:rise .35s cubic-bezier(.2,.7,.2,1)}
+.icempty{text-align:center;padding:44px 20px;display:grid;justify-items:center;gap:8px;color:var(--mute)}.icempty svg{color:#0f766e}
+.icempty h3{margin:6px 0 0;color:var(--ink);font-size:20px}.icempty p{margin:0 0 10px;max-width:52ch}
+.top h1{cursor:pointer}
+@media(max-width:700px){.choices{grid-template-columns:minmax(0,1fr)}.choice{min-height:230px}}
 .pubp{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 18px;margin-bottom:16px}.pubp h3{margin:0 0 4px;font-size:17px}.pubp p{margin:0 0 4px;color:var(--mute);font-size:15px}.pubp a{font-weight:600;color:var(--acc);word-break:break-all}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes pop{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
@@ -155,7 +180,9 @@ body.bulk .toast{bottom:104px}
   </div>
 </header>
 <nav class="tabs" role="tablist">
-  <button class="tab on" data-view="nav">Navlunlar</button>
+  <button class="tab on" data-view="home">Ana sayfa</button>
+  <button class="tab" data-view="ic">Ankara İçi</button>
+  <button class="tab" data-view="nav">Ankara Dışı</button>
   <button class="tab" data-view="hist">Tarihçe</button>
   <button class="tab" data-view="arc">Arşiv</button>
   <button class="tab" data-view="users" id="tabUsers" hidden>Ayarlar</button>
@@ -163,8 +190,44 @@ body.bulk .toast{bottom:104px}
 <main class="wrap">
   <div class="printhead"><h1 id="phT">Navlun Karar Paneli</h1><p id="phS"></p></div>
 
-  <!-- NAVLUNLAR -->
-  <section class="view" id="v-nav">
+  <!-- ANA SAYFA -->
+  <section class="view" id="v-home">
+    <div class="hhead"><h2>Hangi listeye bakmak istiyorsunuz?</h2><p>Fiyatlar TL/ton, KDV hariçtir.</p></div>
+    <div class="choices">
+      <button class="choice c-ic" data-go="ic">
+        <svg class="ch-art" viewBox="0 0 220 120" aria-hidden="true"><rect x="0" y="104" width="220" height="16" fill="#ffffff14"/><rect x="18" y="52" width="26" height="52" rx="3" fill="#ffffff26"/><rect x="50" y="30" width="34" height="74" rx="3" fill="#ffffff33"/><rect x="90" y="60" width="22" height="44" rx="3" fill="#ffffff22"/><rect x="118" y="18" width="30" height="86" rx="3" fill="#ffffff3d"/><path d="M133 6v12" stroke="#ffffff66" stroke-width="2"/><rect x="154" y="46" width="28" height="58" rx="3" fill="#ffffff26"/><rect x="188" y="66" width="20" height="38" rx="3" fill="#ffffff1f"/><g fill="#ffffff55"><rect x="56" y="38" width="6" height="6"/><rect x="70" y="38" width="6" height="6"/><rect x="56" y="52" width="6" height="6"/><rect x="70" y="52" width="6" height="6"/><rect x="124" y="28" width="6" height="6"/><rect x="136" y="28" width="6" height="6"/><rect x="124" y="42" width="6" height="6"/><rect x="136" y="42" width="6" height="6"/><rect x="124" y="56" width="6" height="6"/><rect x="136" y="56" width="6" height="6"/></g></svg>
+        <span class="ch-t">Ankara İçi</span>
+        <span class="ch-s">Şehir içi nakliye fiyatları</span>
+        <span class="ch-m" id="icMeta">Ostim · Temelli</span>
+        <span class="ch-go">Listeyi aç <b>→</b></span>
+      </button>
+      <button class="choice c-dis" data-go="nav">
+        <svg class="ch-art" viewBox="0 0 220 120" aria-hidden="true"><path d="M0 104 L220 104" stroke="#ffffff33" stroke-width="2"/><path d="M10 112 H210" stroke="#ffffff22" stroke-width="2" stroke-dasharray="14 10"/><g class="truck"><rect x="40" y="56" width="92" height="40" rx="5" fill="#ffffff3d"/><path d="M132 66h24l16 16v14h-40z" fill="#ffffff55"/><rect x="140" y="70" width="14" height="10" rx="2" fill="#ffffff33"/><circle cx="62" cy="98" r="9" fill="#ffffff70"/><circle cx="112" cy="98" r="9" fill="#ffffff70"/><circle cx="156" cy="98" r="9" fill="#ffffff70"/></g><g stroke="#ffffff40" stroke-width="3" stroke-linecap="round"><path d="M8 66h20"/><path d="M2 78h26"/><path d="M12 90h16"/></g></svg>
+        <span class="ch-t">Ankara Dışı</span>
+        <span class="ch-s">Bartın, Ereğli, Gebze, Karabük ve İskenderun'dan Ankara'ya</span>
+        <span class="ch-m" id="disMeta"></span>
+        <span class="ch-go">Listeyi aç <b>→</b></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ANKARA İÇİ -->
+  <section class="view" id="v-ic" hidden>
+    <div class="bar"><div class="grow"><h2>Ankara içi navlunlar</h2><p>Şehir içi nakliye fiyatları.</p></div><button class="btn" data-go="home">← Ana sayfa</button></div>
+    <div class="subtabs" role="tablist">
+      <button class="sub on" data-ic="ostim"><span class="sub-t">Ostim</span><span class="sub-s">Ostim şehir içi fiyatları</span></button>
+      <button class="sub" data-ic="temelli"><span class="sub-t">Temelli</span><span class="sub-s">Temelli şehir içi fiyatları</span></button>
+    </div>
+    <div class="panel icempty" id="icPanel">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l5-3v16"/><path d="M10 21V3l9 4v14"/><path d="M14 9h2M14 13h2M14 17h2"/></svg>
+      <h3 id="icTitle">Ostim şehir içi fiyat listesi burada yer alacak</h3>
+      <p>Liste eklendiğinde fiyatlar, hesaplayıcı, tarihçe ve arşiv bu bölümde görünecek.</p>
+      <button class="btn go" data-go="nav">Ankara dışı listeye geç →</button>
+    </div>
+  </section>
+
+  <!-- ANKARA DIŞI -->
+  <section class="view" id="v-nav" hidden>
     <div class="stats">
       <div class="stat"><small>Çıkış bölgesi</small><div class="big" id="sReg">–</div></div>
       <div class="stat"><small>Güzergâh</small><div class="big" id="sRoute">–</div></div>
@@ -172,7 +235,7 @@ body.bulk .toast{bottom:104px}
     </div>
     <div class="bar bar2">
       <div class="bhead">
-        <div><h2>Güncel navlunlar</h2><p>Güzergâha dokunursanız tonaja göre karşılaştırma açılır.</p></div>
+        <div><h2>Ankara dışı navlunlar</h2><p>Şehirler arası, Ankara'ya teslim. Güzergâha dokunursanız tonaja göre karşılaştırma açılır.</p></div>
         <button class="btn go" id="bBulk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span id="bBulkT">Fiyatları güncelle</span></button>
       </div>
       <div class="bctl">
@@ -373,7 +436,7 @@ $('#fLogin').addEventListener('submit',async e=>{
 });
 $('#bOut').addEventListener('click',async()=>{try{await api('/api/cikis',{})}catch{}me=null;setMe();render();if(view==='users')setView('nav');toast('Düzenleme kapatıldı')});
 async function start(){
-  await load();setView(location.hash.slice(1)||'nav');
+  await load();setView(location.hash.slice(1)||'home');
 }
 function setMe(){
   const on=!!me;$('#uChip').hidden=!on;$('#bOut').hidden=!on;$('#tabUsers').hidden=!on;if(!on&&bulk)setBulk(false);
@@ -394,13 +457,18 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)api('/api/
 
 /* ---------- görünümler ---------- */
 function setView(v){
-  if(!['nav','hist','arc','users'].includes(v)||(v==='users'&&!isTam()))v='nav';
+  if(!['home','ic','nav','hist','arc','users'].includes(v)||(v==='users'&&!isTam()))v='home';
   view=v;$$('.tab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
   $$('.view').forEach(s=>s.hidden=s.id!=='v-'+v);
   if(location.hash.slice(1)!==v)history.replaceState(null,'','#'+v);
   if(v==='hist')loadHist();if(v==='arc')loadArc();if(v==='users'){loadUsers();loadPub()}
 }
 $$('.tab').forEach(t=>t.addEventListener('click',()=>setView(t.dataset.view)));
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){setView(g.dataset.go);scrollTo({top:0,behavior:'smooth'})}});
+$('.top h1').addEventListener('click',()=>setView('home'));
+$$('.sub').forEach(b=>b.addEventListener('click',()=>{$$('.sub').forEach(x=>x.classList.toggle('on',x===b));
+  $('#icTitle').textContent=(b.dataset.ic==='ostim'?'Ostim':'Temelli')+' şehir içi fiyat listesi burada yer alacak';
+  const p=$('#icPanel');p.classList.remove('swap');void p.offsetWidth;p.classList.add('swap')}));
 
 /* ---------- navlunlar ---------- */
 function chipsFor(x){return (x.profilEk?`<span class="chip p">Profil +${fmt(x.profilEk)} TL</span>`:'')+(x.ikiNokta?'<span class="chip t">İki teslim noktası</span>':'')}
@@ -421,6 +489,7 @@ const card=(r,list,i,rowFn)=>`<section class="reg" style="--c:${colorOf(r)};anim
 function render(){
   const regs=regionsOf(routes);
   $('#sReg').textContent=regs.length;$('#sRoute').textContent=routes.length;$('#sDate').textContent=meta.guncelleme||'–';
+  $('#disMeta').textContent=routes.length?`${routes.length} güzergâh · ${regs.length} çıkış bölgesi${meta.guncelleme?' · güncelleme '+meta.guncelleme:''}`:'';
   for(const id of ['#fReg','#hReg']){const sel=$(id),cur=sel.value;sel.innerHTML=`<option value="">${id==='#fReg'?'Tümü':'Tüm bölgeler'}</option>`+regs.map(r=>`<option>${esc(r)}</option>`).join('');sel.value=regs.includes(cur)?cur:''}
   $('#regList').innerHTML=regs.map(r=>`<option value="${esc(r)}">`).join('');
   const f=$('#fReg').value,qq=tr(q);
