@@ -98,7 +98,7 @@ td .ichip{padding:5px 10px;font-size:12.5px}
 .btn:disabled{opacity:.5;pointer-events:none}
 .drop{border:2px dashed #c5d2ea;border-radius:var(--radius);padding:40px;text-align:center;color:var(--muted);cursor:pointer;transition:all .2s;background:#fafcff}
 .drop:hover,.drop.over{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);transform:scale(1.005)}
-.drop b{display:block;font-size:18px;color:var(--text);margin-bottom:6px}
+.drop>b{display:block;font-size:18px;color:var(--text);margin-bottom:6px}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0}
 label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
 label.f input,label.f select{width:100%}
@@ -133,6 +133,7 @@ body.locked header,body.locked main{display:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* sığdırma */
+.b23{display:flex;align-items:center;gap:6px;min-width:0}.b23 input{width:100%;max-width:110px}.b23 span{color:var(--muted);font-size:13px;font-weight:600}
 .grid4{grid-template-columns:1.2fr 1fr 1fr 2fr!important;align-items:end}
 @media(max-width:800px){.grid4{grid-template-columns:1fr!important}}
 main{width:100%}
@@ -240,7 +241,7 @@ td input.num{width:100%;max-width:110px}
     <div class="card">
       <h2>Yeni İş Emri</h2>
       <div class="sub">Giriş irsaliyesini (PDF veya fotoğraf) yükleyin; malzemeler listelenir, her birinin yanına yapılacak işi yazıp kaydedin. İş emri numarası otomatik verilir, malzemeler müşteri adına stoğa yazılır.</div>
-      <div class="drop" id="drop-giris"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)<br><span style="font-size:14px">Ekran görüntüsü için: <b>Ctrl+V</b> ile yapıştırın ya da <button type="button" class="btn ghost sm" data-paste="giris">Panodan yapıştır</button></span></div>
+      <div class="drop" id="drop-giris"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)<br><span style="font-size:14px">Ekran görüntüsü için: <strong>Ctrl+V</strong> ile yapıştırın ya da <button type="button" class="btn ghost sm" data-paste="giris">Panodan yapıştır</button></span></div>
       <input type="file" id="file-giris" accept=".pdf,image/*" hidden>
       <div id="giris-form" style="display:none">
         <div class="grid3">
@@ -249,7 +250,7 @@ td input.num{width:100%;max-width:110px}
           <label class="f">Tarih<input type="date" id="g-tarih"></label>
         </div>
         <table>
-          <thead><tr><th>Malzeme</th><th class="right">Miktar</th><th>Birim</th><th>Yapılacak işlem</th><th></th></tr></thead>
+          <thead><tr><th>Malzeme</th><th class="right">Miktar (Birim 1)</th><th>Birim</th><th>Birim 2</th><th>Birim 3</th><th>Yapılacak işlem</th><th></th></tr></thead>
           <tbody id="g-rows"></tbody>
         </table>
         <div class="bar" style="margin-top:16px">
@@ -266,7 +267,7 @@ td input.num{width:100%;max-width:110px}
     <div class="card">
       <h2>Çıkış İrsaliyesi</h2>
       <div class="sub">Giden malzemeler stoktaki kalemlerle eşleştirilir; onayladığınızda stoktan düşer.</div>
-      <div class="drop" id="drop-cikis"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)<br><span style="font-size:14px">Ekran görüntüsü için: <b>Ctrl+V</b> ile yapıştırın ya da <button type="button" class="btn ghost sm" data-paste="cikis">Panodan yapıştır</button></span></div>
+      <div class="drop" id="drop-cikis"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)<br><span style="font-size:14px">Ekran görüntüsü için: <strong>Ctrl+V</strong> ile yapıştırın ya da <button type="button" class="btn ghost sm" data-paste="cikis">Panodan yapıştır</button></span></div>
       <input type="file" id="file-cikis" accept=".pdf,image/*" hidden>
       <div class="bar" style="margin-top:14px"><span class="sub" style="margin:0">İrsaliye yoksa:</span><button class="btn ghost" id="c-manuel" type="button">+ Manuel çıkış ekle</button></div>
       <div id="cikis-form" style="display:none">
@@ -478,9 +479,9 @@ function kalemYap(malzeme, miktar, birim, adet){
   const it = {malzeme, miktar, birim, islem:''};
   if (birim === 'mt' && adet > 0){
     it.ipucu = `İrsaliyede ${miktar.toLocaleString('tr-TR')} mt yazıyor; adet sütunu (${adet.toLocaleString('tr-TR')}) alındı`;
-    it.miktar = adet; it.birim = 'adet';
+    it.miktar = adet; it.birim = 'adet'; it.mt2 = miktar;
   } else if (adet > 0 && birim !== 'adet'){
-    it.ipucu = `İrsaliyede adet sütunu: ${adet.toLocaleString('tr-TR')}`;
+    it.ipucu = `İrsaliyede adet sütunu: ${adet.toLocaleString('tr-TR')}`; it.adet2 = adet;
   }
   return it;
 }
@@ -813,20 +814,48 @@ function katBul(ad){
 // kalem için katalog kartı: elle/otomatik bağlanmış kod, yoksa ada göre
 function katOf(k){ return (k.katalog_kod && S.katKod.get(k.katalog_kod)) || katBul(k.malzeme); }
 function u3Str(ad, q, birim){
-  const c = typeof ad === 'object' ? katOf(ad) : katBul(ad); if (!c) return '';
-  const r = birimler3(c, q, birim), f = (v,u) => v === null ? `— ${u}` : `${fmt(Math.round(v*100)/100)} ${u}`;
-  const sira = c.birim === 'kg' ? [f(r.kg,'kg'), f(r.adet,'adet'), f(r.mt,'mt')] : [f(r.adet,'adet'), f(r.mt,'mt'), f(r.kg,'kg')];
-  return `${c._yaklasik ? '~ ' : ''}${sira.join(' · ')}`;
+  const k = typeof ad === 'object' ? ad : null, c = k ? katOf(k) : katBul(ad);
+  const ek = k && ['adet_ek','mt_ek','kg_ek'].some(x => k[x] !== null && k[x] !== undefined);
+  if (!c && !ek) return '';
+  const r = c ? birimler3(c, q, birim) : {adet:null, mt:null, kg:null};
+  if (ek && Number(k.miktar) > 0 && birim === k.birim){
+    // girişte irsaliyeden okunan / elle yazılan değerler katalog hesabından önceliklidir
+    const f0 = Number(q) / Number(k.miktar);
+    for (const u of ['adet','mt','kg']) if (u !== k.birim && k[u+'_ek'] !== null && k[u+'_ek'] !== undefined) r[u] = Number(k[u+'_ek']) * f0;
+    if (c && c.birim === 'kg' && k.adet_ek != null && (k.mt_ek == null)){ const L = uzunlukM(c.ad); if (L) r.mt = r.adet * L; }
+    r[k.birim] = Number(q);
+  }
+  const f = (v,u) => v === null || v === undefined ? `— ${u}` : `${fmt(Math.round(v*100)/100)} ${u}`;
+  const kgSira = (c && c.birim === 'kg') || (!c && birim === 'kg');
+  const sira = kgSira ? [f(r.kg,'kg'), f(r.adet,'adet'), f(r.mt,'mt')] : [f(r.adet,'adet'), f(r.mt,'mt'), f(r.kg,'kg')];
+  return `${c && c._yaklasik ? '~ ' : ''}${sira.join(' · ')}`;
 }
 const u3P = (k,q,b) => { const t = u3Str(k,q,b); return t ? `<div style="font-size:10.5px;color:#666">${t}</div>` : ''; };
 const u3Html = (ad, q, birim) => { const t = u3Str(ad, q, birim); return t ? `<div class="u3">${t}</div>` : ''; };
 function katOneri(ad){
   return S.katalog.filter(c=>noktaliMi(ad) || !noktaliMi(c.ad)).map(c=>({c, s:matchScore(ad, c.ad)})).filter(x=>x.s>=0.5).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.c);
 }
+// giriş satırında Birim 2 / Birim 3 (birinci birim miktar sütunudur)
+const B23 = {kg:['adet','mt'], adet:['mt','kg'], mt:['adet','kg'], ton:['adet','mt'], paket:[]};
+const yuv = v => v === null || v === undefined || !isFinite(v) ? '' : Math.round(v*100)/100;
+function b23(r){
+  const c = katBul(r.malzeme), q = Number(r.miktar), p = r.birim;
+  const t = c && q > 0 ? birimler3(c, q, p) : {adet:null, mt:null, kg:null};
+  const v = {adet:t.adet, mt:t.mt, kg:t.kg};
+  if (r.adet2 != null) v.adet = r.adet2;
+  if (r.mt2 != null) v.mt = r.mt2;
+  else if (r.adet2 != null && c && c.birim === 'kg'){ const L = uzunlukM(c.ad); if (L) v.mt = r.adet2 * L; }
+  for (const u of ['adet','mt','kg']) if (r['m_'+u] !== undefined) v[u] = r['m_'+u];
+  return (B23[p] || []).map(u => ({u, v:v[u]}));
+}
+function b23Td(r, i){
+  const l = b23(r);
+  return [0,1].map(k => l[k] ? `<td><div class="b23"><input class="num" type="number" step="any" value="${yuv(l[k].v)}" placeholder="—" data-i="${i}" data-f="b${k+2}" data-u="${l[k].u}" id="b${k+2}-${i}"><span>${l[k].u}</span></div></td>` : '<td></td>').join('');
+}
 function girisHint(r, i){
   if (!String(r.malzeme).trim()) return '';
   const c = katBul(r.malzeme);
-  if (c) return Number(r.miktar) > 0 ? (u3Str(r.malzeme, r.miktar, r.birim) || '') : '<span style="color:var(--green)">Katalogda var ✓</span>';
+  if (c) return `<span style="color:var(--green)">Katalogda var ✓${c._yaklasik?' (~ '+esc(c.ad)+')':''}</span>`;
   const o = katOneri(r.malzeme);
   return '<span style="color:var(--red)">Katalogda yok — 3 birim hesaplanamaz.</span>' + (o.length ? ` <span class="oneri">${o.map(x=>`<button type="button" class="ichip" data-kat="${i}" data-ad="${esc(x.ad)}">${esc(x.ad)}</button>`).join('')}</span>` : '');
 }
@@ -930,6 +959,7 @@ function kgyeCevir(rows){
     const q = Number(r.miktar); if (!(q > 0)) continue;
     const kg = r.birim === 'ton' ? q * 1000 : cevir(c, q, r.birim, 'kg');
     if (kg === null || kg === undefined) continue;
+    if (r.birim === 'adet') r.adet2 = q; else if (r.birim === 'mt') r.mt2 = q;
     r.ipucu = `Okunan ${fmt(q)} ${r.birim} → kg'a çevrildi` + (r.ipucu ? ' · ' + r.ipucu : '');
     r.miktar = Math.round(kg * 100) / 100; r.birim = 'kg';
   }
@@ -1052,6 +1082,7 @@ function renderGiris(){
     <td><input list="dl-katalog" value="${esc(r.malzeme)}" data-i="${i}" data-f="malzeme">${r.ipucu?`<div class="hint">${esc(r.ipucu)}</div>`:''}<div class="u3" id="gh-${i}" style="white-space:normal">${girisHint(r,i)}</div></td>
     <td><input class="num" type="number" step="any" value="${esc(r.miktar)}" data-i="${i}" data-f="miktar"></td>
     <td>${unitSel(r.birim, `data-i="${i}" data-f="birim"`)}</td>
+    ${b23Td(r, i)}
     <td>${islemCell(r.islem, r.ozel, `data-i="${i}"`)}</td>
     <td><button class="btn danger sm" data-rm="${i}">×</button></td></tr>`).join('');
 }
@@ -1066,6 +1097,15 @@ async function getOrCreateMusteri(ad){
   return data;
 }
 
+// irsaliyeden okunan veya elle yazılan 2. / 3. birim değerleri kalemle birlikte saklanır
+function ekBirimler(r){
+  const o = {adet_ek:null, mt_ek:null, kg_ek:null};
+  for (const x of b23(r)){
+    const okunan = r['m_'+x.u] !== undefined ? r['m_'+x.u] : x.u === 'adet' ? r.adet2 : x.u === 'mt' ? r.mt2 : undefined;
+    if (okunan !== undefined && okunan !== null && Number(okunan) > 0) o[x.u+'_ek'] = Math.round(Number(okunan)*10000)/10000;
+  }
+  return o;
+}
 async function saveGiris(){
   const ad = $('#g-musteri').value.trim();
   const rows = girisRows.filter(r=>r.malzeme.trim() && Number(r.miktar)>0);
@@ -1077,7 +1117,7 @@ async function saveGiris(){
     const {data: irs, error} = await sb.from('irsaliyeler').insert({tip:'giris', irsaliye_no:$('#g-no').value.trim()||null, tarih:$('#g-tarih').value||null, musteri_id:m.id, dosya_adi:girisFile||null}).select().single();
     if (error) throw error;
     const {error: e2} = await sb.from('stok_kalemleri').insert(rows.map(r=>({
-      musteri_id:m.id, giris_irsaliye_id:irs.id, malzeme:r.malzeme.trim(), miktar:Number(r.miktar), birim:r.birim, islem:r.islem.trim()||null, katalog_kod:S.katIdx.get(kkey(r.malzeme))?.kod || null
+      musteri_id:m.id, giris_irsaliye_id:irs.id, malzeme:r.malzeme.trim(), miktar:Number(r.miktar), birim:r.birim, islem:r.islem.trim()||null, katalog_kod:S.katIdx.get(kkey(r.malzeme))?.kod || null, ...ekBirimler(r)
     })));
     if (e2){ await sb.from('irsaliyeler').delete().eq('id', irs.id); throw e2; }
     toast(`${ieNo(irs.is_emri_no)} oluşturuldu, ${rows.length} kalem stoğa girdi.`);
@@ -1215,8 +1255,14 @@ $('#g-rows').addEventListener('input', e => {
   if (e.target.dataset.f === 'islemOzel'){
     const r = girisRows[i]; r.islem = islemBuild(islemParse(r.islem).std, e.target.value); return;
   }
-  girisRows[i][e.target.dataset.f] = e.target.value;
-  if (['malzeme','miktar','birim'].includes(e.target.dataset.f)){ const h = document.getElementById('gh-'+i); if (h) h.innerHTML = girisHint(girisRows[i], i); }
+  const f = e.target.dataset.f, r = girisRows[i];
+  if (f === 'b2' || f === 'b3'){ r['m_'+e.target.dataset.u] = e.target.value === '' ? undefined : Number(e.target.value); return; }
+  r[f] = e.target.value;
+  if (['miktar','birim'].includes(f)){ for (const k of ['adet2','mt2','m_adet','m_mt','m_kg']) delete r[k]; }
+  if (['malzeme','miktar','birim'].includes(f)){
+    const h = document.getElementById('gh-'+i); if (h) h.innerHTML = girisHint(r, i);
+    if (f === 'birim') renderGiris(); else b23(r).forEach((x,k)=>{ const el = document.getElementById('b'+(k+2)+'-'+i); if (el && el.dataset.u === x.u && r['m_'+x.u] === undefined) el.value = yuv(x.v); });
+  }
 });
 $('#g-rows').addEventListener('click', e => {
   const kt = e.target.closest('[data-kat]');
