@@ -502,6 +502,14 @@ function profilSatir(line){
   if (q) return {malzeme:ad, miktar:trNum(q[1]), birim:'adet', islem:'', ipucu:'Kg miktarı okunamadı, adet sütunu alındı'};
   return {malzeme:ad, miktar:'', birim:'kg', islem:'', ipucu:'Miktar okunamadı, elle girin'};
 }
+// uygulamanın kendi ekran görüntüsü gibi anlamsız metinlerden gelen sahte satırları ele
+function adGecerli(ad){
+  ad = String(ad).trim(); const n = norm(ad);
+  if (/irsaliyede adet|katalogda yok|okunamad|birim hesaplanamaz/.test(n)) return false;
+  if (/^\d[\d.,]*\s*(kg|adet|ad|mt|m|ton)\b/i.test(ad)) return false;
+  const harf = (ad.replace(/\b(kg|adet|mt|mm|ton)\b/gi,'').match(/[A-Za-zÇĞİÖŞÜçğıöşü]/g) || []).length;
+  return /\d/.test(ad) ? harf >= 3 : harf >= 5;
+}
 function parseItems(lines){
   const out = [];
   for (let i = 0; i < lines.length; i++){
@@ -543,7 +551,7 @@ function parseItems(lines){
       }
     }
   }
-  return out;
+  return out.filter(it => adGecerli(it.malzeme));
 }
 
 // "SAYIN" altındaki alıcı adı (adres/vergi satırlarına kadar)
