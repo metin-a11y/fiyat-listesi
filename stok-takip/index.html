@@ -167,7 +167,7 @@ body.locked header,body.locked main{display:none}
 .pgrid .pgh .gsay{color:var(--muted);font-size:13px;font-weight:500}
 .pgrid .gtopl{text-align:right;font-weight:600;font-size:13.5px;color:#334}
 .pgrid .pbs{font-size:12.5px;color:#445}
-.pgrid th:nth-child(5),.pgrid th:nth-child(7),.pgrid th:nth-child(9){width:9%}.pgrid th:nth-child(6),.pgrid th:nth-child(8),.pgrid th:nth-child(10){width:4.5%}.pbie{font-size:11.5px;color:#667;margin-top:2px}.pbed{display:inline-block;font-size:11.5px;color:var(--brand);text-decoration:none;margin-top:2px;opacity:.75}.pbed:hover{opacity:1;text-decoration:underline}
+.pgrid th:nth-child(5),.pgrid th:nth-child(7),.pgrid th:nth-child(9){width:9%}.pgrid th:nth-child(6),.pgrid th:nth-child(8),.pgrid th:nth-child(10){width:4.5%}.pbie{font-size:11.5px;color:#667;margin-top:2px}.ie-u{min-width:84px}#ie-rows select{min-width:74px}.ie-p{background:#f3f6fb;color:#556}.ie-man{border-color:var(--brand);background:#f0f5ff}.pbed{display:inline-block;font-size:11.5px;color:var(--brand);text-decoration:none;margin-top:2px;opacity:.75}.pbed:hover{opacity:1;text-decoration:underline}
 .pgrid tbody tr:not(.pgh):nth-child(even) td:not(.pb){background:#eef4fb}.pgrid tbody tr:not(.pgh):nth-child(odd) td:not(.pb){background:#fdf5e6}
 .pgrid .pgh td{background:#e2e9f7!important}
 .pgrid .pbad{min-width:190px;font-weight:500}
@@ -207,6 +207,16 @@ td input.num{width:100%;max-width:110px}
   #v-stok .tbl-stack td{display:block;width:auto!important;border:0;padding:2px 0;text-align:left!important}
   #v-stok .tbl-stack td:nth-child(1),#v-stok .tbl-stack td:nth-child(2),#v-stok .tbl-stack td:nth-child(6){grid-column:1/-1}
   #v-stok .tbl-stack td[data-l]::before{content:attr(data-l);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+}
+@media(max-width:1100px){
+  #ie-modal table,#ie-modal tbody{display:block}
+  #ie-modal thead{display:none}
+  #ie-modal tbody tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 12px;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+  #ie-modal tbody td{display:block;border:0;padding:2px 0;text-align:left!important;white-space:normal!important;min-width:0}
+  #ie-modal tbody td[data-l]::before{content:attr(data-l);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+  #ie-modal tbody td:first-child,#ie-modal tbody td:nth-child(7),#ie-modal tbody td:last-child{grid-column:1/-1}
+  #ie-modal td input.num{max-width:none}
+  .ie-u{min-width:0}
 }
 @media(max-width:800px){
   .view table,.modal table{display:block}
@@ -416,14 +426,14 @@ td input.num{width:100%;max-width:110px}
   <option value="042-KUMLAMA"><option value="045-KUMLAMA+SHOPPRIMER">
   <option value="046-SON KAT BOYAMA"><option value="133-KUMLAMA+SON KAT BOYA">
 </datalist>
-<div class="modal" id="ie-modal" style="display:none"><div class="modal-card">
+<div class="modal" id="ie-modal" style="display:none"><div class="modal-card" style="width:min(1240px,100%)">
   <h2 id="ie-title">İş emri</h2>
   <div class="grid3">
     <label class="f">Müşteri<input id="ie-musteri" list="dl-musteri"></label>
     <label class="f">İrsaliye no<input id="ie-no"></label>
     <label class="f">Tarih<input type="date" id="ie-tarih"></label>
   </div>
-  <table><thead><tr><th>Malzeme</th><th class="right">Miktar</th><th>Birim</th><th>Yapılacak işlem</th><th></th></tr></thead><tbody id="ie-rows"></tbody></table>
+  <table><thead><tr><th>Malzeme</th><th class="right">Miktar</th><th>Birim</th><th class="right">Adet</th><th class="right">Metre</th><th class="right">Kg</th><th>Yapılacak işlem</th><th></th></tr></thead><tbody id="ie-rows"></tbody></table>
   <div id="ie-cikislar"></div>
   <div class="bar" style="margin-top:14px">
     <button class="btn ghost" id="ie-add" type="button">+ Satır ekle</button>
@@ -1802,11 +1812,24 @@ function renderIE(){
 $('#ie-ara').oninput = renderIE; $('#ie-durum').onchange = renderIE;
 
 let ieId = null, ieRows = [], ieOrj = [];
+const IE_U = {adet:'Adet', mt:'Metre', kg:'Kg'};
+function ieKatHint(r){ return String(r.malzeme).trim() && !katBul(r.malzeme) ? '<div class="hint" style="color:var(--red)">Katalogda yok — birimleri elle yazın</div>' : ''; }
+// satırın katalogdan hesaplanan 2./3. birimleri (elle yazılanlar korunur)
+function ieHesapla(r){
+  const q = Number(r.miktar), c = katBul(r.malzeme), t = c && q > 0 ? birimler3(c, q, r.birim) : {};
+  for (const u of ['adet','mt','kg']) if (u !== r.birim && !r.man[u]) r.v[u] = t[u] ?? null;
+  r.v[r.birim] = q > 0 ? q : null;
+}
+function ieUGuncelle(i){
+  const r = ieRows[i];
+  for (const u of ['adet','mt','kg']){ const el = document.getElementById(`ie-v-${i}-${u}`); if (el && document.activeElement !== el) el.value = r.birim === u ? r.miktar : yuv(r.v[u]); }
+}
 function ieRender(){
   $('#ie-rows').innerHTML = ieRows.map((r,i)=>`<tr>
     <td><input list="dl-katalog" value="${esc(r.malzeme)}" data-e="${i}" data-f="malzeme"></td>
-    <td><input class="num" type="number" step="any" value="${esc(r.miktar)}" data-e="${i}" data-f="miktar">${r.cikan>0?`<div class="hint">çıkan: ${fmt(r.cikan)}</div>`:''}${u3Html(S.kalemler.find(x=>x.id===r.id)||r.malzeme,r.miktar,r.birim)}</td>
+    <td><input class="num" type="number" step="any" value="${esc(r.miktar)}" data-e="${i}" data-f="miktar">${r.cikan>0?`<div class="hint">çıkan: ${fmt(r.cikan)}</div>`:''}${ieKatHint(r)}</td>
     <td>${unitSel(r.birim, `data-e="${i}" data-f="birim" ${r.cikan>0?'disabled':''}`)}</td>
+    ${['adet','mt','kg'].map(u=>`<td data-l="${IE_U[u]}"><input class="num ie-u${r.birim===u?' ie-p':''}${r.man[u]?' ie-man':''}" type="number" step="any" id="ie-v-${i}-${u}" data-e="${i}" data-f="u" data-u="${u}" value="${r.birim===u ? esc(r.miktar) : yuv(r.v[u])}" placeholder="—" ${r.birim===u?'readonly tabindex="-1" title="Ana birim: Miktar alanından değişir"':''}></td>`).join('')}
     <td>${islemCell(r.islem, r.ozel, `data-e="${i}"`)}</td>
     <td>${r.cikan>0?'':`<button class="btn danger sm" data-erm="${i}">×</button>`}</td></tr>`).join('');
 }
@@ -1814,7 +1837,12 @@ function ieAc(id){
   const i = S.irsaliyeler.find(x=>x.id===id); if (!i) return;
   ieId = id;
   ieOrj = S.kalemler.filter(k=>k.giris_irsaliye_id===id);
-  ieRows = ieOrj.map(k=>({id:k.id, malzeme:k.malzeme, miktar:k.miktar, birim:k.birim, islem:k.islem||'', ozel:false, cikan:k.cikan}));
+  ieRows = ieOrj.map(k=>{
+    const x = u3Vals(k, k.miktar, k.birim);
+    return {id:k.id, malzeme:k.malzeme, miktar:k.miktar, birim:k.birim, islem:k.islem||'', ozel:false, cikan:k.cikan,
+      v: {adet:x?.r.adet ?? null, mt:x?.r.mt ?? null, kg:x?.r.kg ?? null},
+      man: {adet:k.adet_ek!=null, mt:k.mt_ek!=null, kg:k.kg_ek!=null}};
+  });
   $('#ie-title').textContent = `${ieNo(i.is_emri_no)} · iş emri`;
   $('#ie-musteri').value = i.musteriler?.ad || ''; $('#ie-no').value = i.irsaliye_no || ''; $('#ie-tarih').value = i.tarih || '';
   const kilit = ieOrj.some(k=>k.cikan>0);
@@ -1840,6 +1868,7 @@ async function ieKaydet(yaz){
     for (const k of silinen){ r = await sb.from('stok_kalemleri').delete().eq('id', k.id); if (r.error) throw r.error; }
     for (const x of rows){
       const d = {musteri_id:m.id, malzeme:String(x.malzeme).trim(), miktar:Number(x.miktar), birim:x.birim, islem:String(x.islem||'').trim()||null, katalog_kod:S.katIdx.get(kkey(x.malzeme))?.kod || undefined};
+      for (const u of ['adet','mt','kg']){ const v = Number(x.v?.[u]); d[u+'_ek'] = (u !== x.birim && x.man?.[u] && v > 0) ? Math.round(v*10000)/10000 : null; }
       r = x.id ? await sb.from('stok_kalemleri').update(d).eq('id', x.id)
                : await sb.from('stok_kalemleri').insert({...d, giris_irsaliye_id:ieId});
       if (r.error) throw r.error;
@@ -1862,7 +1891,23 @@ $('#ie-body').addEventListener('click', e => {
 $('#ie-rows').addEventListener('input', e => {
   const i = e.target.dataset.e; if (i===undefined) return; const r = ieRows[i];
   if (e.target.dataset.f === 'islemOzel'){ r.islem = islemBuild(islemParse(r.islem).std, e.target.value); return; }
-  if (e.target.dataset.f) r[e.target.dataset.f] = e.target.value;
+  const f = e.target.dataset.f;
+  if (f === 'u'){
+    const u = e.target.dataset.u, val = e.target.value === '' ? null : Number(e.target.value);
+    if (val === null){ r.man[u] = false; ieHesapla(r); }
+    else { r.man[u] = true; r.v[u] = val;
+      const c = katBul(r.malzeme);
+      if (c && val > 0){ const t = birimler3(c, val, u); for (const w of ['adet','mt','kg']) if (w !== u && w !== r.birim && !r.man[w] && t[w] != null && isFinite(t[w])) r.v[w] = t[w]; } }
+    e.target.classList.toggle('ie-man', !!r.man[u]); ieUGuncelle(i); return;
+  }
+  if (f === 'miktar'){
+    const eski = Number(r.miktar), yeni = Number(e.target.value); r.miktar = e.target.value;
+    if (eski > 0 && yeni > 0) for (const u of ['adet','mt','kg']) if (r.man[u] && u !== r.birim && r.v[u] > 0) r.v[u] = r.v[u] * yeni / eski;
+    ieHesapla(r); ieUGuncelle(i); return;
+  }
+  if (f === 'birim'){ r.birim = e.target.value; r.man = {adet:false, mt:false, kg:false}; ieHesapla(r); ieRender(); return; }
+  if (f === 'malzeme'){ r.malzeme = e.target.value; r.man = {adet:false, mt:false, kg:false}; ieHesapla(r); ieUGuncelle(i); return; }
+  if (f) r[f] = e.target.value;
 });
 $('#ie-rows').addEventListener('click', e => {
   const ic = e.target.closest('[data-isl]');
@@ -1874,7 +1919,7 @@ $('#ie-rows').addEventListener('click', e => {
   }
   const rm = e.target.closest('[data-erm]'); if (rm){ ieRows.splice(+rm.dataset.erm, 1); ieRender(); }
 });
-$('#ie-add').onclick = () => { ieRows.push({malzeme:'', miktar:'', birim:'adet', islem:'', ozel:false, cikan:0}); ieRender(); };
+$('#ie-add').onclick = () => { ieRows.push({malzeme:'', miktar:'', birim:'adet', islem:'', ozel:false, cikan:0, v:{adet:null,mt:null,kg:null}, man:{adet:false,mt:false,kg:false}}); ieRender(); };
 $('#ie-iptal').onclick = ieKapat;
 $('#ie-kaydet').onclick = () => ieKaydet(false);
 $('#ie-kaydet-yaz').onclick = () => ieKaydet(true);
