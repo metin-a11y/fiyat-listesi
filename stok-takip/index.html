@@ -1206,10 +1206,17 @@ function resimdenOku(file){
   toast('Ekran görüntüsü okunuyor…'); handleUpload(file, tip); return true;
 }
 document.addEventListener('paste', e => {
-  if (['INPUT','TEXTAREA'].includes(e.target.tagName) && e.target.type!=='file') return;
-  const it = [...(e.clipboardData?.items||[])].find(x=>x.type.startsWith('image/'));
-  if (!it) return;
-  const f = it.getAsFile(); if (f && resimdenOku(f)) e.preventDefault();
+  const v = document.querySelector('.view.on')?.id;
+  if (v!=='v-giris' && v!=='v-cikis') return;
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName) && e.target.type!=='file') return;
+  const cd = e.clipboardData; if (!cd) return;
+  const okunur = f => f && (/^image\//.test(f.type) || /\.(jpe?g|png|webp|bmp|gif|pdf)$/i.test(f.name||'') || f.type==='application/pdf');
+  let f = [...(cd.files||[])].find(okunur);
+  if (!f){ const it = [...(cd.items||[])].find(x=>x.kind==='file' && (x.type.startsWith('image/') || x.type==='application/pdf')); if (it) f = it.getAsFile(); }
+  if (f){ e.preventDefault(); resimdenOku(f); return; }
+  const html = cd.getData('text/html'), m = html && html.match(/<img[^>]+src=["']?(data:image\/[^"'>\s]+)/i);
+  if (m){ e.preventDefault(); fetch(m[1]).then(r=>r.blob()).then(bl=>resimdenOku(new File([bl],'ekran.png',{type:bl.type}))); return; }
+  toast('Panoda okunabilir resim yok (türler: '+([...(cd.types||[])].join(', ')||'boş')+'). Resmi açıp kopyalayın veya dosyayı kutuya sürükleyin.', true);
 });
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-paste]'); if (!b) return;
@@ -1217,7 +1224,7 @@ document.addEventListener('click', async e => {
   try {
     const items = await navigator.clipboard.read();
     for (const it of items){ const t = it.types.find(x=>x.startsWith('image/')); if (t){ resimdenOku(new File([await it.getType(t)], 'ekran.png', {type:t})); return; } }
-    toast('Panoda resim yok. Önce ekran görüntüsü alın (Win+Shift+S) sonra tekrar deneyin.', true);
+    toast('Panoda resim yok. Dosya kopyaladıysanız sayfaya tıklayıp Ctrl+V yapın; ekran görüntüsü için Win+Shift+S kullanın.', true);
   } catch(err){ toast('Panoya erişilemedi. Ctrl+V ile yapıştırmayı deneyin.', true); }
 }, true);
 setupDrop('#drop-giris', '#file-giris', f => handleUpload(f, 'giris'));
