@@ -1264,7 +1264,17 @@ $('#g-rows').addEventListener('input', e => {
     const r = girisRows[i]; r.islem = islemBuild(islemParse(r.islem).std, e.target.value); return;
   }
   const f = e.target.dataset.f, r = girisRows[i];
-  if (f === 'b2' || f === 'b3'){ r['m_'+e.target.dataset.u] = e.target.value === '' ? undefined : Number(e.target.value); return; }
+  if (f === 'b2' || f === 'b3'){
+    const u = e.target.dataset.u, val = e.target.value === '' ? undefined : Number(e.target.value);
+    r['m_'+u] = val;
+    // elle yazılan birim diğerini de günceller (adet → metre/kg)
+    const c = katBul(r.malzeme);
+    if (c && val > 0){
+      const t = birimler3(c, val, u), diger = f === 'b2' ? 'b3' : 'b2', el = document.getElementById(diger+'-'+i);
+      if (el){ const u2 = el.dataset.u, nv = t[u2]; if (nv !== null && nv !== undefined && isFinite(nv) && u2 !== r.birim){ r['m_'+u2] = Math.round(nv*10000)/10000; el.value = yuv(nv); } }
+    }
+    return;
+  }
   r[f] = e.target.value;
   if (['miktar','birim'].includes(f)){ for (const k of ['adet2','mt2','m_adet','m_mt','m_kg']) delete r[k]; }
   if (['malzeme','miktar','birim'].includes(f)){
