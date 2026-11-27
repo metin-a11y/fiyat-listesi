@@ -667,6 +667,16 @@ const fmt = n => Number(n).toLocaleString('tr-TR',{maximumFractionDigits:2});
 const fdate = d => d ? new Date(d+'T00:00:00').toLocaleDateString('tr-TR') : '—';
 
 let sb = null;
+let dlNokta = null;
+function dlKatalog(nokta){
+  if (dlNokta === nokta) return; dlNokta = nokta;
+  $('#dl-katalog').innerHTML = S.katalog.filter(x=>nokta || !noktaliMi(x.ad)).map(x=>`<option value="${esc(x.ad)}"></option>`).join('');
+}
+document.addEventListener('input', e => { if (e.target.getAttribute && e.target.getAttribute('list')==='dl-katalog') dlKatalog(noktaliMi(e.target.value)); }, true);
+document.addEventListener('focusin', e => { if (e.target.getAttribute && e.target.getAttribute('list')==='dl-katalog') dlKatalog(noktaliMi(e.target.value)); });
+// başında nokta olan katalog adları yalnızca arama da noktayla başlıyorsa önerilir
+const noktaliMi = ad => String(ad||'').trim().startsWith('.');
+const kkey = ad => (noktaliMi(ad)?'.':'') + norm(dimNorm(ad));
 const S = {islemler:{}, katIdx:new Map(),  musteriler:[], kalemler:[], irsaliyeler:[], katalog:[] };
 let girisRows = [], cikisRows = [], girisFile = '', cikisFile = '';
 
@@ -697,8 +707,8 @@ async function loadAll(){
   for (const r of [m,k,i]) if (r.error){ toast('Veri okunamadı: '+r.error.message, true); return; }
   S.islemler = {}; for (const x of (ik.data || [])) (S.islemler[x.kalem_id] ||= []).push(x);
   S.katalog = kat.data || [];
-  S.katKod = new Map(); S.katCache = new Map(); S.katIdx = new Map(); for (const c of S.katalog){ S.katKod.set(c.kod, c); const n = norm(dimNorm(c.ad)); if (!S.katIdx.has(n)) S.katIdx.set(n, c); }
-  $('#dl-katalog').innerHTML = S.katalog.map(x=>`<option value="${esc(x.ad)}"></option>`).join('');
+  S.katKod = new Map(); S.katCache = new Map(); S.katIdx = new Map(); for (const c of S.katalog){ S.katKod.set(c.kod, c); const n = kkey(c.ad); if (!S.katIdx.has(n)) S.katIdx.set(n, c); }
+  dlNokta = null; dlKatalog(false);
   S.musteriler = m.data;
   S.kalemler = k.data.map(x => {
     const cikan = (x.hareketler||[]).reduce((s,h)=>s+Number(h.miktar),0);
@@ -749,12 +759,12 @@ function renderMusteri(){
 
 // ── 3 birim gösterimi ──
 function katBul(ad){
-  const n = norm(dimNorm(ad));
+  const n = kkey(ad);
   const tam = S.katIdx.get(n); if (tam) return tam;
   if (!n) return null;
   if (!S.katCache.has(n)){
     let best = null, bs = 0;
-    for (const c of S.katalog){ const sc = matchScore(ad, c.ad); if (sc > bs){ bs = sc; best = c; } }
+    for (const c of S.katalog){ if (noktaliMi(c.ad) && !noktaliMi(ad)) continue; const sc = matchScore(ad, c.ad); if (sc > bs){ bs = sc; best = c; } }
     S.katCache.set(n, bs >= 0.8 ? {...best, _yaklasik:true} : null);
   }
   return S.katCache.get(n);
@@ -769,7 +779,7 @@ function u3Str(ad, q, birim){
 const u3P = (k,q,b) => { const t = u3Str(k,q,b); return t ? `<div style="font-size:10.5px;color:#666">${t}</div>` : ''; };
 const u3Html = (ad, q, birim) => { const t = u3Str(ad, q, birim); return t ? `<div class="u3">${t}</div>` : ''; };
 function katOneri(ad){
-  return S.katalog.map(c=>({c, s:matchScore(ad, c.ad)})).filter(x=>x.s>=0.5).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.c);
+  return S.katalog.filter(c=>noktaliMi(ad) || !noktaliMi(c.ad)).map(c=>({c, s:matchScore(ad, c.ad)})).filter(x=>x.s>=0.5).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.c);
 }
 function girisHint(r, i){
   if (!String(r.malzeme).trim()) return '';
@@ -1014,7 +1024,7 @@ async function saveGiris(){
     const {data: irs, error} = await sb.from('irsaliyeler').insert({tip:'giris', irsaliye_no:$('#g-no').value.trim()||null, tarih:$('#g-tarih').value||null, musteri_id:m.id, dosya_adi:girisFile||null}).select().single();
     if (error) throw error;
     const {error: e2} = await sb.from('stok_kalemleri').insert(rows.map(r=>({
-      musteri_id:m.id, giris_irsaliye_id:irs.id, malzeme:r.malzeme.trim(), miktar:Number(r.miktar), birim:r.birim, islem:r.islem.trim()||null, katalog_kod:S.katIdx.get(norm(dimNorm(r.malzeme)))?.kod || null
+      musteri_id:m.id, giris_irsaliye_id:irs.id, malzeme:r.malzeme.trim(), miktar:Number(r.miktar), birim:r.birim, islem:r.islem.trim()||null, katalog_kod:S.katIdx.get(kkey(r.malzeme))?.kod || null
     })));
     if (e2){ await sb.from('irsaliyeler').delete().eq('id', irs.id); throw e2; }
     toast(`${ieNo(irs.is_emri_no)} oluşturuldu, ${rows.length} kalem stoğa girdi.`);
@@ -1588,7 +1598,7 @@ async function ieKaydet(yaz){
     if (r.error) throw r.error;
     for (const k of silinen){ r = await sb.from('stok_kalemleri').delete().eq('id', k.id); if (r.error) throw r.error; }
     for (const x of rows){
-      const d = {musteri_id:m.id, malzeme:String(x.malzeme).trim(), miktar:Number(x.miktar), birim:x.birim, islem:String(x.islem||'').trim()||null, katalog_kod:S.katIdx.get(norm(dimNorm(x.malzeme)))?.kod || undefined};
+      const d = {musteri_id:m.id, malzeme:String(x.malzeme).trim(), miktar:Number(x.miktar), birim:x.birim, islem:String(x.islem||'').trim()||null, katalog_kod:S.katIdx.get(kkey(x.malzeme))?.kod || undefined};
       r = x.id ? await sb.from('stok_kalemleri').update(d).eq('id', x.id)
                : await sb.from('stok_kalemleri').insert({...d, giris_irsaliye_id:ieId});
       if (r.error) throw r.error;
@@ -1740,7 +1750,7 @@ $('#stok-body').addEventListener('click', e => { const b = e.target.closest('[da
 let kbId = null;
 function kbGuncelle(){
   const k = S.kalemler.find(x=>x.id===kbId); if (!k) return;
-  const c = S.katIdx.get(norm(dimNorm($('#kb-ad').value)));
+  const c = S.katIdx.get(kkey($('#kb-ad').value));
   $('#kb-onizleme').textContent = c ? (u3Str({...k, katalog_kod:c.kod}, k.miktar, k.birim) || 'Bu kartta çevrim katsayısı yok.') : '';
 }
 function kbAc(id){
@@ -1757,7 +1767,7 @@ $('#kb-ad').addEventListener('input', kbGuncelle);
 $('#kb-oneri').addEventListener('click', e => { const b = e.target.closest('[data-kbpick]'); if (b){ $('#kb-ad').value = b.dataset.kbpick; kbGuncelle(); } });
 $('#kb-modal').addEventListener('mousedown', e => { if (e.target.id === 'kb-modal') kbKapat(); });
 $('#kb-kaydet').onclick = async () => {
-  const c = S.katIdx.get(norm(dimNorm($('#kb-ad').value)));
+  const c = S.katIdx.get(kkey($('#kb-ad').value));
   if (!c) return toast('Listeden katalogdaki bir stok adı seçin.', true);
   const {error} = await sb.from('stok_kalemleri').update({katalog_kod:c.kod}).eq('id', kbId);
   if (error) return toast('Bağlanamadı: '+error.message, true);
