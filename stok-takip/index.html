@@ -485,21 +485,40 @@ function kalemYap(malzeme, miktar, birim, adet){
   return it;
 }
 
+// OCR'ın sık bozduğu profil kodları ve yapışık "3MMPROFİL" gibi adlar
+function adDuzelt(ad){
+  return String(ad).replace(/\b1P([EN])\b/gi,'IP$1').replace(/\bHE8\b/gi,'HEB').replace(/\bHEA\b/gi,'HEA')
+    .replace(/(\d)\s*MM(?=[A-ZÇĞİÖŞÜ]{3,})/g,'$1 MM ').replace(/\s+/g,' ').trim();
+}
+// "160 IPE 12 MT 3.615 kg 20 Adet": ad sonundaki boy (12 MT) miktar değildir
+function profilSatir(line){
+  const m = line.match(/^(.*?\b(?:[1I]P[EN]|HE[ABM8]|NPU|NPI|UPN|UPE)\b.*?)\s+(\d{1,2}(?:[.,]5)?)\s*(?:MTR|MT)\b\s*(.*)$/i);
+  if (!m) return null;
+  const ad = adDuzelt(`${m[1]} ${m[2]} MT`), rest = m[3];
+  let q = rest.match(/^(\d[\d.,]*)\s*(KGM|KG|TON|TNE)\b\s*(?:(\d[\d.,]*)\s*(?:ADET|AD)\b)?/i);
+  if (q) return kalemYap(ad, trNum(q[1]), normUnit(q[2]), q[3] ? trNum(q[3]) : 0);
+  q = rest.match(/^(\d[\d.,]*)\s*(?:ADET|AD)\b/i);
+  if (q) return {malzeme:ad, miktar:trNum(q[1]), birim:'adet', islem:'', ipucu:'Kg miktarı okunamadı, adet sütunu alındı'};
+  return {malzeme:ad, miktar:'', birim:'kg', islem:'', ipucu:'Miktar okunamadı, elle girin'};
+}
 function parseItems(lines){
   const out = [];
   for (let i = 0; i < lines.length; i++){
     let line = lines[i].replace(/\s+/g,' ').trim();
     if (!line || SKIP_RE.test(norm(line))) continue;
+    line = line.replace(/^[>»›|¦!~=–—-]+\s*/,'');
     // OCR/PDF yapışıklıkları: "3.615kg", "264m", "12MT7 865 kg"
     line = line.replace(/(\d)(MTR|MT|KGM|KG)\d(?=\s+\d)/gi,'$1 $2').replace(/(\d)(?=(?:KGM|KG|TON|TNE|MTR|MT|ADET|AD)\b)/gi,'$1 ').replace(/(\d)(?=m\b)/g,'$1 ')
       .replace(/\b(MT|MTR|KG|KGM)\d\b(?=\s+\d)/gi,'$1').replace(/[(\[{]\s*(?=\d[\d.,]*\s*(?:adet|ad)\b)/gi,'').replace(/\s+/g,' ').trim();
     // baştaki sıra numarasını yalnızca beklenen sıradaki numaraysa at (ör. "3 mm X 1200" bozulmasın)
     const rn = line.match(/^(\d{1,3})\s+(.+)$/);
     if (rn && Number(rn[1]) === out.length + 1) line = rn[2];
+    const ps = profilSatir(line);
+    if (ps){ out.push(ps); continue; }
     // "ad ... MİKTAR birim ADET adet" (miktar sütunu önce, adet sütunu sonda): ad içindeki "12 MT" gibi boyları miktar sanma
     const ma = line.match(/^(.+)\s+(\d[\d.,]*)\s*(KGM|KG|TON|TNE|MTR|MT|M)\s+(\d[\d.,]*)\s*(?:ADET|AD)\s*$/i);
     if (ma && !/^[\d.,\s]+$/.test(ma[1]) && ma[1].trim().length >= 3 && trNum(ma[2]) > 0){
-      out.push(kalemYap(ma[1].trim(), trNum(ma[2]), normUnit(ma[3]), trNum(ma[4])));
+      out.push(kalemYap(adDuzelt(ma[1]), trNum(ma[2]), normUnit(ma[3]), trNum(ma[4])));
       continue;
     }
     const m = line.match(ROW_RE);
@@ -508,7 +527,7 @@ function parseItems(lines){
       const {ad, adet} = adetAyir(m[1]);
       const miktar = trNum(m[2]);
       if (ad.length < 3 || /^[\d.,\s]+$/.test(ad) || miktar <= 0) continue;
-      out.push(kalemYap(ad, miktar, normUnit(m[3]), adet));
+      out.push(kalemYap(adDuzelt(ad), miktar, normUnit(m[3]), adet));
       continue;
     }
     // Açıklama ile miktar PDF'te iki ayrı satıra düşmüş olabilir: "60 X 120 X 4 PROFİL 308.0000000" + "1 1.848 m"
@@ -518,7 +537,7 @@ function parseItems(lines){
       const {ad, adet} = adetAyir(line);
       const miktar = trNum(q[2]);
       if (ad.length >= 3 && !/^[\d.,\s]+$/.test(ad) && miktar > 0){
-        out.push(kalemYap(ad, miktar, normUnit(q[3]), adet));
+        out.push(kalemYap(adDuzelt(ad), miktar, normUnit(q[3]), adet));
         i++;
       }
     }
