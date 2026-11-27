@@ -167,7 +167,7 @@ body.locked header,body.locked main{display:none}
 .pgrid .pgh .gsay{color:var(--muted);font-size:13px;font-weight:500}
 .pgrid .gtopl{text-align:right;font-weight:600;font-size:13.5px;color:#334}
 .pgrid .pbs{font-size:12.5px;color:#445}
-.pgrid th:nth-child(5),.pgrid th:nth-child(7),.pgrid th:nth-child(9){width:9%}.pgrid th:nth-child(6),.pgrid th:nth-child(8),.pgrid th:nth-child(10){width:4.5%}.pbie{font-size:11.5px;color:#667;margin-top:2px}
+.pgrid th:nth-child(5),.pgrid th:nth-child(7),.pgrid th:nth-child(9){width:9%}.pgrid th:nth-child(6),.pgrid th:nth-child(8),.pgrid th:nth-child(10){width:4.5%}.pbie{font-size:11.5px;color:#667;margin-top:2px}.pbed{display:inline-block;font-size:11.5px;color:var(--brand);text-decoration:none;margin-top:2px;opacity:.75}.pbed:hover{opacity:1;text-decoration:underline}
 .pgrid tbody tr:not(.pgh):nth-child(even) td:not(.pb){background:#eef4fb}.pgrid tbody tr:not(.pgh):nth-child(odd) td:not(.pb){background:#fdf5e6}
 .pgrid .pgh td{background:#e2e9f7!important}
 .pgrid .pbad{min-width:190px;font-weight:500}
@@ -465,6 +465,13 @@ td input.num{width:100%;max-width:110px}
   <div id="kb-oneri" class="oneri" style="margin:10px 0"></div>
   <div id="kb-onizleme" class="u3" style="white-space:normal;font-size:14px;margin-bottom:8px"></div>
   <div class="bar"><span style="flex:1"></span><button class="btn ghost" id="kb-kapat" type="button">Vazgeç</button><button class="btn" id="kb-kaydet" type="button">Bağla</button></div>
+</div></div>
+<div class="modal" id="bd-modal" style="display:none"><div class="modal-card" style="width:min(520px,100%)">
+  <h2>Birimleri düzelt</h2>
+  <div id="bd-info" class="sub" style="margin:0 0 12px"></div>
+  <div id="bd-alan" class="grid3" style="grid-template-columns:1fr 1fr"></div>
+  <div class="hint" style="margin:8px 0 12px">Değerler girişteki toplam miktar içindir. Çıkış yapıldıkça oransal azalır. Boş bırakırsanız katalog hesabı kullanılır.</div>
+  <div class="bar"><span style="flex:1"></span><button class="btn ghost" id="bd-kapat" type="button">Vazgeç</button><button class="btn" id="bd-kaydet" type="button">Kaydet</button></div>
 </div></div>
 <div class="toast" id="toast"></div>
 
@@ -978,7 +985,7 @@ function stokGruplari(list, sg){
     const ust = `<tr class="pgh"><td colspan="7"><b>${esc(g.ad)}</b> <span class="gsay">· ${sayi}</span></td><td colspan="4" class="gtopl">${alan==='kalan'?'Kalan':AL}: ${topl || '—'}</td></tr>`;
     const satirlar = g.k.map(k => {
       const ie = `<div class="pbie">${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b> · `:''}${esc(k.giris?.irsaliye_no||'—')}</div>`;
-      const ad = (sg === 'musteri' ? esc(k.malzeme) + katDurumHtml(k) : esc(k.musteriler?.ad || '—')) + ie;
+      const ad = (sg === 'musteri' ? esc(k.malzeme) + katDurumHtml(k) : esc(k.musteriler?.ad || '—')) + ie + `<a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a>`;
       return `<tr><td class="pbad">${ad}</td><td class="r"><b>${sayi2(k.miktar)}</b></td><td>${PB[k.birim]||esc(k.birim)}</td><td class="r">${sayi2(k.cikan)}</td>${pbHucre(k, alan)}<td class="pbs">${esc(islemParse(k.islem).std.join(' + ') || k.islem || '—')}<br>${durumChip(k)}</td></tr>`;
     }).join('');
     return ust + satirlar;
@@ -1008,7 +1015,7 @@ function renderStok(){
     <tr style="animation-delay:${Math.min(i,20)*25}ms">
       <td data-l="Müşteri"><b>${esc(k.musteriler?.ad)}</b></td>
       <td data-l="Malzeme">${esc(k.malzeme)}${katDurumHtml(k)}</td>
-      <td data-l="Giriş" class="right">${fmt(k.miktar)} ${esc(k.birim)}${u3Html(k,k.miktar,k.birim)}</td>
+      <td data-l="Giriş" class="right">${fmt(k.miktar)} ${esc(k.birim)}${u3Html(k,k.miktar,k.birim)}<a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a></td>
       <td data-l="Çıkan" class="right">${fmt(k.cikan)}${k.cikan>0?u3Html(k,k.cikan,k.birim):''}</td>
       <td data-l="Kalan" class="right"><b>${k.kalan>0?fmt(k.kalan)+' '+esc(k.birim):'<span class="chip c-cikti">Çıktı</span>'}</b>${k.kalan>0?u3Html(k,k.kalan,k.birim):''}</td>
       <td data-l="Yapılacak işlem">${islemCell(k.islem, k._ozel, `data-id="${k.id}"`)}</td>
@@ -1987,6 +1994,33 @@ function kbGuncelle(){
   const c = S.katIdx.get(kkey($('#kb-ad').value));
   $('#kb-onizleme').textContent = c ? (u3Str({...k, katalog_kod:c.kod}, k.miktar, k.birim) || 'Bu kartta çevrim katsayısı yok.') : '';
 }
+// kayıtlı kalemin 2. / 3. birimini elle düzelt
+let bdId = null;
+function bdAc(id){
+  const k = S.kalemler.find(x=>x.id===id); if (!k) return; bdId = id;
+  const x = u3Vals(k, k.miktar, k.birim), us = B23[k.birim] || [];
+  $('#bd-info').innerHTML = `<b>${esc(k.malzeme)}</b><br>${esc(k.musteriler?.ad||'')} · Giriş: ${fmt(k.miktar)} ${esc(k.birim)}`;
+  $('#bd-alan').innerHTML = us.map((u,i)=>`<label class="f">${i+2}. Birim (${PB[u]})<input type="number" step="any" id="bd-${i}" data-u="${u}" value="${yuv(x ? x.r[u] : null)}"></label>`).join('') || '<div class="hint">Bu birim için ek değer yok.</div>';
+  $('#bd-modal').style.display = 'flex';
+}
+const bdKapat = () => { $('#bd-modal').style.display = 'none'; bdId = null; };
+$('#bd-kapat').onclick = bdKapat;
+$('#bd-modal').addEventListener('mousedown', e => { if (e.target.id === 'bd-modal') bdKapat(); });
+$('#bd-alan').addEventListener('input', e => {
+  const k = S.kalemler.find(x=>x.id===bdId), c = k && katOf(k); if (!c || !e.target.dataset.u) return;
+  const val = Number(e.target.value); if (!(val > 0)) return;
+  const t = birimler3(c, val, e.target.dataset.u);
+  for (const el of $('#bd-alan').querySelectorAll('input')) if (el !== e.target && el.dataset.u !== k.birim){ const nv = t[el.dataset.u]; if (nv !== null && nv !== undefined && isFinite(nv)) el.value = yuv(nv); }
+});
+$('#bd-kaydet').onclick = async () => {
+  const k = S.kalemler.find(x=>x.id===bdId); if (!k) return;
+  const patch = {};
+  for (const el of $('#bd-alan').querySelectorAll('input')){ const v = el.value === '' ? null : Number(el.value); patch[el.dataset.u+'_ek'] = v > 0 ? Math.round(v*10000)/10000 : null; }
+  const {error} = await sb.from('stok_kalemleri').update(patch).eq('id', k.id);
+  if (error){ toast(error.message, true); return; }
+  Object.assign(k, patch); bdKapat(); renderAll(); toast('Birimler güncellendi');
+};
+document.addEventListener('click', e => { const a = e.target.closest('[data-bedit]'); if (a){ e.preventDefault(); e.stopPropagation(); bdAc(a.dataset.bedit); } });
 function kbAc(id){
   const k = S.kalemler.find(x=>x.id===id); if (!k) return;
   kbId = id;
