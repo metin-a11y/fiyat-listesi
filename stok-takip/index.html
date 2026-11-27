@@ -159,6 +159,12 @@ body.locked header,body.locked main{display:none}
 .pgrid td{border:1px solid #e3e8f2;padding:6px 7px;vertical-align:middle}
 .pgrid td.pb{font-variant-numeric:tabular-nums}
 .pgrid td.r{text-align:right}
+.pbu{font-size:.78em;opacity:.7;margin-left:2px}.pbn{color:#9aa}td.pb{font-variant-numeric:tabular-nums;white-space:nowrap}th.gc{text-align:center}
+#ie-body td:last-child{white-space:normal!important}#ie-body td:last-child .btn{display:block;margin:3px 0 0 auto}
+table.mini td.pb{padding:5px 6px}@media(max-width:1100px){table.mini td.pb{white-space:normal}table.mini td.mm{min-width:110px}}
+#stok-tablo td.pb,#irs-modal td.pb,#ie-cikislar td.pb{padding:5px 5px;font-size:12.5px}#stok-tablo th,#irs-modal th{padding-left:6px;padding-right:6px}#stok-tablo td:nth-child(12){max-width:190px}#stok-tablo td:nth-child(2){min-width:130px}#stok-tablo td:nth-child(1){max-width:150px}#stok-tablo td.pb{white-space:normal}#stok-tablo td:nth-child(14){max-width:120px}
+table.mini{width:100%;border-collapse:collapse;font-size:13.5px;min-width:0}table.mini td{border:1px solid #e3e8f2;padding:5px 7px}table.mini td.mm{background:#fff;font-weight:500;min-width:110px;white-space:normal}
+@media(max-width:800px){.view table.mini{display:table!important}.view table.mini tbody{display:table-row-group!important}.view table.mini tbody tr{display:table-row!important;border:0!important;padding:0!important}.view table.mini tbody td{display:table-cell!important;padding:4px 4px!important;font-size:12px;text-align:right!important;white-space:normal!important}.view table.mini td.mm{text-align:left!important;white-space:normal!important}.view table.mini td::before{display:none!important}}
 .pb1{background:#fffcd2}.pb2{background:#e0f8d4}.pb3{background:#d6f7f6}
 .pgrid th.pb1{background:#f3efae}.pgrid th.pb2{background:#c9ecb8}.pgrid th.pb3{background:#b9ecea}
 .pgrid td.pb{font-weight:600;color:#1b2540}.pgrid td.pb:not(.r){font-weight:500;color:#445}
@@ -203,10 +209,18 @@ td input.num{width:100%;max-width:110px}
   .logo-img{height:32px}
   #v-stok .tbl-stack thead{display:none}
   #v-stok .tbl-stack,#v-stok .tbl-stack tbody{display:block}
-  #v-stok .tbl-stack tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px}
+  #v-stok .tbl-stack tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 14px;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px}
   #v-stok .tbl-stack td{display:block;width:auto!important;border:0;padding:2px 0;text-align:left!important}
-  #v-stok .tbl-stack td:nth-child(1),#v-stok .tbl-stack td:nth-child(2),#v-stok .tbl-stack td:nth-child(6){grid-column:1/-1}
+  #v-stok .tbl-stack td:nth-child(1),#v-stok .tbl-stack td:nth-child(2),#v-stok .tbl-stack td:nth-child(12),#v-stok .tbl-stack td:nth-child(13),#v-stok .tbl-stack td:nth-child(14){grid-column:1/-1}
   #v-stok .tbl-stack td[data-l]::before{content:attr(data-l);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+}
+@media(max-width:1100px){
+  #ie-body{display:block}
+  #v-isemri thead{display:none}#v-isemri .card>table{display:block}
+  #ie-body tr.tikla{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 12px;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+  #ie-body > tr > td{display:block;border:0;padding:2px 0;min-width:0}
+  #ie-body > tr > td:nth-child(5),#ie-body > tr > td:nth-child(7){grid-column:1/-1}
+  #ie-body > tr > td:nth-child(7) .btn{display:inline-block;margin:2px 4px 2px 0}
 }
 @media(max-width:1100px){
   #ie-modal table,#ie-modal tbody{display:block}
@@ -285,10 +299,10 @@ td input.num{width:100%;max-width:110px}
       <div class="seg" id="stok-seg"><button data-sg="musteri" class="on">Müşteri bazlı</button><button data-sg="malzeme">Malzeme bazlı</button><button data-sg="detay">Detay listesi</button></div>
       <div class="smbar" id="stok-sm" style="display:none"><span style="color:var(--muted);font-size:14px">Göster:</span><select id="f-alan"><option value="kalan">Kalan</option><option value="miktar">Giriş</option><option value="cikan">Çıkan</option></select></div>
       <div id="stok-gruplar"></div>
-      <table class="tbl-stack" id="stok-tablo" style="display:none">
-        <thead><tr><th>Müşteri</th><th>Malzeme</th><th class="right">Giriş</th><th class="right">Çıkan</th><th class="right">Kalan</th><th>Yapılacak işlem</th><th>Durum</th><th>İş emri / irsaliye</th></tr></thead>
+      <div style="overflow-x:auto;max-width:100%"><table class="tbl-stack" id="stok-tablo" style="display:none">
+        <thead><tr><th rowspan="2">Müşteri</th><th rowspan="2">Malzeme</th><th colspan="3" class="gc">Giriş</th><th colspan="3" class="gc">Çıkan</th><th colspan="3" class="gc">Kalan</th><th rowspan="2">Yapılacak işlem</th><th rowspan="2">Durum</th><th rowspan="2">İş emri / irsaliye</th></tr><tr><th class="pb1 r">1.Birim</th><th class="pb2 r">2.Birim</th><th class="pb3 r">3.Birim</th><th class="pb1 r">1.Birim</th><th class="pb2 r">2.Birim</th><th class="pb3 r">3.Birim</th><th class="pb1 r">1.Birim</th><th class="pb2 r">2.Birim</th><th class="pb3 r">3.Birim</th></tr></thead>
         <tbody id="stok-body"></tbody>
-      </table>
+      </table></div>
     </div>
   </section>
 
@@ -444,7 +458,7 @@ td input.num{width:100%;max-width:110px}
     <button class="btn" id="ie-kaydet-yaz" type="button">Kaydet ve yazdır</button>
   </div>
 </div></div>
-<div class="modal" id="irs-modal" style="display:none"><div class="modal-card">
+<div class="modal" id="irs-modal" style="display:none"><div class="modal-card" style="width:min(1240px,100%)">
   <h2 id="irs-title"></h2>
   <div id="irs-info" class="grid3" style="margin-bottom:10px"></div>
   <table><thead id="irs-head"></thead><tbody id="irs-rows"></tbody></table>
@@ -858,8 +872,8 @@ function ieCikisHtml(girisId){
   if (!l.length) return '<div class="hint" style="margin-top:14px">Bu iş emrinden henüz çıkış yapılmadı.</div>';
   const n = new Set(l.map(x=>x.irs?.id)).size;
   return `<h3 style="margin:22px 0 8px;font-size:16px">Çıkışlar <span class="chip c-cikis">${n} irsaliye</span></h3>
-  <table><thead><tr><th>Tarih</th><th>Çıkış irsaliye no</th><th>Malzeme</th><th class="right">Çıkan</th></tr></thead><tbody>
-  ${l.map(x=>`<tr class="tikla" data-open="${x.irs?.id||''}"><td>${fdate(x.irs?.tarih||'')}</td><td>${esc(x.irs?.irsaliye_no||'—')}</td><td>${esc(x.k.malzeme)}</td><td class="right">${u3Kutu(x.k,x.miktar,x.k.birim)}</td></tr>`).join('')}</tbody></table>`;
+  <table><thead><tr><th rowspan="2">Tarih</th><th rowspan="2">Çıkış irsaliye no</th><th rowspan="2">Malzeme</th>${u3Th1('Çıkan')}</tr><tr>${u3Th2()}</tr></thead><tbody>
+  ${l.map(x=>`<tr class="tikla" data-open="${x.irs?.id||''}"><td>${fdate(x.irs?.tarih||'')}</td><td>${esc(x.irs?.irsaliye_no||'—')}</td><td>${esc(x.k.malzeme)}</td>${u3Td(x.k,x.miktar,x.k.birim,'Çıkan')}</tr>`).join('')}</tbody></table>`;
 }
 function renderAll(){ renderMusteri(); renderStok(); renderIrs(); renderCikis(); renderIE(); }
 
@@ -934,6 +948,21 @@ function u3Kutu(k, q, birim){
     return `<span style="background:${U3C[i+1]};border:1px solid rgba(0,0,0,.12);border-radius:6px;padding:2px 7px;white-space:nowrap;font-variant-numeric:tabular-nums"><b>${yok?'—':sayi(v)}</b> <span style="font-size:.8em;opacity:.7">${U3E[u]}</span></span>`;
   }).join('')}</span>`;
 }
+// stok gridi gibi hizalı 3 birim sütunları (1.Birim / 2.Birim / 3.Birim)
+function u3Arr(k, q, birim){
+  q = Number(q); const x = u3Vals(k, q, birim), r = x ? x.r : {adet:null, mt:null, kg:null};
+  const sira = x ? (x.kgSira ? ['kg','adet','mt'] : ['mt','adet','kg']) : [birim, ...['kg','adet','mt'].filter(u=>u!==birim)];
+  return sira.map(u => ({u, v: u === birim ? q : r[u], yok: !(q > 0)}));
+}
+function u3Cells(k, q, birim){
+  const sayi = v => (Math.round(v*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return u3Arr(k, q, birim).map(o => o.yok || o.v === null || o.v === undefined || !isFinite(o.v) ? '<span class="pbn">—</span>' : `<b>${sayi(o.v)}</b> <span class="pbu">${U3E[o.u]}</span>`);
+}
+const u3Td = (k, q, birim, lbl) => u3Cells(k, q, birim).map((c,i) => `<td class="pb pb${i+1} r" data-l="${lbl} ${i+1}.Birim">${c}</td>`).join('');
+// iki satırlı başlık: grup adı + 1.Birim/2.Birim/3.Birim
+const u3Th1 = g => `<th colspan="3" class="gc">${g}</th>`;
+const u3Th2 = () => [1,2,3].map(i=>`<th class="pb${i} r">${i}.Birim</th>`).join('');
+const u3Mini = (list, alan, ek) => `<table class="mini"><tbody>${list.map(x=>`<tr><td class="mm">${esc(x.malzeme)}</td>${u3Td(x, x[alan], x.birim, 'Miktar')}</tr>`).join('')}</tbody></table>${ek||''}`;
 const u3Html = (ad, q, birim) => { const t = u3Str(ad, q, birim); return t ? `<div class="u3">${t}</div>` : ''; };
 function katOneri(ad){
   return S.katalog.filter(c=>noktaliMi(ad) || !noktaliMi(c.ad)).map(c=>({c, s:matchScore(ad, c.ad)})).filter(x=>x.s>=0.5).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.c);
@@ -1038,16 +1067,14 @@ function renderStok(){
   $('#stok-body').innerHTML = list.length ? list.map((k,i)=>`
     <tr style="animation-delay:${Math.min(i,20)*25}ms">
       <td data-l="Müşteri"><b>${esc(k.musteriler?.ad)}</b></td>
-      <td data-l="Malzeme">${esc(k.malzeme)}${katDurumHtml(k)}</td>
-      <td data-l="Giriş" class="right">${u3Kutu(k,k.miktar,k.birim)}<br><a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a></td>
-      <td data-l="Çıkan" class="right">${u3Kutu(k,k.cikan,k.birim)}</td>
-      <td data-l="Kalan" class="right">${k.kalan>0?u3Kutu(k,k.kalan,k.birim):'<span class="chip c-cikti">Çıktı</span>'}</td>
+      <td data-l="Malzeme">${esc(k.malzeme)}${katDurumHtml(k)}<a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a></td>
+      ${u3Td(k,k.miktar,k.birim,'Giriş')}${u3Td(k,k.cikan,k.birim,'Çıkan')}${u3Td(k,k.kalan,k.birim,'Kalan')}
       <td data-l="Yapılacak işlem">${islemCell(k.islem, k._ozel, `data-id="${k.id}"`)}</td>
       <td data-l="Durum"><select data-id="${k.id}" data-f="durum">
         ${['bekliyor','islemde','tamam'].map(d=>`<option value="${d}" ${k.durum===d?'selected':''}>${{bekliyor:'Bekliyor',islemde:'İşlemde',tamam:'Tamam'}[d]}</option>`).join('')}
       </select>${islemOzetHtml(k)}<button class="btn ghost sm" style="margin-top:6px" data-ikayit="${k.id}">İşlem kaydı</button></td>
       <td data-l="İş emri / irsaliye" style="color:var(--muted);font-size:13px">${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b><br>`:''}${esc(k.giris?.irsaliye_no||'—')}<br>${fdate(k.giris?.tarih)}</td>
-    </tr>`).join('') : '<tr><td colspan="8" class="empty">Kayıt yok</td></tr>';
+    </tr>`).join('') : '<tr><td colspan="14" class="empty">Kayıt yok</td></tr>';
 }
 
 function renderIrs(){
@@ -1687,6 +1714,7 @@ function printIsEmri(irsId){
     .meta span{color:#666;font-size:12px;display:block}
     table{width:100%;border-collapse:collapse} th,td{border:1px solid #bbb;padding:8px 10px;text-align:left;vertical-align:top}
     th{background:#f1f3f6;font-size:12px;text-transform:uppercase;letter-spacing:.4px} td.r,th.r{text-align:right}
+    .pb1{background:#fffcd2}.pb2{background:#e0f8d4}.pb3{background:#d6f7f6}.pbu{font-size:.78em;opacity:.7}.pbn{color:#999} body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .imza{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:60px;text-align:center;color:#555;font-size:12px}
     .imza div{border-top:1px solid #888;padding-top:6px}
   </style></head><body>
@@ -1698,8 +1726,8 @@ function printIsEmri(irsId){
       <div><span>İrsaliye tarihi</span>${fdate(r.tarih)}</div>
       <div><span>İş emri tarihi</span>${fdate((r.created_at||"").slice(0,10))}</div>
     </div>
-    <table><thead><tr><th>#</th><th>Malzeme</th><th class="r">Miktar</th><th>Yapılacak işlem</th></tr></thead><tbody>
-      ${kl.map((k,i)=>`<tr><td>${i+1}</td><td>${esc(k.malzeme)}</td><td class="r">${u3Kutu(k,k.miktar,k.birim)}</td><td>${esc(k.islem||'')}</td></tr>`).join('')}
+    <table><thead><tr><th>#</th><th>Malzeme</th><th class="r pb1">1.Birim</th><th class="r pb2">2.Birim</th><th class="r pb3">3.Birim</th><th>Yapılacak işlem</th></tr></thead><tbody>
+      ${kl.map((k,i)=>`<tr><td>${i+1}</td><td>${esc(k.malzeme)}</td>${u3Cells(k,k.miktar,k.birim).map((c,j)=>`<td class="r pb${j+1}" style="white-space:nowrap">${c}</td>`).join('')}<td>${esc(k.islem||'')}</td></tr>`).join('')}
     </tbody></table>
     <div class="imza"><div>Hazırlayan</div><div>İşlemi yapan</div><div>Kontrol</div></div>
     <script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script>
@@ -1722,10 +1750,22 @@ function raporFiltre(){
 const DURUM_AD = {bekliyor:'Bekliyor', islemde:'İşlemde', tamam:'Tamam'};
 
 // bölümler: [{baslik, satirlar:[[h1,h2,...]]}], kolonlar: [{h, r:sağa hizalı}]
+const U3K = g => [1,2,3].map(i=>({h:i+'.Birim', r:1, pb:i, ust: i===1 ? {h:g, span:3} : undefined}));
 function raporYaz(w, baslik, filtreOzet, kolonlar, bolumler, toplamMetni){
+  const pc = k => `${k.r?'r':''} ${k.pb?'pb'+k.pb:''}`.trim();
+  let thead;
+  if (kolonlar.some(k=>k.ust)){
+    let h1 = '', h2 = '';
+    for (let i = 0; i < kolonlar.length;){
+      const k = kolonlar[i];
+      if (k.ust){ h1 += `<th colspan="${k.ust.span}" class="c">${esc(k.ust.h)}</th>`; for (let j = 0; j < k.ust.span; j++){ const kk = kolonlar[i+j]; h2 += `<th class="${pc(kk)}">${esc(kk.h)}</th>`; } i += k.ust.span; }
+      else { h1 += `<th rowspan="2" class="${pc(k)}">${esc(k.h)}</th>`; i++; }
+    }
+    thead = `<tr>${h1}</tr><tr>${h2}</tr>`;
+  } else thead = `<tr>${kolonlar.map(k=>`<th class="${pc(k)}">${esc(k.h)}</th>`).join('')}</tr>`;
   const tbl = b => `<div class="bolum">${b.baslik ? `<div class="bb">${esc(b.baslik)}</div>` : ''}
-    <table><thead><tr>${kolonlar.map(k=>`<th class="${k.r?'r':''}">${esc(k.h)}</th>`).join('')}</tr></thead><tbody>
-    ${b.satirlar.map(r=>`<tr>${r.map((c,i)=>`<td class="${kolonlar[i].r?'r':''}">${c===null||c===undefined?'':c}</td>`).join('')}</tr>`).join('')}
+    <table><thead>${thead}</thead><tbody>
+    ${b.satirlar.map(r=>`<tr>${r.map((c,i)=>`<td class="${pc(kolonlar[i])}">${c===null||c===undefined?'':c}</td>`).join('')}</tr>`).join('')}
     </tbody></table></div>`;
   w.document.open();
   w.document.write(`<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>${esc(baslik)}</title><style>
@@ -1738,6 +1778,7 @@ function raporYaz(w, baslik, filtreOzet, kolonlar, bolumler, toplamMetni){
     table{width:100%;border-collapse:collapse} th,td{border:1px solid #cfd6e3;padding:5px 8px;text-align:left;vertical-align:top}
     th{background:#f4f6fa;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#444} td.r,th.r{text-align:right}
     tr{break-inside:avoid} thead{display:table-header-group}
+    .pb1{background:#fffcd2}.pb2{background:#e0f8d4}.pb3{background:#d6f7f6}th.pb1{background:#f3efae}th.pb2{background:#c9ecb8}th.pb3{background:#b9ecea}th.c{text-align:center}td.pb{white-space:nowrap;font-variant-numeric:tabular-nums}.pbu{font-size:.78em;opacity:.7}.pbn{color:#999}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .alt{margin-top:10px;color:#444;font-size:12px;border-top:1px solid #ccc;padding-top:8px}
     .bos{padding:30px;text-align:center;color:#777}
   </style></head><body>
@@ -1767,34 +1808,34 @@ async function rapor(tur){
 
     if (tur === 'isemri'){
       const l = giris.filter(i => f.ok(i.musteri_id, rTarih(i))).sort((a,b)=>(b.is_emri_no||0)-(a.is_emri_no||0));
-      const rows = l.map(i => {
+      const bol = l.map(i => {
         const k = kalemlerDe(i.id);
-        const islem = [...new Set(k.map(x=>x.islem).filter(Boolean))].join(', ');
         const durum = !k.length ? '—' : k.every(x=>x.kalan<=0) ? 'Sevk edildi' : k.every(x=>x.durum==='tamam') ? 'Sevke hazır' : k.some(x=>x.durum==='islemde') ? 'İşlemde' : 'Bekliyor';
-        return [`<b>${ieNo(i.is_emri_no)}</b>`, fdate(rTarih(i)), esc(i.musteriler?.ad||''), esc(i.irsaliye_no||'—'), k.map(x=>`${esc(x.malzeme)}<br>${u3Kutu(x,x.miktar,x.birim)}`).join('<div style="height:5px"></div>'), esc(islem||'—'), durum];
-      });
-      raporYaz(w, 'İş Emri Listesi', f.ozet, [{h:'İş emri'},{h:'Tarih'},{h:'Müşteri'},{h:'İrsaliye no'},{h:'Malzemeler'},{h:'Yapılacak işlem'},{h:'Durum'}], rows.length?[{satirlar:rows}]:[], `Toplam ${rows.length} iş emri`);
+        return {baslik: `${ieNo(i.is_emri_no)}  ·  ${fdate(rTarih(i))}  ·  ${i.musteriler?.ad||''}  ·  İrsaliye: ${i.irsaliye_no||'—'}  ·  ${durum}`,
+          satirlar: k.map(x=>[esc(x.malzeme), ...u3Cells(x,x.miktar,x.birim), esc(x.islem||'—')])};
+      }).filter(g=>g.satirlar.length);
+      raporYaz(w, 'İş Emri Listesi', f.ozet, [{h:'Malzeme'},...U3K('Miktar'),{h:'Yapılacak işlem'}], bol, `Toplam ${bol.length} iş emri`);
     }
     else if (tur === 'stok'){
       const l = S.kalemler.filter(k => k.kalan>0 && f.ok(k.musteri_id, k.giris?.tarih || (k.created_at||'').slice(0,10)));
       const gr = grupla(l, k=>k.musteri_id, (a, x) => `${x[0].musteriler?.ad||''}  ·  ${x.length} kalem`).sort((a,b)=>a.baslik.localeCompare(b.baslik,'tr'));
-      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), u3Kutu(k,k.miktar,k.birim), u3Kutu(k,k.cikan,k.birim), u3Kutu(k,k.kalan,k.birim), esc(k.islem||'—'), DURUM_AD[k.durum], esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
-      raporYaz(w, 'Stok Listesi', f.ozet, [{h:'Malzeme'},{h:'Giriş',r:1},{h:'Çıkan',r:1},{h:'Kalan',r:1},{h:'Yapılacak işlem'},{h:'Durum'},{h:'İş emri'},{h:'Giriş tarihi'}], bol, `${gr.length} müşteri, ${l.length} kalem stokta`);
+      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), ...u3Cells(k,k.miktar,k.birim), ...u3Cells(k,k.cikan,k.birim), ...u3Cells(k,k.kalan,k.birim), esc(k.islem||'—'), DURUM_AD[k.durum], esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
+      raporYaz(w, 'Stok Listesi', f.ozet, [{h:'Malzeme'},...U3K('Giriş'),...U3K('Çıkan'),...U3K('Kalan'),{h:'Yapılacak işlem'},{h:'Durum'},{h:'İş emri'},{h:'Giriş tarihi'}], bol, `${gr.length} müşteri, ${l.length} kalem stokta`);
     }
     else if (tur === 'biten'){
       const l = S.kalemler.filter(k => (k.durum==='tamam' || k.kalan<=0) && f.ok(k.musteri_id, k.giris?.tarih || (k.created_at||'').slice(0,10)));
       const gr = grupla(l, k=>k.musteri_id, (a, x) => `${x[0].musteriler?.ad||''}  ·  ${x.length} kalem`).sort((a,b)=>a.baslik.localeCompare(b.baslik,'tr'));
-      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), esc(k.islem||'—'), u3Kutu(k,k.miktar,k.birim), k.kalan>0 ? u3Kutu(k,k.kalan,k.birim) : '0', k.kalan>0 ? 'Sevke hazır' : 'Sevk edildi', esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
+      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), esc(k.islem||'—'), ...u3Cells(k,k.miktar,k.birim), ...u3Cells(k,k.kalan,k.birim), k.kalan>0 ? 'Sevke hazır' : 'Sevk edildi', esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
       const hazir = l.filter(k=>k.kalan>0).length;
-      raporYaz(w, 'Biten İşler', f.ozet, [{h:'Malzeme'},{h:'Yapılan işlem'},{h:'Miktar',r:1},{h:'Sevk bekleyen',r:1},{h:'Durum'},{h:'İş emri'},{h:'Giriş tarihi'}], bol, `${l.length} biten kalem; ${hazir} tanesi sevk bekliyor, ${l.length-hazir} tanesi sevk edildi`);
+      raporYaz(w, 'Biten İşler', f.ozet, [{h:'Malzeme'},{h:'Yapılan işlem'},...U3K('Miktar'),...U3K('Sevk bekleyen'),{h:'Durum'},{h:'İş emri'},{h:'Giriş tarihi'}], bol, `${l.length} biten kalem; ${hazir} tanesi sevk bekliyor, ${l.length-hazir} tanesi sevk edildi`);
     }
     else if (tur === 'sevk'){
-      const {data, error} = await fetchAll(() => sb.from('hareketler').select('miktar, kalem:stok_kalemleri(malzeme,birim,katalog_kod), irs:irsaliyeler(id,irsaliye_no,tarih,musteri_id,created_at,musteriler(ad))').order('created_at',{ascending:false}).order('id'));
+      const {data, error} = await fetchAll(() => sb.from('hareketler').select('miktar, kalem:stok_kalemleri(malzeme,birim,miktar,adet_ek,mt_ek,kg_ek,katalog_kod), irs:irsaliyeler(id,irsaliye_no,tarih,musteri_id,created_at,musteriler(ad))').order('created_at',{ascending:false}).order('id'));
       if (error) throw error;
       const l = data.filter(h => h.irs && f.ok(h.irs.musteri_id, rTarih(h.irs)));
       const gr = grupla(l, h=>h.irs.id, (a, x) => `${fdate(rTarih(x[0].irs))}  ·  ${x[0].irs.musteriler?.ad||''}  ·  İrsaliye: ${x[0].irs.irsaliye_no||'—'}`).sort((a,b)=>rTarih(b.l[0].irs).localeCompare(rTarih(a.l[0].irs)));
-      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(h=>[esc(h.kalem?.malzeme||''), h.kalem ? u3Kutu(h.kalem,h.miktar,h.kalem.birim) : fmt(h.miktar)])}));
-      raporYaz(w, 'Sevkiyatlar', f.ozet, [{h:'Malzeme'},{h:'Miktar',r:1}], bol, `${gr.length} sevkiyat, ${l.length} kalem`);
+      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(h=>[esc(h.kalem?.malzeme||''), ...(h.kalem ? u3Cells(h.kalem,h.miktar,h.kalem.birim) : [fmt(h.miktar),'',''])])}));
+      raporYaz(w, 'Sevkiyatlar', f.ozet, [{h:'Malzeme'},...U3K('Miktar')], bol, `${gr.length} sevkiyat, ${l.length} kalem`);
     }
   } catch(e){ console.error(e); w.close(); toast('Rapor hazırlanamadı: '+(e.message||e), true); }
 }
@@ -1816,7 +1857,7 @@ function renderIE(){
     <tr class="tikla" data-ieedit="${i.id}" style="animation-delay:${Math.min(n,20)*25}ms">
       <td style="white-space:nowrap"><b>${ieNo(i.is_emri_no)}</b></td><td style="white-space:nowrap">${fdate(i.tarih || (i.created_at||'').slice(0,10))}</td>
       <td>${esc(i.musteriler?.ad||'—')}</td><td>${esc(i.irsaliye_no||'—')}</td>
-      <td style="font-size:14px">${k.slice(0,3).map(x=>`<div style="margin-bottom:6px">${esc(x.malzeme)}<br>${u3Kutu(x,x.miktar,x.birim)}</div>`).join('')}${k.length>3?`<br><span style="color:var(--muted)">+${k.length-3} kalem daha</span>`:''}</td>
+      <td style="font-size:14px">${u3Mini(k.slice(0,3),'miktar',k.length>3?`<span style="color:var(--muted)">+${k.length-3} kalem daha</span>`:'')}</td>
       <td><span class="chip ${IE_CHIP[d]}">${d}</span>${(()=>{const n=new Set(ieCikislari(i.id).map(x=>x.irs?.id)).size;return n?`<div class="u3">${n} çıkış irsaliyesi</div>`:''})()}</td>
       <td class="right" style="white-space:nowrap"><button class="btn ghost sm" data-ieedit="${i.id}">Aç / Düzenle</button>
         <button class="btn ghost sm" data-print="${i.id}">Yazdır</button>
@@ -1953,15 +1994,15 @@ async function irsAc(id){
   $('#irs-modal').style.display = 'flex';
   if (giris){
     const k = S.kalemler.filter(x=>x.giris_irsaliye_id===id);
-    $('#irs-head').innerHTML = '<tr><th>Malzeme</th><th class="right">Giriş</th><th class="right">Çıkan</th><th class="right">Kalan</th><th>Yapılacak işlem</th><th>Durum</th></tr>';
-    $('#irs-rows').innerHTML = k.length ? k.map(x=>`<tr><td>${esc(x.malzeme)}${katDurumHtml(x).includes('Katalog seç')?'':''}</td><td class="right">${u3Kutu(x,x.miktar,x.birim)}</td><td class="right">${u3Kutu(x,x.cikan,x.birim)}</td><td class="right">${u3Kutu(x,x.kalan,x.birim)}</td><td>${esc(x.islem||'—')}</td><td>${DURUM_AD[x.durum]||''}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">Kalem yok</td></tr>';
+    $('#irs-head').innerHTML = `<tr><th rowspan="2">Malzeme</th>${u3Th1('Giriş')}${u3Th1('Çıkan')}${u3Th1('Kalan')}<th rowspan="2">Yapılacak işlem</th><th rowspan="2">Durum</th></tr><tr>${u3Th2()}${u3Th2()}${u3Th2()}</tr>`;
+    $('#irs-rows').innerHTML = k.length ? k.map(x=>`<tr><td>${esc(x.malzeme)}${katDurumHtml(x).includes('Katalog seç')?'':''}</td>${u3Td(x,x.miktar,x.birim,'Giriş')}${u3Td(x,x.cikan,x.birim,'Çıkan')}${u3Td(x,x.kalan,x.birim,'Kalan')}<td>${esc(x.islem||'—')}</td><td>${DURUM_AD[x.durum]||''}</td></tr>`).join('') : '<tr><td colspan="14" class="empty">Kalem yok</td></tr>';
   } else {
-    $('#irs-head').innerHTML = '<tr><th>Malzeme</th><th class="right">Çıkan miktar</th><th>Yapılacak işlem</th><th>İş emri</th></tr>';
-    $('#irs-rows').innerHTML = '<tr><td colspan="4" class="empty">Yükleniyor…</td></tr>';
-    const {data, error} = await sb.from('hareketler').select('miktar, kalem:stok_kalemleri(malzeme,birim,islem,katalog_kod,giris:irsaliyeler!giris_irsaliye_id(is_emri_no))').eq('irsaliye_id', id);
+    $('#irs-head').innerHTML = `<tr><th rowspan="2">Malzeme</th>${u3Th1('Çıkan miktar')}<th rowspan="2">Yapılacak işlem</th><th rowspan="2">İş emri</th></tr><tr>${u3Th2()}</tr>`;
+    $('#irs-rows').innerHTML = '<tr><td colspan="6" class="empty">Yükleniyor…</td></tr>';
+    const {data, error} = await sb.from('hareketler').select('miktar, kalem:stok_kalemleri(malzeme,birim,miktar,adet_ek,mt_ek,kg_ek,islem,katalog_kod,giris:irsaliyeler!giris_irsaliye_id(is_emri_no))').eq('irsaliye_id', id);
     if (irsAcikId !== id) return;
-    $('#irs-rows').innerHTML = error ? `<tr><td colspan="3" class="empty">Okunamadı: ${esc(error.message)}</td></tr>`
-      : data.length ? data.map(h=>`<tr><td>${esc(h.kalem?.malzeme||'')}</td><td class="right">${h.kalem?u3Kutu(h.kalem,h.miktar,h.kalem.birim):fmt(h.miktar)}</td><td>${esc(h.kalem?.islem||'—')}</td><td>${h.kalem?.giris?.is_emri_no?`<b>${ieNo(h.kalem.giris.is_emri_no)}</b>`:'—'}</td></tr>`).join('') : '<tr><td colspan="4" class="empty">Kalem yok</td></tr>';
+    $('#irs-rows').innerHTML = error ? `<tr><td colspan="6" class="empty">Okunamadı: ${esc(error.message)}</td></tr>`
+      : data.length ? data.map(h=>`<tr><td>${esc(h.kalem?.malzeme||'')}</td>${h.kalem?u3Td(h.kalem,h.miktar,h.kalem.birim,'Çıkan'):`<td class="r" colspan="3">${fmt(h.miktar)}</td>`}<td>${esc(h.kalem?.islem||'—')}</td><td>${h.kalem?.giris?.is_emri_no?`<b>${ieNo(h.kalem.giris.is_emri_no)}</b>`:'—'}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">Kalem yok</td></tr>';
   }
 }
 const irsKapat = () => { $('#irs-modal').style.display = 'none'; irsAcikId = null; };
