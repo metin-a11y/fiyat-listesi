@@ -240,7 +240,7 @@ td input.num{width:100%;max-width:110px}
     <div class="card">
       <h2>Yeni İş Emri</h2>
       <div class="sub">Giriş irsaliyesini (PDF veya fotoğraf) yükleyin; malzemeler listelenir, her birinin yanına yapılacak işi yazıp kaydedin. İş emri numarası otomatik verilir, malzemeler müşteri adına stoğa yazılır.</div>
-      <div class="drop" id="drop-giris"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)</div>
+      <div class="drop" id="drop-giris"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)<br><span style="font-size:14px">Ekran görüntüsü için: <b>Ctrl+V</b> ile yapıştırın ya da <button type="button" class="btn ghost sm" data-paste="giris">Panodan yapıştır</button></span></div>
       <input type="file" id="file-giris" accept=".pdf,image/*" hidden>
       <div id="giris-form" style="display:none">
         <div class="grid3">
@@ -266,7 +266,7 @@ td input.num{width:100%;max-width:110px}
     <div class="card">
       <h2>Çıkış İrsaliyesi</h2>
       <div class="sub">Giden malzemeler stoktaki kalemlerle eşleştirilir; onayladığınızda stoktan düşer.</div>
-      <div class="drop" id="drop-cikis"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)</div>
+      <div class="drop" id="drop-cikis"><b>İrsaliyeyi buraya bırakın</b>veya tıklayıp seçin (PDF, JPG, PNG)<br><span style="font-size:14px">Ekran görüntüsü için: <b>Ctrl+V</b> ile yapıştırın ya da <button type="button" class="btn ghost sm" data-paste="cikis">Panodan yapıştır</button></span></div>
       <input type="file" id="file-cikis" accept=".pdf,image/*" hidden>
       <div class="bar" style="margin-top:14px"><span class="sub" style="margin:0">İrsaliye yoksa:</span><button class="btn ghost" id="c-manuel" type="button">+ Manuel çıkış ekle</button></div>
       <div id="cikis-form" style="display:none">
@@ -867,7 +867,13 @@ async function readFile(file, onStatus){
     return lines;
   }
   onStatus('Görüntü OCR ile okunuyor (ilk seferde dil dosyası iner)...');
-  const r = await Tesseract.recognize(file, 'tur');
+  let src = file;
+  try {
+    const bmp = await createImageBitmap(file), k = bmp.width < 2000 ? Math.min(3, 2400/bmp.width) : 1;
+    const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width*k); cv.height = Math.round(bmp.height*k);
+    const cx = cv.getContext('2d'); cx.filter = 'grayscale(1) contrast(1.25)'; cx.drawImage(bmp, 0, 0, cv.width, cv.height); src = cv;
+  } catch(_){}
+  const r = await Tesseract.recognize(src, 'tur');
   return r.data.text.split('\n');
 }
 
@@ -1190,6 +1196,30 @@ $('#irs-body').addEventListener('click', async e => {
   toast('İrsaliye silindi.'); loadAll();
 });
 
+
+// ekran görüntüsü: Ctrl+V veya "Panodan yapıştır"
+function resimdenOku(file){
+  const v = document.querySelector('.view.on')?.id;
+  const tip = v==='v-giris' ? 'giris' : v==='v-cikis' ? 'cikis' : null;
+  if (!tip) return false;
+  if (!file.name || file.name==='image.png') file = new File([file], `ekran-${Date.now()}.png`, {type:file.type||'image/png'});
+  toast('Ekran görüntüsü okunuyor…'); handleUpload(file, tip); return true;
+}
+document.addEventListener('paste', e => {
+  if (['INPUT','TEXTAREA'].includes(e.target.tagName) && e.target.type!=='file') return;
+  const it = [...(e.clipboardData?.items||[])].find(x=>x.type.startsWith('image/'));
+  if (!it) return;
+  const f = it.getAsFile(); if (f && resimdenOku(f)) e.preventDefault();
+});
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-paste]'); if (!b) return;
+  e.stopPropagation();
+  try {
+    const items = await navigator.clipboard.read();
+    for (const it of items){ const t = it.types.find(x=>x.startsWith('image/')); if (t){ resimdenOku(new File([await it.getType(t)], 'ekran.png', {type:t})); return; } }
+    toast('Panoda resim yok. Önce ekran görüntüsü alın (Win+Shift+S) sonra tekrar deneyin.', true);
+  } catch(err){ toast('Panoya erişilemedi. Ctrl+V ile yapıştırmayı deneyin.', true); }
+}, true);
 setupDrop('#drop-giris', '#file-giris', f => handleUpload(f, 'giris'));
 setupDrop('#drop-cikis', '#file-cikis', f => handleUpload(f, 'cikis'));
 
