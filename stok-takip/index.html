@@ -368,8 +368,8 @@ td input.num{width:100%;max-width:110px}
 <datalist id="dl-musteri"></datalist>
 <datalist id="dl-katalog"></datalist>
 <datalist id="dl-islem">
-  <option value="Shopprimer"><option value="Kumlama"><option value="Kumlama + Shopprimer">
-  <option value="Kumlama + Boyama"><option value="Boyama">
+  <option value="042-KUMLAMA"><option value="045-KUMLAMA+SHOPPRIMER">
+  <option value="046-SON KAT BOYAMA"><option value="133-KUMLAMA+SON KAT BOYA">
 </datalist>
 <div class="modal" id="ie-modal" style="display:none"><div class="modal-card">
   <h2 id="ie-title">İş emri</h2>
@@ -1060,18 +1060,24 @@ async function handleUpload(file, tip){
 }
 
 // ── Yapılacak işlem seçimi ───────────────────────
-const ISLEMLER = ['Kumlama','Shopprimer','Son kat'];
+const ISLEMLER = ['042-KUMLAMA','045-KUMLAMA+SHOPPRIMER','046-SON KAT BOYAMA','133-KUMLAMA+SON KAT BOYA'];
+// koddaki adımlar (işlem kaydında tek tek takip edilir)
+const ISLEM_ADIM = {'042-KUMLAMA':['Kumlama'], '045-KUMLAMA+SHOPPRIMER':['Kumlama','Shopprimer'], '046-SON KAT BOYAMA':['Son kat'], '133-KUMLAMA+SON KAT BOYA':['Kumlama','Son kat']};
+// eski kayıtlardaki adlar yeni kodlara eşlenir
+const ISLEM_ESKI = {'kumlama':'042-KUMLAMA', 'kumlama + shopprimer':'045-KUMLAMA+SHOPPRIMER', 'son kat':'046-SON KAT BOYAMA', 'kumlama + son kat':'133-KUMLAMA+SON KAT BOYA'};
 function islemParse(v){
-  const p = String(v||'').split(' + ').map(x=>x.trim()).filter(Boolean);
+  v = String(v||'').trim();
+  const eski = ISLEM_ESKI[v.toLowerCase()]; if (eski) return {std:[eski], ozel:''};
+  const p = v.split(' + ').map(x=>x.trim()).filter(Boolean);
   return {std: ISLEMLER.filter(o=>p.includes(o)), ozel: p.filter(x=>!ISLEMLER.includes(x)).join(' + ')};
 }
 const islemBuild = (std, ozel) => [...std, String(ozel||'').trim()].filter(Boolean).join(' + ');
-// seçime tıklanınca yeni {islem, ozel} hesaplar (Kumlama/Shopprimer/Son kat birlikte seçilebilir)
+// seçime tıklanınca yeni {islem, ozel} hesaplar (kodlardan yalnız biri seçilir; Özel ayrıca eklenebilir)
 function islemToggle(v, ozelFlag, secim){
   const {std, ozel} = islemParse(v);
   let oz = ozelFlag || !!ozel, list = std, text = ozel;
   if (secim === 'Özel'){ oz = !oz; if (!oz) text = ''; }
-  else list = std.includes(secim) ? std.filter(x=>x!==secim) : ISLEMLER.filter(o=>o===secim || std.includes(o));
+  else list = std.includes(secim) ? [] : [secim];
   return {islem: islemBuild(list, oz ? text : ''), ozel: oz};
 }
 function islemCell(v, ozelFlag, attrs){
@@ -1789,7 +1795,7 @@ $('#irs-modal').addEventListener('mousedown', e => { if (e.target.id === 'irs-mo
 document.addEventListener('keydown', e => { if (e.key === 'Escape'){ irsKapat(); if ($('#ie-modal').style.display !== 'none') ieKapat(); } });
 
 // ---- İşlem kayıtları (kalem bazında yapılan işler) ----
-const planIslemler = k => String(k.islem||'').split(' + ').map(x=>x.trim()).filter(Boolean);
+const planIslemler = k => { const {std, ozel} = islemParse(k.islem); const o = []; for (const c of std) for (const a of ISLEM_ADIM[c]) if (!o.includes(a)) o.push(a); if (ozel) o.push(...ozel.split(' + ').map(x=>x.trim()).filter(Boolean)); return o; };
 function islemDurumlari(k){
   const kay = S.islemler[k.id] || [], ad = [...planIslemler(k)];
   for (const x of kay) if (!ad.some(a => norm(a) === norm(x.islem))) ad.push(x.islem);
