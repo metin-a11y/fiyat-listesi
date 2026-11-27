@@ -132,6 +132,25 @@ body.locked header,body.locked main{display:none}
 #userbox{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--muted);font-size:14px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+/* stok görünümleri */
+.seg{display:inline-flex;gap:4px;background:#eef1f8;padding:4px;border-radius:14px;margin:4px 0 16px}
+.seg button{font:inherit;font-size:14px;font-weight:600;border:0;background:transparent;color:var(--muted);padding:8px 16px;border-radius:10px;cursor:pointer;transition:all .2s}
+.seg button.on{background:#fff;color:var(--brand);box-shadow:0 2px 8px rgba(40,60,120,.12)}
+.grp{border:1px solid var(--line);border-radius:16px;margin-bottom:10px;background:#fff;overflow:hidden;animation:fadeUp .35s both}
+.grp>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1.6fr) 90px minmax(0,2fr) 24px;gap:12px;align-items:center;padding:14px 18px;transition:background .2s}
+.grp>summary::-webkit-details-marker{display:none}
+.grp>summary:hover{background:#f6f8fd}
+.grp>summary::after{content:'▾';color:var(--muted);transition:transform .2s;justify-self:end}
+.grp[open]>summary::after{transform:rotate(180deg)}
+.grp .gad{font-weight:700;font-size:16px;overflow-wrap:anywhere}
+.grp .gsay{color:var(--muted);font-size:13px}
+.grp .gtop{font-size:14px;font-weight:600;text-align:right}
+.grp .gtop small{display:block;color:var(--muted);font-weight:500;font-size:12px}
+.grp .gic{border-top:1px solid var(--line);padding:4px 18px 10px}
+.grow{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.6fr) minmax(0,1.2fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:start}
+.grow:last-child{border-bottom:0}.grow.h{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600;padding-bottom:6px}
+.grow .r{text-align:right}
+@media(max-width:900px){.grp>summary{grid-template-columns:1fr 24px}.grp .gsay,.grp .gtop{grid-column:1/-1;text-align:left}.grow{grid-template-columns:1fr 1fr}.grow.h{display:none}.grow .r{text-align:left}}
 /* sığdırma */
 .b23{display:flex;align-items:center;gap:6px;min-width:0}.b23 input{width:100%;max-width:110px}.b23 span{color:var(--muted);font-size:13px;font-weight:600}
 .grid4{grid-template-columns:1.2fr 1fr 1fr 2fr!important;align-items:end}
@@ -217,7 +236,7 @@ td input.num{width:100%;max-width:110px}
     <div class="stats" id="stats"></div>
     <div class="card">
       <h2>Stoktaki Malzemeler</h2>
-      <div class="sub">Yapılacak işlemi ve durumu satırdan doğrudan değiştirebilirsiniz.</div>
+      <div class="sub">Müşteri veya malzeme bazında görün. İşlem ve durumu değiştirmek için Detay listesini kullanın.</div>
       <div class="bar">
         <select id="f-musteri"><option value="">Tüm müşteriler</option></select>
         <select id="f-durum">
@@ -229,7 +248,9 @@ td input.num{width:100%;max-width:110px}
         <input id="f-ara" placeholder="Malzeme ara...">
         <label style="display:flex;align-items:center;gap:8px;color:var(--muted)"><input type="checkbox" id="f-biten"> Biten kalemleri göster</label>
       </div>
-      <table class="tbl-stack">
+      <div class="seg" id="stok-seg"><button data-sg="musteri" class="on">Müşteri bazlı</button><button data-sg="malzeme">Malzeme bazlı</button><button data-sg="detay">Detay listesi</button></div>
+      <div id="stok-gruplar"></div>
+      <table class="tbl-stack" id="stok-tablo" style="display:none">
         <thead><tr><th>Müşteri</th><th>Malzeme</th><th class="right">Giriş</th><th class="right">Çıkan</th><th class="right">Kalan</th><th>Yapılacak işlem</th><th>Durum</th><th>İş emri / irsaliye</th></tr></thead>
         <tbody id="stok-body"></tbody>
       </table>
@@ -821,10 +842,10 @@ function katBul(ad){
 }
 // kalem için katalog kartı: elle/otomatik bağlanmış kod, yoksa ada göre
 function katOf(k){ return (k.katalog_kod && S.katKod.get(k.katalog_kod)) || katBul(k.malzeme); }
-function u3Str(ad, q, birim){
+function u3Vals(ad, q, birim){
   const k = typeof ad === 'object' ? ad : null, c = k ? katOf(k) : katBul(ad);
   const ek = k && ['adet_ek','mt_ek','kg_ek'].some(x => k[x] !== null && k[x] !== undefined);
-  if (!c && !ek) return '';
+  if (!c && !ek) return null;
   const r = c ? birimler3(c, q, birim) : {adet:null, mt:null, kg:null};
   if (ek && Number(k.miktar) > 0 && birim === k.birim){
     // girişte irsaliyeden okunan / elle yazılan değerler katalog hesabından önceliklidir
@@ -833,10 +854,29 @@ function u3Str(ad, q, birim){
     if (c && c.birim === 'kg' && k.adet_ek != null && (k.mt_ek == null)){ const L = uzunlukM(c.ad); if (L) r.mt = r.adet * L; }
     r[k.birim] = Number(q);
   }
-  const f = (v,u) => v === null || v === undefined ? `— ${u}` : `${fmt(Math.round(v*100)/100)} ${u}`;
-  const kgSira = (c && c.birim === 'kg') || (!c && birim === 'kg');
-  const sira = kgSira ? [f(r.kg,'kg'), f(r.adet,'adet'), f(r.mt,'mt')] : [f(r.adet,'adet'), f(r.mt,'mt'), f(r.kg,'kg')];
-  return `${c && c._yaklasik ? '~ ' : ''}${sira.join(' · ')}`;
+  return {r, yaklasik: !!(c && c._yaklasik), kgSira: (c && c.birim === 'kg') || (!c && birim === 'kg')};
+}
+const u3Say = (v,u) => v === null || v === undefined ? `— ${u}` : `${fmt(Math.round(v*100)/100)} ${u}`;
+const u3Sirala = (r, kgSira) => kgSira ? [u3Say(r.kg,'kg'), u3Say(r.adet,'adet'), u3Say(r.mt,'mt')] : [u3Say(r.adet,'adet'), u3Say(r.mt,'mt'), u3Say(r.kg,'kg')];
+function u3Str(ad, q, birim){
+  const x = u3Vals(ad, q, birim); if (!x) return '';
+  return `${x.yaklasik ? '~ ' : ''}${u3Sirala(x.r, x.kgSira).join(' · ')}`;
+}
+// kalem listesinin 3 birim toplamı (alan: miktar | cikan | kalan)
+function u3Toplam(list, alan){
+  const t = {adet:0, mt:0, kg:0}, var_ = {adet:false, mt:false, kg:false}, eksik = {adet:false, mt:false, kg:false};
+  let kgSira = 0;
+  for (const k of list){
+    const q = Number(k[alan]); if (!(q > 0)) continue;
+    const x = u3Vals(k, q, k.birim);
+    for (const u of ['adet','mt','kg']){
+      const v = x ? x.r[u] : (k.birim === u ? q : null);
+      if (v === null || v === undefined || !isFinite(v)) eksik[u] = true; else { t[u] += v; var_[u] = true; }
+    }
+    if (x && x.kgSira) kgSira++;
+  }
+  const f = u => !var_[u] ? `— ${u}` : `${eksik[u] ? '≥ ' : ''}${fmt(Math.round(t[u]*100)/100)} ${u}`;
+  return kgSira * 2 >= list.length ? [f('kg'), f('adet'), f('mt')].join(' · ') : [f('adet'), f('mt'), f('kg')].join(' · ');
 }
 const u3P = (k,q,b) => { const t = u3Str(k,q,b); return t ? `<div style="font-size:10.5px;color:#666">${t}</div>` : ''; };
 const u3Html = (ad, q, birim) => { const t = u3Str(ad, q, birim); return t ? `<div class="u3">${t}</div>` : ''; };
@@ -882,6 +922,33 @@ function katDurumHtml(k){
   if (c) return '';
   return `<div class="u3"><button class="btn ghost sm" type="button" data-katbagla="${k.id}">Katalog seç (3 birim)</button></div>`;
 }
+function stokGruplari(list, sg){
+  if (!list.length) return '<div class="empty">Kayıt yok</div>';
+  const m = new Map();
+  for (const k of list){
+    const key = sg === 'musteri' ? (k.musteri_id || '?') : (k.katalog_kod || kkey(k.malzeme));
+    if (!m.has(key)) m.set(key, {ad: sg === 'musteri' ? (k.musteriler?.ad || '—') : k.malzeme, k:[]});
+    m.get(key).k.push(k);
+  }
+  const gr = [...m.values()].sort((a,b)=>a.ad.localeCompare(b.ad,'tr'));
+  const durumChip = k => `<span class="chip c-${k.durum}">${DURUM_AD[k.durum]||k.durum}</span>`;
+  return gr.map((g,i) => {
+    const acik = g.k.filter(k=>k.kalan>0), sayi2 = sg === 'musteri' ? `${g.k.length} kalem` : `${new Set(g.k.map(k=>k.musteri_id)).size} müşteri`;
+    const ust = `<summary><div><div class="gad">${esc(g.ad)}</div></div><div class="gsay">${sayi2}</div>
+      <div class="gtop">${acik.length ? u3Toplam(acik,'kalan') : '<span class="chip c-cikti">Çıktı</span>'}<small>kalan · toplam giriş ${u3Toplam(g.k,'miktar')}</small></div></summary>`;
+    const baslik = sg === 'musteri'
+      ? '<div class="grow h"><div>Malzeme</div><div class="r">Giriş</div><div class="r">Çıkan</div><div class="r">Kalan</div><div>İşlem / durum</div></div>'
+      : '<div class="grow h"><div>Müşteri</div><div class="r">Giriş</div><div class="r">Çıkan</div><div class="r">Kalan</div><div>İş emri / durum</div></div>';
+    const satir = k => {
+      const ad = sg === 'musteri' ? esc(k.malzeme) + katDurumHtml(k) : `<b>${esc(k.musteriler?.ad||'—')}</b>`;
+      const son = sg === 'musteri'
+        ? `${esc(islemParse(k.islem).std.join(' + ') || k.islem || '—')}<br>${durumChip(k)}`
+        : `${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b> · `:''}${esc(k.giris?.irsaliye_no||'—')}<br>${durumChip(k)}`;
+      return `<div class="grow"><div>${ad}</div><div class="r">${fmt(k.miktar)} ${esc(k.birim)}${u3Html(k,k.miktar,k.birim)}</div><div class="r">${fmt(k.cikan)}${k.cikan>0?u3Html(k,k.cikan,k.birim):''}</div><div class="r"><b>${k.kalan>0?fmt(k.kalan)+' '+esc(k.birim):'<span class="chip c-cikti">Çıktı</span>'}</b>${k.kalan>0?u3Html(k,k.kalan,k.birim):''}</div><div>${son}</div></div>`;
+    };
+    return `<details class="grp" style="animation-delay:${Math.min(i,15)*30}ms">${ust}<div class="gic">${baslik}${g.k.map(satir).join('')}</div></details>`;
+  }).join('');
+}
 function renderStok(){
   const fm = $('#f-musteri').value, fd = $('#f-durum').value, q = norm($('#f-ara').value), biten = $('#f-biten').checked;
   const acik = S.kalemler.filter(k=>k.kalan>0);
@@ -895,6 +962,11 @@ function renderStok(){
   if (fm) list = list.filter(k=>k.musteri_id===fm);
   if (fd) list = list.filter(k=>k.durum===fd);
   if (q) list = list.filter(k=>norm(k.malzeme).includes(q));
+  const sg = S.sg || 'musteri';
+  document.querySelectorAll('#stok-seg button').forEach(b => b.classList.toggle('on', b.dataset.sg === sg));
+  $('#stok-tablo').style.display = sg === 'detay' ? '' : 'none';
+  $('#stok-gruplar').style.display = sg === 'detay' ? 'none' : '';
+  if (sg !== 'detay'){ $('#stok-gruplar').innerHTML = stokGruplari(list, sg); return; }
   $('#stok-body').innerHTML = list.length ? list.map((k,i)=>`
     <tr style="animation-delay:${Math.min(i,20)*25}ms">
       <td data-l="Müşteri"><b>${esc(k.musteriler?.ad)}</b></td>
@@ -1236,6 +1308,7 @@ function go(v){
 $('#nav').onclick = e => { const b = e.target.closest('button'); if (b){ go(b.dataset.v); if (b.dataset.v === 'rapor') raporMusteriDoldur(); if (b.dataset.v === 'uye') loadUyeler(); } };
 ['#f-musteri','#f-durum'].forEach(s => $(s).onchange = renderStok);
 $('#f-ara').oninput = renderStok;
+$('#stok-seg').onclick = e => { const b = e.target.closest('[data-sg]'); if (b){ S.sg = b.dataset.sg; renderStok(); } };
 $('#f-biten').onchange = renderStok;
 
 $('#stok-body').addEventListener('click', async e => {
