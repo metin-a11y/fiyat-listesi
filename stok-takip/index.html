@@ -858,7 +858,7 @@ function ieCikisHtml(girisId){
   const n = new Set(l.map(x=>x.irs?.id)).size;
   return `<h3 style="margin:22px 0 8px;font-size:16px">Çıkışlar <span class="chip c-cikis">${n} irsaliye</span></h3>
   <table><thead><tr><th>Tarih</th><th>Çıkış irsaliye no</th><th>Malzeme</th><th class="right">Çıkan</th></tr></thead><tbody>
-  ${l.map(x=>`<tr class="tikla" data-open="${x.irs?.id||''}"><td>${fdate(x.irs?.tarih||'')}</td><td>${esc(x.irs?.irsaliye_no||'—')}</td><td>${esc(x.k.malzeme)}</td><td class="right"><b>${fmt(x.miktar)} ${esc(x.k.birim)}</b>${u3Html(x.k,x.miktar,x.k.birim)}</td></tr>`).join('')}</tbody></table>`;
+  ${l.map(x=>`<tr class="tikla" data-open="${x.irs?.id||''}"><td>${fdate(x.irs?.tarih||'')}</td><td>${esc(x.irs?.irsaliye_no||'—')}</td><td>${esc(x.k.malzeme)}</td><td class="right">${u3Kutu(x.k,x.miktar,x.k.birim)}</td></tr>`).join('')}</tbody></table>`;
 }
 function renderAll(){ renderMusteri(); renderStok(); renderIrs(); renderCikis(); renderIE(); }
 
@@ -920,6 +920,19 @@ function u3Toplam(list, alan){
   return kgSira * 2 >= list.length ? [f('kg'), f('adet'), f('mt')].join(' · ') : [f('mt'), f('adet'), f('kg')].join(' · ');
 }
 const u3P = (k,q,b) => { const t = u3Str(k,q,b); return t ? `<div style="font-size:10.5px;color:#666">${t}</div>` : ''; };
+// stoktaki gibi renkli 3 birimli kutu (ekran, rapor ve yazdırmada aynı görünüm)
+const U3C = {1:'#fffcd2', 2:'#e0f8d4', 3:'#d6f7f6'}, U3E = {kg:'KG', adet:'AD', mt:'MTR'};
+function u3Kutu(k, q, birim){
+  q = Number(q); if (!(q > 0)) return '0';
+  const x = u3Vals(k, q, birim);
+  const r = x ? x.r : {adet:null, mt:null, kg:null};
+  const sira = x ? (x.kgSira ? ['kg','adet','mt'] : ['mt','adet','kg']) : [birim, ...['kg','adet','mt'].filter(u=>u!==birim)];
+  const sayi = v => (Math.round(v*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return `<span style="display:inline-flex;gap:3px;flex-wrap:wrap;vertical-align:middle">${sira.map((u,i)=>{
+    const v = u === birim ? q : r[u], yok = v === null || v === undefined || !isFinite(v);
+    return `<span style="background:${U3C[i+1]};border:1px solid rgba(0,0,0,.12);border-radius:6px;padding:2px 7px;white-space:nowrap;font-variant-numeric:tabular-nums"><b>${yok?'—':sayi(v)}</b> <span style="font-size:.8em;opacity:.7">${U3E[u]}</span></span>`;
+  }).join('')}</span>`;
+}
 const u3Html = (ad, q, birim) => { const t = u3Str(ad, q, birim); return t ? `<div class="u3">${t}</div>` : ''; };
 function katOneri(ad){
   return S.katalog.filter(c=>noktaliMi(ad) || !noktaliMi(c.ad)).map(c=>({c, s:matchScore(ad, c.ad)})).filter(x=>x.s>=0.5).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.c);
@@ -1025,9 +1038,9 @@ function renderStok(){
     <tr style="animation-delay:${Math.min(i,20)*25}ms">
       <td data-l="Müşteri"><b>${esc(k.musteriler?.ad)}</b></td>
       <td data-l="Malzeme">${esc(k.malzeme)}${katDurumHtml(k)}</td>
-      <td data-l="Giriş" class="right">${fmt(k.miktar)} ${esc(k.birim)}${u3Html(k,k.miktar,k.birim)}<a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a></td>
-      <td data-l="Çıkan" class="right">${fmt(k.cikan)}${k.cikan>0?u3Html(k,k.cikan,k.birim):''}</td>
-      <td data-l="Kalan" class="right"><b>${k.kalan>0?fmt(k.kalan)+' '+esc(k.birim):'<span class="chip c-cikti">Çıktı</span>'}</b>${k.kalan>0?u3Html(k,k.kalan,k.birim):''}</td>
+      <td data-l="Giriş" class="right">${u3Kutu(k,k.miktar,k.birim)}<br><a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a></td>
+      <td data-l="Çıkan" class="right">${u3Kutu(k,k.cikan,k.birim)}</td>
+      <td data-l="Kalan" class="right">${k.kalan>0?u3Kutu(k,k.kalan,k.birim):'<span class="chip c-cikti">Çıktı</span>'}</td>
       <td data-l="Yapılacak işlem">${islemCell(k.islem, k._ozel, `data-id="${k.id}"`)}</td>
       <td data-l="Durum"><select data-id="${k.id}" data-f="durum">
         ${['bekliyor','islemde','tamam'].map(d=>`<option value="${d}" ${k.durum===d?'selected':''}>${{bekliyor:'Bekliyor',islemde:'İşlemde',tamam:'Tamam'}[d]}</option>`).join('')}
@@ -1293,7 +1306,7 @@ function renderCikis(){
     <td><select data-ci="${i}" data-f="kalemId" ${over?'style="border-color:var(--red)"':''}>
       <option value="">— eşleşme yok (atla) —</option>
       ${list.map(x=>`<option value="${x.id}" ${x.id===r.kalemId?'selected':''}>${x.giris?.is_emri_no?ieNo(x.giris.is_emri_no)+' · ':''}${esc(x.malzeme)} · kalan ${fmt(x.kalan)} ${esc(x.birim)}${u3Str(x,x.kalan,x.birim)?' ('+u3Str(x,x.kalan,x.birim)+')':''}</option>`).join('')}
-    </select>${k&&u3Str(k,k.kalan,k.birim)?`<div class="u3" style="white-space:normal">Kalan: ${u3Str(k,k.kalan,k.birim)}</div>`:''}${over?'<div style="color:var(--red);font-size:12px;margin-top:4px">Kalandan fazla!</div>':''}${oneriHtml(r, i, list)}</td>
+    </select>${k&&u3Str(k,k.kalan,k.birim)?`<div style="margin-top:4px;white-space:normal">Kalan: ${u3Kutu(k,k.kalan,k.birim)}</div>`:''}${over?'<div style="color:var(--red);font-size:12px;margin-top:4px">Kalandan fazla!</div>':''}${oneriHtml(r, i, list)}</td>
     <td><button class="btn danger sm" data-crm="${i}">×</button></td></tr>`;
   }).join('');
   stokPanel(list);
@@ -1685,7 +1698,7 @@ function printIsEmri(irsId){
       <div><span>İş emri tarihi</span>${fdate((r.created_at||"").slice(0,10))}</div>
     </div>
     <table><thead><tr><th>#</th><th>Malzeme</th><th class="r">Miktar</th><th>Yapılacak işlem</th></tr></thead><tbody>
-      ${kl.map((k,i)=>`<tr><td>${i+1}</td><td>${esc(k.malzeme)}</td><td class="r">${fmt(k.miktar)} ${esc(k.birim)}${u3Str(k,k.miktar,k.birim)?`<div style="font-size:10.5px;color:#666">${u3Str(k,k.miktar,k.birim)}</div>`:''}</td><td>${esc(k.islem||'')}</td></tr>`).join('')}
+      ${kl.map((k,i)=>`<tr><td>${i+1}</td><td>${esc(k.malzeme)}</td><td class="r">${u3Kutu(k,k.miktar,k.birim)}</td><td>${esc(k.islem||'')}</td></tr>`).join('')}
     </tbody></table>
     <div class="imza"><div>Hazırlayan</div><div>İşlemi yapan</div><div>Kontrol</div></div>
     <script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script>
@@ -1757,20 +1770,20 @@ async function rapor(tur){
         const k = kalemlerDe(i.id);
         const islem = [...new Set(k.map(x=>x.islem).filter(Boolean))].join(', ');
         const durum = !k.length ? '—' : k.every(x=>x.kalan<=0) ? 'Sevk edildi' : k.every(x=>x.durum==='tamam') ? 'Sevke hazır' : k.some(x=>x.durum==='islemde') ? 'İşlemde' : 'Bekliyor';
-        return [`<b>${ieNo(i.is_emri_no)}</b>`, fdate(rTarih(i)), esc(i.musteriler?.ad||''), esc(i.irsaliye_no||'—'), k.map(x=>`${esc(x.malzeme)} (${fmt(x.miktar)} ${esc(x.birim)})${u3P(x,x.miktar,x.birim)}`).join('<br>'), esc(islem||'—'), durum];
+        return [`<b>${ieNo(i.is_emri_no)}</b>`, fdate(rTarih(i)), esc(i.musteriler?.ad||''), esc(i.irsaliye_no||'—'), k.map(x=>`${esc(x.malzeme)}<br>${u3Kutu(x,x.miktar,x.birim)}`).join('<div style="height:5px"></div>'), esc(islem||'—'), durum];
       });
       raporYaz(w, 'İş Emri Listesi', f.ozet, [{h:'İş emri'},{h:'Tarih'},{h:'Müşteri'},{h:'İrsaliye no'},{h:'Malzemeler'},{h:'Yapılacak işlem'},{h:'Durum'}], rows.length?[{satirlar:rows}]:[], `Toplam ${rows.length} iş emri`);
     }
     else if (tur === 'stok'){
       const l = S.kalemler.filter(k => k.kalan>0 && f.ok(k.musteri_id, k.giris?.tarih || (k.created_at||'').slice(0,10)));
       const gr = grupla(l, k=>k.musteri_id, (a, x) => `${x[0].musteriler?.ad||''}  ·  ${x.length} kalem`).sort((a,b)=>a.baslik.localeCompare(b.baslik,'tr'));
-      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), `${fmt(k.miktar)} ${esc(k.birim)}${u3P(k,k.miktar,k.birim)}`, fmt(k.cikan), `<b>${fmt(k.kalan)} ${esc(k.birim)}</b>${u3Str(k,k.kalan,k.birim)?`<div style="font-size:10.5px;color:#666">${u3Str(k,k.kalan,k.birim)}</div>`:''}`, esc(k.islem||'—'), DURUM_AD[k.durum], esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
+      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), u3Kutu(k,k.miktar,k.birim), u3Kutu(k,k.cikan,k.birim), u3Kutu(k,k.kalan,k.birim), esc(k.islem||'—'), DURUM_AD[k.durum], esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
       raporYaz(w, 'Stok Listesi', f.ozet, [{h:'Malzeme'},{h:'Giriş',r:1},{h:'Çıkan',r:1},{h:'Kalan',r:1},{h:'Yapılacak işlem'},{h:'Durum'},{h:'İş emri'},{h:'Giriş tarihi'}], bol, `${gr.length} müşteri, ${l.length} kalem stokta`);
     }
     else if (tur === 'biten'){
       const l = S.kalemler.filter(k => (k.durum==='tamam' || k.kalan<=0) && f.ok(k.musteri_id, k.giris?.tarih || (k.created_at||'').slice(0,10)));
       const gr = grupla(l, k=>k.musteri_id, (a, x) => `${x[0].musteriler?.ad||''}  ·  ${x.length} kalem`).sort((a,b)=>a.baslik.localeCompare(b.baslik,'tr'));
-      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), esc(k.islem||'—'), `${fmt(k.miktar)} ${esc(k.birim)}${u3P(k,k.miktar,k.birim)}`, k.kalan>0 ? `<b>${fmt(k.kalan)} ${esc(k.birim)}</b>${u3P(k,k.kalan,k.birim)}` : '0', k.kalan>0 ? 'Sevke hazır' : 'Sevk edildi', esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
+      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(k=>[esc(k.malzeme), esc(k.islem||'—'), u3Kutu(k,k.miktar,k.birim), k.kalan>0 ? u3Kutu(k,k.kalan,k.birim) : '0', k.kalan>0 ? 'Sevke hazır' : 'Sevk edildi', esc(ieNo(k.giris?.is_emri_no)||'—'), fdate(k.giris?.tarih)])}));
       const hazir = l.filter(k=>k.kalan>0).length;
       raporYaz(w, 'Biten İşler', f.ozet, [{h:'Malzeme'},{h:'Yapılan işlem'},{h:'Miktar',r:1},{h:'Sevk bekleyen',r:1},{h:'Durum'},{h:'İş emri'},{h:'Giriş tarihi'}], bol, `${l.length} biten kalem; ${hazir} tanesi sevk bekliyor, ${l.length-hazir} tanesi sevk edildi`);
     }
@@ -1779,7 +1792,7 @@ async function rapor(tur){
       if (error) throw error;
       const l = data.filter(h => h.irs && f.ok(h.irs.musteri_id, rTarih(h.irs)));
       const gr = grupla(l, h=>h.irs.id, (a, x) => `${fdate(rTarih(x[0].irs))}  ·  ${x[0].irs.musteriler?.ad||''}  ·  İrsaliye: ${x[0].irs.irsaliye_no||'—'}`).sort((a,b)=>rTarih(b.l[0].irs).localeCompare(rTarih(a.l[0].irs)));
-      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(h=>[esc(h.kalem?.malzeme||''), `${fmt(h.miktar)} ${esc(h.kalem?.birim||'')}${h.kalem?u3P(h.kalem,h.miktar,h.kalem.birim):''}`])}));
+      const bol = gr.map(g => ({baslik:g.baslik, satirlar: g.l.map(h=>[esc(h.kalem?.malzeme||''), h.kalem ? u3Kutu(h.kalem,h.miktar,h.kalem.birim) : fmt(h.miktar)])}));
       raporYaz(w, 'Sevkiyatlar', f.ozet, [{h:'Malzeme'},{h:'Miktar',r:1}], bol, `${gr.length} sevkiyat, ${l.length} kalem`);
     }
   } catch(e){ console.error(e); w.close(); toast('Rapor hazırlanamadı: '+(e.message||e), true); }
@@ -1802,7 +1815,7 @@ function renderIE(){
     <tr class="tikla" data-ieedit="${i.id}" style="animation-delay:${Math.min(n,20)*25}ms">
       <td style="white-space:nowrap"><b>${ieNo(i.is_emri_no)}</b></td><td style="white-space:nowrap">${fdate(i.tarih || (i.created_at||'').slice(0,10))}</td>
       <td>${esc(i.musteriler?.ad||'—')}</td><td>${esc(i.irsaliye_no||'—')}</td>
-      <td style="font-size:14px">${k.slice(0,3).map(x=>`<div style="margin-bottom:6px">${esc(x.malzeme)} <span style="color:var(--muted)">(${fmt(x.miktar)} ${esc(x.birim)})</span>${u3Html(x,x.miktar,x.birim)}</div>`).join('')}${k.length>3?`<br><span style="color:var(--muted)">+${k.length-3} kalem daha</span>`:''}</td>
+      <td style="font-size:14px">${k.slice(0,3).map(x=>`<div style="margin-bottom:6px">${esc(x.malzeme)}<br>${u3Kutu(x,x.miktar,x.birim)}</div>`).join('')}${k.length>3?`<br><span style="color:var(--muted)">+${k.length-3} kalem daha</span>`:''}</td>
       <td><span class="chip ${IE_CHIP[d]}">${d}</span>${(()=>{const n=new Set(ieCikislari(i.id).map(x=>x.irs?.id)).size;return n?`<div class="u3">${n} çıkış irsaliyesi</div>`:''})()}</td>
       <td class="right" style="white-space:nowrap"><button class="btn ghost sm" data-ieedit="${i.id}">Aç / Düzenle</button>
         <button class="btn ghost sm" data-print="${i.id}">Yazdır</button>
@@ -1940,14 +1953,14 @@ async function irsAc(id){
   if (giris){
     const k = S.kalemler.filter(x=>x.giris_irsaliye_id===id);
     $('#irs-head').innerHTML = '<tr><th>Malzeme</th><th class="right">Giriş</th><th class="right">Çıkan</th><th class="right">Kalan</th><th>Yapılacak işlem</th><th>Durum</th></tr>';
-    $('#irs-rows').innerHTML = k.length ? k.map(x=>`<tr><td>${esc(x.malzeme)}${katDurumHtml(x).includes('Katalog seç')?'':''}</td><td class="right">${fmt(x.miktar)} ${esc(x.birim)}${u3Html(x,x.miktar,x.birim)}</td><td class="right">${fmt(x.cikan)}${x.cikan>0?u3Html(x,x.cikan,x.birim):''}</td><td class="right"><b>${fmt(x.kalan)}</b>${x.kalan>0?u3Html(x,x.kalan,x.birim):''}</td><td>${esc(x.islem||'—')}</td><td>${DURUM_AD[x.durum]||''}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">Kalem yok</td></tr>';
+    $('#irs-rows').innerHTML = k.length ? k.map(x=>`<tr><td>${esc(x.malzeme)}${katDurumHtml(x).includes('Katalog seç')?'':''}</td><td class="right">${u3Kutu(x,x.miktar,x.birim)}</td><td class="right">${u3Kutu(x,x.cikan,x.birim)}</td><td class="right">${u3Kutu(x,x.kalan,x.birim)}</td><td>${esc(x.islem||'—')}</td><td>${DURUM_AD[x.durum]||''}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">Kalem yok</td></tr>';
   } else {
     $('#irs-head').innerHTML = '<tr><th>Malzeme</th><th class="right">Çıkan miktar</th><th>Yapılacak işlem</th><th>İş emri</th></tr>';
     $('#irs-rows').innerHTML = '<tr><td colspan="4" class="empty">Yükleniyor…</td></tr>';
     const {data, error} = await sb.from('hareketler').select('miktar, kalem:stok_kalemleri(malzeme,birim,islem,katalog_kod,giris:irsaliyeler!giris_irsaliye_id(is_emri_no))').eq('irsaliye_id', id);
     if (irsAcikId !== id) return;
     $('#irs-rows').innerHTML = error ? `<tr><td colspan="3" class="empty">Okunamadı: ${esc(error.message)}</td></tr>`
-      : data.length ? data.map(h=>`<tr><td>${esc(h.kalem?.malzeme||'')}</td><td class="right"><b>${fmt(h.miktar)} ${esc(h.kalem?.birim||'')}</b>${h.kalem?u3Html(h.kalem,h.miktar,h.kalem.birim):''}</td><td>${esc(h.kalem?.islem||'—')}</td><td>${h.kalem?.giris?.is_emri_no?`<b>${ieNo(h.kalem.giris.is_emri_no)}</b>`:'—'}</td></tr>`).join('') : '<tr><td colspan="4" class="empty">Kalem yok</td></tr>';
+      : data.length ? data.map(h=>`<tr><td>${esc(h.kalem?.malzeme||'')}</td><td class="right">${h.kalem?u3Kutu(h.kalem,h.miktar,h.kalem.birim):fmt(h.miktar)}</td><td>${esc(h.kalem?.islem||'—')}</td><td>${h.kalem?.giris?.is_emri_no?`<b>${ieNo(h.kalem.giris.is_emri_no)}</b>`:'—'}</td></tr>`).join('') : '<tr><td colspan="4" class="empty">Kalem yok</td></tr>';
   }
 }
 const irsKapat = () => { $('#irs-modal').style.display = 'none'; irsAcikId = null; };
