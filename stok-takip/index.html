@@ -639,6 +639,17 @@ function tabloGenelMi(items){
 }
 // ── 3 birim: metre / adet / kg (katalogdaki boy ve kg katsayısından) ──
 // Metre bazlı kart: boy = metre/adet, kg_katsayi = kg/metre. Kg bazlı kart: boy = kg/adet.
+// ürün boyu (metre): ad içinden — "12 MT", "(6 MT)", "(13720mm)" ya da sac "3 mm X 1500 X 5775" (son ölçü mm)
+function uzunlukM(ad){
+  ad = String(ad||'');
+  let m = ad.match(/\(?\s*(\d+(?:[.,]\d+)?)\s*(?:MT|MTR|METRE)\b\s*\)?/i);
+  if (m) return Number(m[1].replace(',','.')) || null;
+  m = ad.match(/\(\s*(\d{3,6})\s*mm\s*\)/i);
+  if (m) return Number(m[1]) / 1000;
+  m = ad.match(/\d+(?:[.,/]\d+)*\s*mm\s*[xX]\s*\d+\s*[xX]\s*(\d{3,6})\b/i);
+  if (m) return Number(m[1]) / 1000;
+  return null;
+}
 function birimler3(c, q, u){
   const r = {adet:null, mt:null, kg:null};
   q = Number(q);
@@ -648,8 +659,10 @@ function birimler3(c, q, u){
     let mt = u === 'mt' ? q : u === 'adet' ? (boy ? q * boy : null) : u === 'kg' ? (kgm ? q / kgm : null) : null;
     if (mt !== null){ r.mt = mt; r.adet = boy ? mt / boy : null; r.kg = kgm ? mt * kgm : null; }
   } else if (c.birim === 'kg'){
-    let kg = u === 'kg' ? q : u === 'adet' ? (boy ? q * boy : null) : null;
-    if (kg !== null){ r.kg = kg; r.adet = boy ? kg / boy : null; }
+    // kg bazlı kart: asıl birim kg; adet = kg / (kg/adet); metre = adet × ürün boyu (addan)
+    const L = uzunlukM(c.ad);
+    let kg = u === 'kg' ? q : u === 'adet' ? (boy ? q * boy : null) : u === 'mt' ? (boy && L ? q / L * boy : null) : null;
+    if (kg !== null){ r.kg = kg; r.adet = boy ? kg / boy : null; r.mt = (r.adet !== null && L) ? r.adet * L : null; }
   }
   if (r[u] !== undefined) r[u] = q;   // verilen birim aynen kalsın
   return r;
@@ -774,7 +787,8 @@ function katOf(k){ return (k.katalog_kod && S.katKod.get(k.katalog_kod)) || katB
 function u3Str(ad, q, birim){
   const c = typeof ad === 'object' ? katOf(ad) : katBul(ad); if (!c) return '';
   const r = birimler3(c, q, birim), f = (v,u) => v === null ? `— ${u}` : `${fmt(Math.round(v*100)/100)} ${u}`;
-  return `${c._yaklasik ? '~ ' : ''}${f(r.adet,'adet')} · ${f(r.mt,'mt')} · ${f(r.kg,'kg')}`;
+  const sira = c.birim === 'kg' ? [f(r.kg,'kg'), f(r.adet,'adet'), f(r.mt,'mt')] : [f(r.adet,'adet'), f(r.mt,'mt'), f(r.kg,'kg')];
+  return `${c._yaklasik ? '~ ' : ''}${sira.join(' · ')}`;
 }
 const u3P = (k,q,b) => { const t = u3Str(k,q,b); return t ? `<div style="font-size:10.5px;color:#666">${t}</div>` : ''; };
 const u3Html = (ad, q, birim) => { const t = u3Str(ad, q, birim); return t ? `<div class="u3">${t}</div>` : ''; };
@@ -881,6 +895,17 @@ async function readFile(file, onStatus){
 }
 
 // Tablo çizgilerini siler, büyütür; OCR'ı sayfa modunda okur, tablo satırlarını şeritler halinde yeniden okur
+// katalogda kg bazlı olan kalemlerin miktarı her zaman kg olarak tutulur
+function kgyeCevir(rows){
+  for (const r of rows){
+    const c = S.katIdx.get(kkey(r.malzeme)); if (!c || c.birim !== 'kg' || r.birim === 'kg') continue;
+    const q = Number(r.miktar); if (!(q > 0)) continue;
+    const kg = r.birim === 'ton' ? q * 1000 : cevir(c, q, r.birim, 'kg');
+    if (kg === null || kg === undefined) continue;
+    r.ipucu = `Okunan ${fmt(q)} ${r.birim} → kg'a çevrildi` + (r.ipucu ? ' · ' + r.ipucu : '');
+    r.miktar = Math.round(kg * 100) / 100; r.birim = 'kg';
+  }
+}
 async function ocrHazirla(file){
   const bmp = await createImageBitmap(file), W = bmp.width, H = bmp.height;
   const c0 = document.createElement('canvas'); c0.width = W; c0.height = H;
@@ -955,7 +980,7 @@ async function handleUpload(file, tip){
       }
     }
     if (tip === 'giris'){
-      girisFile = file.name; girisRows = items.length ? items : [{malzeme:'',miktar:'',birim:'adet',islem:''}];
+      kgyeCevir(items); girisFile = file.name; girisRows = items.length ? items : [{malzeme:'',miktar:'',birim:'adet',islem:''}];
       $('#g-musteri').value = h.musteri; $('#g-no').value = h.no; $('#g-tarih').value = h.tarih || new Date().toISOString().slice(0,10);
       $('#g-raw').textContent = text; $('#giris-form').style.display = 'block'; renderGiris();
     } else {
