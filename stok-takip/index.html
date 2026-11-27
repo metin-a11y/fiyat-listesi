@@ -151,6 +151,29 @@ body.locked header,body.locked main{display:none}
 .grow:last-child{border-bottom:0}.grow.h{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600;padding-bottom:6px}
 .grow .r{text-align:right}
 @media(max-width:900px){.grp>summary{grid-template-columns:1fr 24px}.grp .gsay,.grp .gtop{grid-column:1/-1;text-align:left}.grow{grid-template-columns:1fr 1fr}.grow.h{display:none}.grow .r{text-align:left}}
+/* Presto tarzı stok gridi */
+.pgw{overflow-x:auto;border:1px solid #cfd6e4;border-radius:12px}
+.pgrid{width:100%;border-collapse:collapse;font-size:13.5px;min-width:0;table-layout:auto}
+.pgrid th{background:linear-gradient(#f4f6fb,#e6eaf3);border:1px solid #cfd6e4;padding:8px 6px;font-size:12px;color:#334;text-transform:none;letter-spacing:0;white-space:nowrap;text-align:left}
+.pgrid th.r{text-align:right}
+.pgrid td{border:1px solid #e3e8f2;padding:6px 7px;vertical-align:middle}
+.pgrid td.pb{font-variant-numeric:tabular-nums}
+.pgrid td.r{text-align:right}
+.pb1{background:#fffcd2}.pb2{background:#e0f8d4}.pb3{background:#d6f7f6}
+.pgrid th.pb1{background:#f3efae}.pgrid th.pb2{background:#c9ecb8}.pgrid th.pb3{background:#b9ecea}
+.pgrid td.pb{font-weight:600;color:#1b2540}.pgrid td.pb:not(.r){font-weight:500;color:#445}
+.pbn{color:#9aa}
+.pgrid .pgh td{background:#eef2fb;border-top:2px solid #b8c3dc;font-size:14.5px}
+.pgrid .pgh .gsay{color:var(--muted);font-size:13px;font-weight:500}
+.pgrid .gtopl{text-align:right;font-weight:600;font-size:13.5px;color:#334}
+.pgrid .pbs{font-size:12.5px;color:#445}
+.pgrid th:nth-child(5),.pgrid th:nth-child(7),.pgrid th:nth-child(9){width:9%}.pgrid th:nth-child(6),.pgrid th:nth-child(8),.pgrid th:nth-child(10){width:4.5%}.pbie{font-size:11.5px;color:#667;margin-top:2px}
+.pgrid tbody tr:not(.pgh):nth-child(even) td:not(.pb){background:#eef4fb}.pgrid tbody tr:not(.pgh):nth-child(odd) td:not(.pb){background:#fdf5e6}
+.pgrid .pgh td{background:#e2e9f7!important}
+.pgrid .pbad{min-width:190px;font-weight:500}
+.pgrid tbody tr:not(.pgh):hover td{filter:brightness(.97)}
+.smbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 14px}
+.smbar select{width:auto}
 /* sığdırma */
 .b23{display:flex;align-items:center;gap:6px;min-width:0}.b23 input{width:100%;max-width:110px}.b23 span{color:var(--muted);font-size:13px;font-weight:600}
 .grid4{grid-template-columns:1.2fr 1fr 1fr 2fr!important;align-items:end}
@@ -249,6 +272,7 @@ td input.num{width:100%;max-width:110px}
         <label style="display:flex;align-items:center;gap:8px;color:var(--muted)"><input type="checkbox" id="f-biten"> Biten kalemleri göster</label>
       </div>
       <div class="seg" id="stok-seg"><button data-sg="musteri" class="on">Müşteri bazlı</button><button data-sg="malzeme">Malzeme bazlı</button><button data-sg="detay">Detay listesi</button></div>
+      <div class="smbar" id="stok-sm" style="display:none"><span style="color:var(--muted);font-size:14px">Göster:</span><select id="f-alan"><option value="kalan">Kalan</option><option value="miktar">Giriş</option><option value="cikan">Çıkan</option></select></div>
       <div id="stok-gruplar"></div>
       <table class="tbl-stack" id="stok-tablo" style="display:none">
         <thead><tr><th>Müşteri</th><th>Malzeme</th><th class="right">Giriş</th><th class="right">Çıkan</th><th class="right">Kalan</th><th>Yapılacak işlem</th><th>Durum</th><th>İş emri / irsaliye</th></tr></thead>
@@ -857,7 +881,7 @@ function u3Vals(ad, q, birim){
   return {r, yaklasik: !!(c && c._yaklasik), kgSira: (c && c.birim === 'kg') || (!c && birim === 'kg')};
 }
 const u3Say = (v,u) => v === null || v === undefined ? `— ${u}` : `${fmt(Math.round(v*100)/100)} ${u}`;
-const u3Sirala = (r, kgSira) => kgSira ? [u3Say(r.kg,'kg'), u3Say(r.adet,'adet'), u3Say(r.mt,'mt')] : [u3Say(r.adet,'adet'), u3Say(r.mt,'mt'), u3Say(r.kg,'kg')];
+const u3Sirala = (r, kgSira) => kgSira ? [u3Say(r.kg,'kg'), u3Say(r.adet,'adet'), u3Say(r.mt,'mt')] : [u3Say(r.mt,'mt'), u3Say(r.adet,'adet'), u3Say(r.kg,'kg')];
 function u3Str(ad, q, birim){
   const x = u3Vals(ad, q, birim); if (!x) return '';
   return `${x.yaklasik ? '~ ' : ''}${u3Sirala(x.r, x.kgSira).join(' · ')}`;
@@ -876,7 +900,7 @@ function u3Toplam(list, alan){
     if (x && x.kgSira) kgSira++;
   }
   const f = u => !var_[u] ? `— ${u}` : `${eksik[u] ? '≥ ' : ''}${fmt(Math.round(t[u]*100)/100)} ${u}`;
-  return kgSira * 2 >= list.length ? [f('kg'), f('adet'), f('mt')].join(' · ') : [f('adet'), f('mt'), f('kg')].join(' · ');
+  return kgSira * 2 >= list.length ? [f('kg'), f('adet'), f('mt')].join(' · ') : [f('mt'), f('adet'), f('kg')].join(' · ');
 }
 const u3P = (k,q,b) => { const t = u3Str(k,q,b); return t ? `<div style="font-size:10.5px;color:#666">${t}</div>` : ''; };
 const u3Html = (ad, q, birim) => { const t = u3Str(ad, q, birim); return t ? `<div class="u3">${t}</div>` : ''; };
@@ -922,8 +946,22 @@ function katDurumHtml(k){
   if (c) return '';
   return `<div class="u3"><button class="btn ghost sm" type="button" data-katbagla="${k.id}">Katalog seç (3 birim)</button></div>`;
 }
+const PB = {kg:'KG', adet:'AD', mt:'MTR'};
+// Presto tarzı: 1.Birim / 2.Birim / 3.Birim sütunları (mt bazlı: MTR·AD·KG, kg bazlı: KG·AD·MTR)
+function pbHucre(k, alan){
+  const q = Number(k[alan]);
+  const x = u3Vals(k, q, k.birim);
+  const r = x ? x.r : {adet:null, mt:null, kg:null, [k.birim]: q};
+  const sira = x ? (x.kgSira ? ['kg','adet','mt'] : ['mt','adet','kg']) : [k.birim, ...['mt','adet','kg'].filter(u=>u!==k.birim)];
+  return sira.map((u,i) => {
+    const v = u === k.birim ? q : r[u];
+    return `<td class="pb pb${i+1} r">${v === null || v === undefined || !isFinite(v) ? '<span class="pbn">—</span>' : (Math.round(v*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="pb pb${i+1}">${PB[u]}${x && x.yaklasik && i===0 ? ' ~' : ''}</td>`;
+  }).join('');
+}
 function stokGruplari(list, sg){
   if (!list.length) return '<div class="empty">Kayıt yok</div>';
+  const alan = 'kalan', AL = 'Kalan';
+  const sayi2 = v => (Math.round(Number(v)*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const m = new Map();
   for (const k of list){
     const key = sg === 'musteri' ? (k.musteri_id || '?') : (k.katalog_kod || kkey(k.malzeme));
@@ -932,22 +970,20 @@ function stokGruplari(list, sg){
   }
   const gr = [...m.values()].sort((a,b)=>a.ad.localeCompare(b.ad,'tr'));
   const durumChip = k => `<span class="chip c-${k.durum}">${DURUM_AD[k.durum]||k.durum}</span>`;
-  return gr.map((g,i) => {
-    const acik = g.k.filter(k=>k.kalan>0), sayi2 = sg === 'musteri' ? `${g.k.length} kalem` : `${new Set(g.k.map(k=>k.musteri_id)).size} müşteri`;
-    const ust = `<summary><div><div class="gad">${esc(g.ad)}</div></div><div class="gsay">${sayi2}</div>
-      <div class="gtop">${acik.length ? u3Toplam(acik,'kalan') : '<span class="chip c-cikti">Çıktı</span>'}<small>kalan · toplam giriş ${u3Toplam(g.k,'miktar')}</small></div></summary>`;
-    const baslik = sg === 'musteri'
-      ? '<div class="grow h"><div>Malzeme</div><div class="r">Giriş</div><div class="r">Çıkan</div><div class="r">Kalan</div><div>İşlem / durum</div></div>'
-      : '<div class="grow h"><div>Müşteri</div><div class="r">Giriş</div><div class="r">Çıkan</div><div class="r">Kalan</div><div>İş emri / durum</div></div>';
-    const satir = k => {
-      const ad = sg === 'musteri' ? esc(k.malzeme) + katDurumHtml(k) : `<b>${esc(k.musteriler?.ad||'—')}</b>`;
-      const son = sg === 'musteri'
-        ? `${esc(islemParse(k.islem).std.join(' + ') || k.islem || '—')}<br>${durumChip(k)}`
-        : `${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b> · `:''}${esc(k.giris?.irsaliye_no||'—')}<br>${durumChip(k)}`;
-      return `<div class="grow"><div>${ad}</div><div class="r">${fmt(k.miktar)} ${esc(k.birim)}${u3Html(k,k.miktar,k.birim)}</div><div class="r">${fmt(k.cikan)}${k.cikan>0?u3Html(k,k.cikan,k.birim):''}</div><div class="r"><b>${k.kalan>0?fmt(k.kalan)+' '+esc(k.birim):'<span class="chip c-cikti">Çıktı</span>'}</b>${k.kalan>0?u3Html(k,k.kalan,k.birim):''}</div><div>${son}</div></div>`;
-    };
-    return `<details class="grp" style="animation-delay:${Math.min(i,15)*30}ms">${ust}<div class="gic">${baslik}${g.k.map(satir).join('')}</div></details>`;
+  const ilkCol = sg === 'musteri' ? 'Malzeme' : 'Müşteri';
+  const baslik = `<thead><tr><th>${ilkCol}</th><th class="r">Miktar</th><th>Birim</th><th class="r">Karşılanan</th><th class="pb1 r">1.Birim ${AL}</th><th class="pb1">1.Birim</th><th class="pb2 r">2.Birim ${AL}</th><th class="pb2">2.Birim</th><th class="pb3 r">3.Birim ${AL}</th><th class="pb3">3.Birim</th><th>İşlem / durum</th></tr></thead>`;
+  const govde = gr.map(g => {
+    const sayi = sg === 'musteri' ? `${g.k.length} kalem` : `${new Set(g.k.map(k=>k.musteri_id)).size} müşteri`;
+    const topl = u3Toplam(g.k.filter(k=>Number(k[alan])>0), alan);
+    const ust = `<tr class="pgh"><td colspan="7"><b>${esc(g.ad)}</b> <span class="gsay">· ${sayi}</span></td><td colspan="4" class="gtopl">${alan==='kalan'?'Kalan':AL}: ${topl || '—'}</td></tr>`;
+    const satirlar = g.k.map(k => {
+      const ie = `<div class="pbie">${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b> · `:''}${esc(k.giris?.irsaliye_no||'—')}</div>`;
+      const ad = (sg === 'musteri' ? esc(k.malzeme) + katDurumHtml(k) : esc(k.musteriler?.ad || '—')) + ie;
+      return `<tr><td class="pbad">${ad}</td><td class="r"><b>${sayi2(k.miktar)}</b></td><td>${PB[k.birim]||esc(k.birim)}</td><td class="r">${sayi2(k.cikan)}</td>${pbHucre(k, alan)}<td class="pbs">${esc(islemParse(k.islem).std.join(' + ') || k.islem || '—')}<br>${durumChip(k)}</td></tr>`;
+    }).join('');
+    return ust + satirlar;
   }).join('');
+  return `<div class="pgw"><table class="pgrid">${baslik}<tbody>${govde}</tbody></table></div>`;
 }
 function renderStok(){
   const fm = $('#f-musteri').value, fd = $('#f-durum').value, q = norm($('#f-ara').value), biten = $('#f-biten').checked;
@@ -966,6 +1002,7 @@ function renderStok(){
   document.querySelectorAll('#stok-seg button').forEach(b => b.classList.toggle('on', b.dataset.sg === sg));
   $('#stok-tablo').style.display = sg === 'detay' ? '' : 'none';
   $('#stok-gruplar').style.display = sg === 'detay' ? 'none' : '';
+  $('#stok-sm').style.display = 'none';
   if (sg !== 'detay'){ $('#stok-gruplar').innerHTML = stokGruplari(list, sg); return; }
   $('#stok-body').innerHTML = list.length ? list.map((k,i)=>`
     <tr style="animation-delay:${Math.min(i,20)*25}ms">
@@ -1308,6 +1345,7 @@ function go(v){
 $('#nav').onclick = e => { const b = e.target.closest('button'); if (b){ go(b.dataset.v); if (b.dataset.v === 'rapor') raporMusteriDoldur(); if (b.dataset.v === 'uye') loadUyeler(); } };
 ['#f-musteri','#f-durum'].forEach(s => $(s).onchange = renderStok);
 $('#f-ara').oninput = renderStok;
+$('#f-alan').onchange = e => { S.sm = e.target.value; renderStok(); };
 $('#stok-seg').onclick = e => { const b = e.target.closest('[data-sg]'); if (b){ S.sg = b.dataset.sg; renderStok(); } };
 $('#f-biten').onchange = renderStok;
 
