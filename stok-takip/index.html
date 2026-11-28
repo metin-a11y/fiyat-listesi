@@ -1139,8 +1139,8 @@ function renderIrs(){
       <td>${r.is_emri_no?`<b>${ieNo(r.is_emri_no)}</b>`:(r.tip==='cikis'?(cikisIeNolari(r.id).map(n=>`<b>${ieNo(n)}</b>`).join(', ')||'—'):'—')}</td>
       <td>${esc(r.irsaliye_no||'—')}</td><td>${fdate(r.tarih)}</td>
       <td>${esc(r.musteriler?.ad||'—')}</td>
-      <td class="right">${r.tip==='giris'?(sayi[r.id]||0):'—'}</td>
-      <td class="right">${r.tip==='giris'?`<button class="btn ghost sm" data-print="${r.id}">Yazdır</button> `:''}<button class="btn danger sm" data-del="${r.id}" data-tip="${r.tip}">Sil</button></td>
+      <td class="right">${r.tip==='giris' ? (sayi[r.id]||0) : (cikisSatirlari(r.id).length || '—')}</td>
+      <td class="right"><button class="btn ghost sm" data-print="${r.id}">Yazdır</button> <button class="btn danger sm" data-del="${r.id}" data-tip="${r.tip}">Sil</button></td>
     </tr>`).join('') : '<tr><td colspan="7" class="empty">Henüz irsaliye yok</td></tr>';
 }
 
@@ -1778,8 +1778,55 @@ $('#kt-btn').onclick = async () => {
 
 // ---- İş emri çıktısı ----
 const ieNo = n => n ? 'İE-' + String(n).padStart(4,'0') : '';
+// çıkış irsaliyesi çıktısı: hangi iş emrinden hangi malzeme ne kadar çıktı
+function printCikis(irsId){
+  const r = S.irsaliyeler.find(x=>x.id===irsId); if (!r) return toast('İrsaliye bulunamadı.', true);
+  const satir = cikisSatirlari(irsId);
+  if (!satir.length) return toast('Bu çıkış irsaliyesinde kalem bulunamadı.', true);
+  const w = window.open('', '_blank');
+  if (!w) return toast('Açılır pencere engellendi; tarayıcıdan izin verin.', true);
+  const ies = [...new Set(satir.map(x=>x.k.giris?.is_emri_no).filter(Boolean))].map(ieNo).join(', ');
+  w.document.write(`<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>Çıkış irsaliyesi</title><style>
+    @page{size:A4 landscape;margin:12mm}
+    body{font:13px/1.4 system-ui,Segoe UI,Arial,sans-serif;color:#111;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    h1{font-size:22px;margin:0 0 2px} .firma{color:#555;font-size:13px;margin-bottom:12px}
+    .no{float:right;font-size:22px;font-weight:700}
+    .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 24px;margin:10px 0 14px;padding:10px 12px;border:1px solid #ccc;border-radius:8px}
+    .meta span{color:#666;font-size:12px;display:block}
+    table{width:100%;border-collapse:collapse} th,td{border:1px solid #bbb;padding:7px 9px;text-align:left;vertical-align:middle}
+    th{background:#f1f3f6;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px} td.r,th.r{text-align:right}
+    .pb1{background:#fffcd2}.pb2{background:#e0f8d4}.pb3{background:#d6f7f6}.pbu{font-size:.78em;opacity:.7}.pbn{color:#999}
+    .imza{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:50px;text-align:center;color:#555;font-size:12px}
+    .imza div{border-top:1px solid #888;padding-top:6px}
+  </style></head><body>
+    <div class="no">${esc(ies)}</div>
+    <img src="${LOGO}" style="height:48px;display:block;margin-bottom:6px"><h1>ÇIKIŞ İRSALİYESİ</h1><div class="firma">Kumlama Boyama Takip</div>
+    <div class="meta">
+      <div><span>Müşteri</span><b>${esc(r.musteriler?.ad||'')}</b></div>
+      <div><span>İrsaliye no</span>${esc(r.irsaliye_no||'—')}</div>
+      <div><span>Tarih</span>${fdate(r.tarih)}</div>
+      <div><span>İş emri</span>${esc(ies||'—')}</div>
+    </div>
+    <table><thead><tr><th>#</th><th>İş emri</th><th>Malzeme</th><th class="r pb1">1.Birim</th><th class="r pb2">2.Birim</th><th class="r pb3">3.Birim</th><th>Yapılan işlem</th></tr></thead><tbody>
+      ${satir.map((x,i)=>`<tr><td>${i+1}</td><td>${x.k.giris?.is_emri_no?`<b>${ieNo(x.k.giris.is_emri_no)}</b>`:'—'}</td><td>${esc(x.k.malzeme)}</td>${u3Cells(x.k,x.miktar,x.k.birim).map((c,j)=>`<td class="r pb${j+1}" style="white-space:nowrap">${c}</td>`).join('')}<td>${esc([...islemParse(x.k.islem).std, islemParse(x.k.islem).ozel].filter(Boolean).join(' + ')||'')}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="imza"><div>Teslim eden</div><div>Teslim alan</div><div>Kontrol</div></div>
+    <script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script>
+  </body></html>`);
+  w.document.close();
+}
+// bir çıkış irsaliyesindeki (kalem, miktar) satırları — yerel veriden
+function cikisSatirlari(irsId){
+  const o = [];
+  for (const k of S.kalemler){
+    let t = 0; for (const h of (k.hareketler||[])) if (h.irsaliye_id === irsId) t += Number(h.miktar);
+    if (t > 0) o.push({k, miktar:t});
+  }
+  return o.sort((a,b)=>(a.k.giris?.is_emri_no||0)-(b.k.giris?.is_emri_no||0));
+}
 function printIsEmri(irsId){
   const r = S.irsaliyeler.find(x=>x.id===irsId); if (!r) return toast('İrsaliye bulunamadı.', true);
+  if (r.tip === 'cikis') return printCikis(irsId);
   const kl = S.kalemler.filter(k=>k.giris_irsaliye_id===irsId);
   const w = window.open('', '_blank');
   if (!w) return toast('Açılır pencere engellendi; tarayıcıdan izin verin.', true);
@@ -2084,7 +2131,7 @@ async function irsAc(id){
   const bilgi = (e, d) => `<div><div class="sub" style="margin:0">${e}</div><b>${d}</b></div>`;
   $('#irs-info').innerHTML = bilgi('Müşteri', esc(r.musteriler?.ad||'—')) + bilgi('İrsaliye no', esc(r.irsaliye_no||'—')) + bilgi('Tarih', fdate(r.tarih))
     + (r.dosya_adi ? bilgi('Dosya', esc(r.dosya_adi)) : bilgi('Kayıt', 'Manuel girildi'));
-  $('#irs-yaz').style.display = $('#irs-duzenle').style.display = giris ? '' : 'none';
+  $('#irs-yaz').style.display = ''; $('#irs-duzenle').style.display = giris ? '' : 'none';
   $('#irs-modal').style.display = 'flex';
   if (giris){
     const k = S.kalemler.filter(x=>x.giris_irsaliye_id===id);
