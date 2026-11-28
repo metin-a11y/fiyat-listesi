@@ -1148,7 +1148,7 @@ function stokGruplari(list, sg){
     m.get(key).k.push(k);
   }
   const gr = [...m.values()].sort((a,b)=>a.ad.localeCompare(b.ad,'tr'));
-  const durumChip = k => `<span class="chip c-${k.durum}">${DURUM_AD[k.durum]||k.durum}</span>`;
+  const durumChip = k => k.kalan <= 0 ? '<span class="chip c-cikis">Sevk edildi</span>' : `<span class="chip c-${k.durum}">${DURUM_AD[k.durum]||k.durum}</span>`;
   const ilkCol = sg === 'musteri' ? 'Malzeme' : 'Müşteri';
   const baslik = `<thead><tr><th>${ilkCol}</th><th class="r">Miktar</th><th>Birim</th><th class="r">Karşılanan</th><th class="pb1 r">1.Birim ${AL}</th><th class="pb1">1.Birim</th><th class="pb2 r">2.Birim ${AL}</th><th class="pb2">2.Birim</th><th class="pb3 r">3.Birim ${AL}</th><th class="pb3">3.Birim</th><th>İşlem / durum</th></tr></thead>`;
   const govde = gr.map(g => {
@@ -1193,7 +1193,7 @@ function renderStok(){
       <div class="skc-b">
         <table class="skq"><thead><tr><th></th><th class="pb1">1.Birim</th><th class="pb2">2.Birim</th><th class="pb3">3.Birim</th></tr></thead><tbody>${satir('Giriş','miktar')}${satir('Çıkan','cikan')}${satir('Kalan','kalan')}</tbody></table>
         <div class="skc-i"><div class="skc-t">Yapılacak işlem</div>${islemCell(k.islem, k._ozel, `data-id="${k.id}"`)}</div>
-        <div class="skc-d"><div class="skc-t">Durum</div><select data-id="${k.id}" data-f="durum">
+        <div class="skc-d"><div class="skc-t">Durum</div>${k.kalan<=0?'<span class="chip c-cikis" style="margin-bottom:6px">Sevk edildi</span>':''}<select data-id="${k.id}" data-f="durum" ${k.kalan<=0?'style="display:none"':''}>
           ${['bekliyor','islemde','tamam'].map(d=>`<option value="${d}" ${k.durum===d?'selected':''}>${{bekliyor:'Bekliyor',islemde:'İşlemde',tamam:'Tamam'}[d]}</option>`).join('')}
         </select>${islemOzetHtml(k)}<button class="btn ghost sm" style="margin-top:8px;width:100%" data-ikayit="${k.id}">İşlem kaydı</button></div>
       </div>
@@ -1533,6 +1533,7 @@ async function saveCikis(){
     if (error) throw error;
     const {error: e2} = await sb.from('hareketler').insert(rows.map(r=>({kalem_id:r.kalemId, irsaliye_id:irs.id, miktar:r._q})));
     if (e2){ await sb.from('irsaliyeler').delete().eq('id', irs.id); throw e2; }
+    for (const id of Object.keys(toplam)){ const k = list.find(x=>x.id===id); if (k && k.durum !== 'tamam' && toplam[id] >= k.kalan - 1e-9) await sb.from('stok_kalemleri').update({durum:'tamam'}).eq('id', id); }
     toast(`${rows.length} kalem stoktan düşüldü.`);
     $('#cikis-form').style.display = 'none'; cikisRows = []; cikisManuel = false; cikisIE = new Set(); cikisIEMus = null;
     await loadAll(); go('stok');
