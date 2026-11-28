@@ -271,7 +271,7 @@ td input.num{width:100%;max-width:110px}
     <label class="f">Şifre<input type="password" id="a-pw" autocomplete="current-password" required></label>
     <button class="btn" id="a-btn" type="submit">Giriş yap</button>
     <div class="auth-msg" id="auth-msg"></div>
-    <div class="auth-switch" id="auth-switch">Hesabın yok mu? <a id="a-toggle">Hesap oluştur</a></div>
+    <div class="auth-switch" id="auth-switch">Hesabınız yok mu? Hesap için yöneticiye başvurun.</div>
   </form>
 </div>
 <header>
@@ -1598,14 +1598,13 @@ function trAuthErr(e){
 }
 
 function setAuthMode(mode){
+  mode = 'in'; // hesap açma kapalı: hesapları yönetici ekler
   authMode = mode;
   const up = mode === 'up';
   $('#auth-title').textContent = up ? 'Hesap oluştur' : 'Giriş yap';
   $('#auth-sub').textContent = up ? 'Hesabını oluştur; yönetici onayladıktan sonra giriş yapabilirsin.' : 'Devam etmek için hesabınla giriş yap.';
   $('#a-btn').textContent = up ? 'Hesap oluştur' : 'Giriş yap';
   $('#a-pw').autocomplete = up ? 'new-password' : 'current-password';
-  $('#auth-switch').innerHTML = up ? 'Hesabın var mı? <a id="a-toggle">Giriş yap</a>' : 'Hesabın yok mu? <a id="a-toggle">Hesap oluştur</a>';
-  $('#a-toggle').onclick = () => { setAuthMsg(''); setAuthMode(up ? 'in' : 'up'); };
   setAuthMsg('');
 }
 
