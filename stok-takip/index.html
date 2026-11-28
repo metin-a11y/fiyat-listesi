@@ -1153,8 +1153,7 @@ function stokGruplari(list, sg){
   const baslik = `<thead><tr><th>${ilkCol}</th><th class="r">Miktar</th><th>Birim</th><th class="r">Karşılanan</th><th class="pb1 r">1.Birim ${AL}</th><th class="pb1">1.Birim</th><th class="pb2 r">2.Birim ${AL}</th><th class="pb2">2.Birim</th><th class="pb3 r">3.Birim ${AL}</th><th class="pb3">3.Birim</th><th>İşlem / durum</th></tr></thead>`;
   const govde = gr.map(g => {
     const sayi = sg === 'musteri' ? `${g.k.length} kalem` : `${new Set(g.k.map(k=>k.musteri_id)).size} müşteri`;
-    const topl = u3Toplam(g.k.filter(k=>Number(k[alan])>0), alan);
-    const ust = `<tr class="pgh"><td colspan="7"><b>${esc(g.ad)}</b> <span class="gsay">· ${sayi}</span></td><td colspan="4" class="gtopl">${alan==='kalan'?'Kalan':AL}: ${topl || '—'}</td></tr>`;
+    const ust = `<tr class="pgh"><td colspan="11"><b>${esc(g.ad)}</b> <span class="gsay">· ${sayi}</span></td></tr>`;
     const satirlar = g.k.map(k => {
       const ie = `<div class="pbie">${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b> · `:''}${esc(k.giris?.irsaliye_no||'—')}</div>`;
       const ad = (sg === 'musteri' ? esc(k.malzeme) + katDurumHtml(k) : esc(k.musteriler?.ad || '—')) + ie + `<a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a>`;
