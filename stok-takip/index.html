@@ -162,21 +162,87 @@ body.locked header,body.locked main{display:none}
 .pbu{font-size:.78em;opacity:.7;margin-left:2px}.pbn{color:#9aa}td.pb{font-variant-numeric:tabular-nums;white-space:nowrap}th.gc{text-align:center}
 #ie-body td:last-child{white-space:normal!important}#ie-body td:last-child .btn{display:block;margin:3px 0 0 auto}
 table.mini td.pb{padding:4px 3px;font-size:12px;width:62px;min-width:62px;max-width:62px;overflow-wrap:anywhere;white-space:normal}table.mini th.pb1,table.mini th.pb2,table.mini th.pb3{width:62px;padding:4px 2px}@media(max-width:1100px){table.mini td.pb{white-space:normal}table.mini th{font-size:10.5px;padding:4px 6px;background:#f4f6fb;border:1px solid #e3e8f2;text-align:center;letter-spacing:0}table.mini td.il{font-size:12px;color:#334;min-width:110px;max-width:150px;background:#fbfcfe}table.mini td.mm{min-width:110px}}
-#irs-modal td.pb,#ie-cikislar td.pb{padding:5px 5px;font-size:12.5px}#stok-tablo td.pb{padding:4px 3px;font-size:12px;width:64px;min-width:64px;max-width:64px;overflow-wrap:anywhere}#stok-tablo th.pb1,#stok-tablo th.pb2,#stok-tablo th.pb3{width:64px;min-width:64px;max-width:64px;padding:6px 2px;font-size:11px;letter-spacing:0}#stok-tablo th,#irs-modal th{padding-left:6px;padding-right:6px}#stok-tablo td:nth-child(2){min-width:130px}#stok-tablo td:nth-child(1){max-width:130px}#stok-tablo td.pb{white-space:normal}#stok-tablo td:nth-child(14){max-width:120px}
-#stok-tablo,#irs-modal table,#ie-cikislar table{border-collapse:collapse;border:1px solid #c5cddd}
-#stok-tablo th,#stok-tablo td,#irs-modal th,#irs-modal td,#ie-cikislar th,#ie-cikislar td{border:1px solid #d5dbe8;vertical-align:middle}
-#stok-tablo thead th,#irs-modal thead th,#ie-cikislar thead th{background:linear-gradient(#f4f6fb,#e9edf6);border-color:#c5cddd}
-#stok-tablo td:nth-child(12){width:210px;min-width:210px;max-width:210px;background:#fbfcfe}
-#stok-tablo td:nth-child(12) .ichips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}#stok-tablo td:nth-child(12) .ichip{min-width:0}
-#stok-tablo td:nth-child(12) .ichip{width:100%;text-align:center;border-radius:9px;white-space:normal;line-height:1.2;padding:6px 6px;font-size:11.5px;transform:none!important;box-shadow:none}
-#stok-tablo td:nth-child(12) .ichip.on{box-shadow:0 2px 6px rgba(47,107,255,.3)}
-#stok-tablo td:nth-child(12) .ichip:last-child{grid-column:1/-1}
-#stok-tablo td:nth-child(13){width:150px;min-width:150px;background:#fff}
-#stok-tablo td:nth-child(13) select{width:100%}
-#stok-tablo td:nth-child(13) .btn{width:100%;margin-top:6px}
-#stok-tablo td:nth-child(13) .u3{margin-top:6px;line-height:1.35}
+#irs-modal td.pb,#ie-cikislar td.pb{padding:5px 5px;font-size:12.5px}#irs-modal th{padding-left:6px;padding-right:6px}
+#irs-modal table,#ie-cikislar table{border-collapse:collapse;border:1px solid #c5cddd}
+#irs-modal th,#irs-modal td,#ie-cikislar th,#ie-cikislar td{border:1px solid #d5dbe8;vertical-align:middle}
+#irs-modal thead th,#ie-cikislar thead th{background:linear-gradient(#f4f6fb,#e9edf6);border-color:#c5cddd}
+
+
+
+
+
+
+
+
+
 #ie-body td:nth-child(3){max-width:150px}#ie-body td:nth-child(4){max-width:110px;overflow-wrap:anywhere}
 @media(max-width:800px){.view table.mini td.pb,.view table.mini th.pb1{width:50px!important;min-width:50px!important;max-width:50px!important}.view table.mini td.il{min-width:64px!important;max-width:90px!important}.view table.mini td.mm{min-width:70px!important}}
+/* düz liste tabloları: çerçeveli, başlıklı */
+#v-irs table,#v-uye table,#ik-modal table{border-collapse:separate;border-spacing:0;border:1px solid #d5dbe8;border-radius:14px;overflow:hidden;width:100%}
+#v-irs thead th,#v-uye thead th,#ik-modal thead th{background:linear-gradient(#f7f9fd,#eaeff8);border-bottom:1px solid #d5dbe8;padding:11px 12px}
+#v-irs td,#v-uye td,#ik-modal td{border-bottom:1px solid #e9edf5;padding:12px}
+#v-irs tbody tr:last-child td,#v-uye tbody tr:last-child td,#ik-modal tbody tr:last-child td{border-bottom:0}
+#v-irs tbody tr:nth-child(even) td,#v-uye tbody tr:nth-child(even) td{background:#fafbfe}
+@media(max-width:800px){
+  .view .pgw{overflow-x:auto}
+  .view table.pgrid{display:table!important;min-width:760px}
+  .view table.pgrid thead{display:table-header-group!important}
+  .view table.pgrid tbody{display:table-row-group!important}
+  .view table.pgrid tbody tr{display:table-row!important;border:0!important;padding:0!important;margin:0!important}
+  .view table.pgrid tbody td{display:table-cell!important;padding:6px 7px!important;text-align:left!important;white-space:normal!important}
+  .view table.pgrid tbody td.r{text-align:right!important}
+  .view table.pgrid tbody td::before{display:none!important}
+  .view .pgrid .pgh td:first-child{grid-column:auto}
+}
+/* Stok detay: kalem kartları */
+.skl{display:flex;flex-direction:column;gap:14px}
+.skc{border:1px solid #d5dbe8;border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 2px 10px rgba(30,50,100,.05);transition:box-shadow .2s}
+.skc:hover{box-shadow:0 8px 24px rgba(47,107,255,.13)}
+.skc-h{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;padding:12px 18px;background:linear-gradient(#f7f9fd,#eef2fa);border-bottom:1px solid #d5dbe8}
+.skc-ad{font-size:17px;font-weight:700;min-width:220px;flex:1}.skc-ad .u3{font-weight:400}
+.skc-meta{display:flex;gap:24px;flex-wrap:wrap}.skc-meta span{font-size:14px}.skc-meta small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+.skc-b{display:grid;grid-template-columns:minmax(360px,1.25fr) minmax(250px,1fr) 190px;gap:0}
+.skc-b>*{padding:14px 18px;min-width:0}
+.skc-b>.skc-i,.skc-b>.skc-d{border-left:1px solid #e3e8f2}
+.skc-t{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600;margin-bottom:8px}
+.skc-d select{width:100%}.skc-d .u3{margin-top:8px;line-height:1.4;white-space:normal}
+.skc .ichips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.skc .ichip{min-width:0;width:100%;white-space:normal;line-height:1.2;text-align:center;border-radius:10px;padding:7px 6px;font-size:12px;transform:none!important}
+.skc .ichip:last-child{grid-column:1/-1}
+table.skq{width:100%;border-collapse:separate;border-spacing:0;border:1px solid #d5dbe8;border-radius:12px;overflow:hidden;table-layout:fixed;font-size:13.5px;padding:0}
+.skc-b>table.skq{margin:14px 18px;width:calc(100% - 36px);padding:0}
+table.skq th,table.skq td{border-right:1px solid #e3e8f2;border-bottom:1px solid #e3e8f2;padding:8px 6px;text-align:center;vertical-align:middle}
+table.skq tr>*:last-child{border-right:0}table.skq tbody tr:last-child>*{border-bottom:0}
+table.skq thead th{font-size:11.5px;padding:7px 4px;letter-spacing:.3px}
+table.skq th.sq-l{width:68px;text-align:left;font-size:12px;background:#f4f6fb;padding-left:10px}
+table.skq td.pb{font-size:13px;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:1100px){.skc-b{grid-template-columns:1fr}.skc-b>.skc-i,.skc-b>.skc-d{border-left:0;border-top:1px solid #e3e8f2}.skc-b>table.skq{margin:12px;width:calc(100% - 24px)}}
+@media(max-width:800px){table.skq td.pb{padding:6px 2px;font-size:12px}.skc-h{padding:12px}.skc-meta{gap:14px}}
+/* satır kartları: giriş, çıkış ve iş emri düzenleme formları */
+table.rowt,table.rowt tbody{display:block;width:100%;border:0!important}
+table.rowt thead{display:none}
+table.rowt tbody tr{display:grid;gap:12px 14px;align-items:start;border:1px solid #d5dbe8;border-radius:14px;padding:14px 16px;margin-bottom:12px;background:#fff;box-shadow:0 1px 6px rgba(30,50,100,.04);transition:box-shadow .2s,border-color .2s}
+table.rowt tbody tr:hover{box-shadow:0 6px 18px rgba(47,107,255,.12);border-color:#b9c8ee}
+table.rowt td{display:block;border:0!important;padding:0!important;min-width:0!important;width:auto!important;max-width:none!important;background:none!important;white-space:normal!important;text-align:left!important}
+table.rowt td[data-l]::before{content:attr(data-l);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600;margin-bottom:5px}
+table.rowt td input:not([type=checkbox]),table.rowt td select{width:100%;min-width:0}
+table.rowt td input.num{text-align:right;max-width:none}
+table.rowt td .btn.danger{width:44px;height:44px;padding:0}
+#g-rows tr{grid-template-columns:minmax(0,2.6fr) minmax(0,1fr) minmax(0,.9fr) minmax(0,1fr) minmax(0,1fr) 44px}
+#g-rows td:nth-child(7){grid-column:6;grid-row:1;align-self:end}
+#g-rows td:nth-child(6){grid-column:1/-1;grid-row:2;border-top:1px dashed #e3e8f2!important;padding-top:12px!important}
+#c-rows tr{grid-template-columns:minmax(0,2.4fr) minmax(0,1fr) minmax(0,.9fr) minmax(0,3fr) 44px}
+#c-rows td:nth-child(5){align-self:end}
+#ie-rows tr{grid-template-columns:minmax(0,2.6fr) minmax(0,1fr) minmax(0,.9fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 44px}
+#ie-rows td:nth-child(8){grid-column:7;grid-row:1;align-self:end}
+#ie-rows td:nth-child(7){grid-column:1/-1;grid-row:2;border-top:1px dashed #e3e8f2!important;padding-top:12px!important}
+.ie-u{min-width:0!important;max-width:none!important}
+@media(max-width:900px){
+  #g-rows tr,#c-rows tr,#ie-rows tr{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #g-rows td:nth-child(n),#c-rows td:nth-child(n),#ie-rows td:nth-child(n){grid-column:auto;grid-row:auto}
+  #g-rows td:nth-child(1),#g-rows td:nth-child(6),#c-rows td:nth-child(1),#c-rows td:nth-child(4),#ie-rows td:nth-child(1),#ie-rows td:nth-child(7){grid-column:1/-1}
+  #g-rows td:nth-child(7),#c-rows td:nth-child(5),#ie-rows td:nth-child(8){grid-column:1/-1;justify-self:end}
+}
 #c-ie .cie-w{margin:4px 0 14px}.cie-h{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
 .cie{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
 .cie-k{border:1.5px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;background:#fff;transition:all .18s}
@@ -276,14 +342,6 @@ td input.num{width:100%;max-width:110px}
   #ie-body > tr > td:nth-child(7) .btn{display:inline-block;margin:2px 4px 2px 0}
 }
 @media(max-width:1100px){
-  #ie-modal table,#ie-modal tbody{display:block}
-  #ie-modal thead{display:none}
-  #ie-modal tbody tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 12px;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
-  #ie-modal tbody td{display:block;border:0;padding:2px 0;text-align:left!important;white-space:normal!important;min-width:0}
-  #ie-modal tbody td[data-l]::before{content:attr(data-l);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
-  #ie-modal tbody td:first-child,#ie-modal tbody td:nth-child(7),#ie-modal tbody td:last-child{grid-column:1/-1}
-  #ie-modal td input.num{max-width:none}
-  #ie-rows td.ie-mal{min-width:0;width:auto}
   .ie-u{min-width:0}
 }
 @media(max-width:800px){
@@ -352,10 +410,7 @@ td input.num{width:100%;max-width:110px}
       <div class="seg" id="stok-seg"><button data-sg="musteri" class="on">Müşteri bazlı</button><button data-sg="malzeme">Malzeme bazlı</button><button data-sg="detay">Detay listesi</button></div>
       <div class="smbar" id="stok-sm" style="display:none"><span style="color:var(--muted);font-size:14px">Göster:</span><select id="f-alan"><option value="kalan">Kalan</option><option value="miktar">Giriş</option><option value="cikan">Çıkan</option></select></div>
       <div id="stok-gruplar"></div>
-      <div style="overflow-x:auto;max-width:100%"><table class="tbl-stack" id="stok-tablo" style="display:none">
-        <thead><tr><th rowspan="2">Müşteri</th><th rowspan="2">Malzeme</th><th colspan="3" class="gc">Giriş</th><th colspan="3" class="gc">Çıkan</th><th colspan="3" class="gc">Kalan</th><th rowspan="2">Yapılacak işlem</th><th rowspan="2">Durum</th></tr><tr><th class="pb1 r">1.Birim</th><th class="pb2 r">2.Birim</th><th class="pb3 r">3.Birim</th><th class="pb1 r">1.Birim</th><th class="pb2 r">2.Birim</th><th class="pb3 r">3.Birim</th><th class="pb1 r">1.Birim</th><th class="pb2 r">2.Birim</th><th class="pb3 r">3.Birim</th></tr></thead>
-        <tbody id="stok-body"></tbody>
-      </table></div>
+      <div id="stok-tablo" style="display:none"><div id="stok-body" class="skl"></div></div>
     </div>
   </section>
 
@@ -372,7 +427,7 @@ td input.num{width:100%;max-width:110px}
           <label class="f">İrsaliye no<input id="g-no"></label>
           <label class="f">Tarih<input type="date" id="g-tarih"></label>
         </div>
-        <table>
+        <table class="rowt">
           <thead><tr><th>Malzeme</th><th class="right">Miktar (Birim 1)</th><th>Birim</th><th>Birim 2</th><th>Birim 3</th><th>Yapılacak işlem</th><th></th></tr></thead>
           <tbody id="g-rows"></tbody>
         </table>
@@ -400,7 +455,7 @@ td input.num{width:100%;max-width:110px}
           <label class="f">Tarih<input type="date" id="c-tarih"></label>
         </div>
         <div id="c-ie"></div>
-        <table>
+        <table class="rowt">
           <thead><tr><th>İrsaliyedeki malzeme</th><th class="right">Miktar</th><th>Birim</th><th>Stoktaki kalem</th><th></th></tr></thead>
           <tbody id="c-rows"></tbody>
         </table>
@@ -500,7 +555,7 @@ td input.num{width:100%;max-width:110px}
     <label class="f">İrsaliye no<input id="ie-no"></label>
     <label class="f">Tarih<input type="date" id="ie-tarih"></label>
   </div>
-  <table><thead><tr><th>Malzeme</th><th class="right">Miktar</th><th>Birim</th><th class="right">Adet</th><th class="right">Metre</th><th class="right">Kg</th><th>Yapılacak işlem</th><th></th></tr></thead><tbody id="ie-rows"></tbody></table>
+  <table class="rowt"><thead><tr><th>Malzeme</th><th class="right">Miktar</th><th>Birim</th><th class="right">Adet</th><th class="right">Metre</th><th class="right">Kg</th><th>Yapılacak işlem</th><th></th></tr></thead><tbody id="ie-rows"></tbody></table>
   <div id="ie-cikislar"></div>
   <div class="bar" style="margin-top:14px">
     <button class="btn ghost" id="ie-add" type="button">+ Satır ekle</button>
@@ -518,6 +573,17 @@ td input.num{width:100%;max-width:110px}
     <button class="btn ghost" id="irs-yaz" type="button" style="display:none">Yazdır</button>
     <button class="btn ghost" id="irs-duzenle" type="button" style="display:none">İş emrini düzenle</button>
     <button class="btn" id="irs-kapat" type="button">Kapat</button></div>
+</div></div>
+<div class="modal" id="cd-modal" style="display:none"><div class="modal-card" style="width:min(900px,100%)">
+  <h2>Çıkış irsaliyesini düzenle</h2>
+  <div id="cd-info" class="sub" style="margin:0 0 12px"></div>
+  <div class="grid3" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+    <label class="f">İrsaliye no<input id="cd-no"></label>
+    <label class="f">Tarih<input type="date" id="cd-tarih"></label>
+  </div>
+  <div id="cd-rows"></div>
+  <div class="hint" style="margin:8px 0 12px">Miktarı değiştirirseniz stok buna göre güncellenir. Satırı silerseniz o malzeme stoğa geri döner.</div>
+  <div class="bar"><span style="flex:1"></span><button class="btn ghost" id="cd-kapat" type="button">Vazgeç</button><button class="btn" id="cd-kaydet" type="button">Kaydet</button></div>
 </div></div>
 <div class="modal" id="ik-modal" style="display:none"><div class="modal-card">
   <h2 id="ik-title">İşlem kaydı</h2>
@@ -879,7 +945,7 @@ async function fetchAll(q){
 async function loadAll(){
   const [m, k, i, ik, kat] = await Promise.all([
     fetchAll(() => sb.from('musteriler').select('*').order('ad').order('id')),
-    fetchAll(() => sb.from('stok_kalemleri').select('*, musteriler(ad), giris:irsaliyeler!giris_irsaliye_id(irsaliye_no,tarih,is_emri_no), hareketler(miktar,irsaliye_id,created_at)').order('created_at',{ascending:false}).order('id')),
+    fetchAll(() => sb.from('stok_kalemleri').select('*, musteriler(ad), giris:irsaliyeler!giris_irsaliye_id(irsaliye_no,tarih,is_emri_no), hareketler(id,miktar,irsaliye_id,created_at)').order('created_at',{ascending:false}).order('id')),
     fetchAll(() => sb.from('irsaliyeler').select('*, musteriler(ad)').order('created_at',{ascending:false}).order('id')),
     fetchAll(() => sb.from('islem_kayitlari').select('id,kalem_id,islem,miktar,tarih,notu,kaydeden,created_at').order('tarih').order('created_at')),
     fetchAll(() => sb.from('katalog').select('kod,ad,birim,boy,kg_katsayi').order('ad').order('kod'))
@@ -1117,16 +1183,23 @@ function renderStok(){
   $('#stok-gruplar').style.display = sg === 'detay' ? 'none' : '';
   $('#stok-sm').style.display = 'none';
   if (sg !== 'detay'){ $('#stok-gruplar').innerHTML = stokGruplari(list, sg); return; }
-  $('#stok-body').innerHTML = list.length ? list.map((k,i)=>`
-    <tr style="animation-delay:${Math.min(i,20)*25}ms">
-      <td data-l="Müşteri"><b>${esc(k.musteriler?.ad)}</b></td>
-      <td data-l="Malzeme">${esc(k.malzeme)}${katDurumHtml(k)}<div class="pbie">${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b> · `:''}${esc(k.giris?.irsaliye_no||'—')} · ${fdate(k.giris?.tarih)}</div><a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a></td>
-      ${u3Td(k,k.miktar,k.birim,'Giriş')}${u3Td(k,k.cikan,k.birim,'Çıkan')}${u3Td(k,k.kalan,k.birim,'Kalan')}
-      <td data-l="Yapılacak işlem">${islemCell(k.islem, k._ozel, `data-id="${k.id}"`)}</td>
-      <td data-l="Durum"><select data-id="${k.id}" data-f="durum">
-        ${['bekliyor','islemde','tamam'].map(d=>`<option value="${d}" ${k.durum===d?'selected':''}>${{bekliyor:'Bekliyor',islemde:'İşlemde',tamam:'Tamam'}[d]}</option>`).join('')}
-      </select>${islemOzetHtml(k)}<button class="btn ghost sm" style="margin-top:6px" data-ikayit="${k.id}">İşlem kaydı</button></td>
-    </tr>`).join('') : '<tr><td colspan="13" class="empty">Kayıt yok</td></tr>';
+  $('#stok-body').innerHTML = list.length ? list.map((k,i)=>{
+    const satir = (ad, alan) => `<tr><th class="sq-l">${ad}</th>${u3Td(k,k[alan],k.birim,ad)}</tr>`;
+    return `<div class="skc" style="animation-delay:${Math.min(i,20)*25}ms">
+      <div class="skc-h">
+        <div class="skc-ad">${esc(k.malzeme)}${katDurumHtml(k)}</div>
+        <div class="skc-meta"><span><small>Müşteri</small><b>${esc(k.musteriler?.ad||'—')}</b></span><span><small>İş emri</small>${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b>`:'—'}</span><span><small>İrsaliye</small>${esc(k.giris?.irsaliye_no||'—')}</span><span><small>Tarih</small>${fdate(k.giris?.tarih)}</span></div>
+        <a href="#" class="pbed" data-bedit="${k.id}">✎ birimleri düzelt</a>
+      </div>
+      <div class="skc-b">
+        <table class="skq"><thead><tr><th></th><th class="pb1">1.Birim</th><th class="pb2">2.Birim</th><th class="pb3">3.Birim</th></tr></thead><tbody>${satir('Giriş','miktar')}${satir('Çıkan','cikan')}${satir('Kalan','kalan')}</tbody></table>
+        <div class="skc-i"><div class="skc-t">Yapılacak işlem</div>${islemCell(k.islem, k._ozel, `data-id="${k.id}"`)}</div>
+        <div class="skc-d"><div class="skc-t">Durum</div><select data-id="${k.id}" data-f="durum">
+          ${['bekliyor','islemde','tamam'].map(d=>`<option value="${d}" ${k.durum===d?'selected':''}>${{bekliyor:'Bekliyor',islemde:'İşlemde',tamam:'Tamam'}[d]}</option>`).join('')}
+        </select>${islemOzetHtml(k)}<button class="btn ghost sm" style="margin-top:8px;width:100%" data-ikayit="${k.id}">İşlem kaydı</button></div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">Kayıt yok</div>';
 }
 
 function renderIrs(){
@@ -1140,7 +1213,7 @@ function renderIrs(){
       <td>${esc(r.irsaliye_no||'—')}</td><td>${fdate(r.tarih)}</td>
       <td>${esc(r.musteriler?.ad||'—')}</td>
       <td class="right">${r.tip==='giris' ? (sayi[r.id]||0) : (cikisSatirlari(r.id).length || '—')}</td>
-      <td class="right"><button class="btn ghost sm" data-print="${r.id}">Yazdır</button> <button class="btn danger sm" data-del="${r.id}" data-tip="${r.tip}">Sil</button></td>
+      <td class="right"><button class="btn ghost sm" data-irsedit="${r.id}">Düzenle</button> <button class="btn ghost sm" data-print="${r.id}">Yazdır</button> <button class="btn danger sm" data-del="${r.id}" data-tip="${r.tip}">Sil</button></td>
     </tr>`).join('') : '<tr><td colspan="7" class="empty">Henüz irsaliye yok</td></tr>';
 }
 
@@ -1603,6 +1676,7 @@ $('#c-ie').addEventListener('click', e => {
 $('#c-save').onclick = saveCikis;
 
 $('#irs-body').addEventListener('click', async e => {
+  const ed = e.target.closest('[data-irsedit]'); if (ed) return irsDuzenle(ed.dataset.irsedit);
   const pr = e.target.closest('[data-print]'); if (pr) return printIsEmri(pr.dataset.print);
   const b = e.target.closest('[data-del]');
   if (!b){ const t = e.target.closest('[data-open]'); if (t) irsAc(t.dataset.open); return; }
@@ -2122,6 +2196,55 @@ $('#ie-kaydet-yaz').onclick = () => ieKaydet(true);
 $('#ie-modal').addEventListener('mousedown', e => { if (e.target.id === 'ie-modal') ieKapat(); });
 
 // ---- İrsaliye ayrıntısı (İrsaliyeler listesinde satıra tıklayınca) ----
+// çıkış irsaliyesi düzenleme (giriş irsaliyesi = iş emri düzenleme penceresi)
+let cdId = null, cdRows = [];
+function irsDuzenle(id){
+  const r = S.irsaliyeler.find(x=>x.id===id); if (!r) return;
+  if (r.tip === 'giris') return ieAc(id);
+  cdId = id;
+  cdRows = [];
+  for (const k of S.kalemler) for (const h of (k.hareketler||[])) if (h.irsaliye_id === id)
+    cdRows.push({hid:h.id, k, miktar:Number(h.miktar), eski:Number(h.miktar), sil:false});
+  $('#cd-info').innerHTML = `<b>${esc(r.musteriler?.ad||'')}</b> · ${cdRows.length} kalem`;
+  $('#cd-no').value = r.irsaliye_no || ''; $('#cd-tarih').value = r.tarih || '';
+  cdRender(); $('#cd-modal').style.display = 'flex';
+}
+function cdRender(){
+  $('#cd-rows').innerHTML = cdRows.length ? `<div class="skl" style="gap:10px;margin-top:6px">${cdRows.map((x,i)=>{
+    const k = x.k, maks = Number(k.kalan) + x.eski;
+    return `<div class="skc" style="${x.sil?'opacity:.45':''}"><div class="skc-h"><div class="skc-ad" style="font-size:15px">${esc(k.malzeme)}</div>
+      <div class="skc-meta"><span><small>İş emri</small>${k.giris?.is_emri_no?`<b>${ieNo(k.giris.is_emri_no)}</b>`:'—'}</span><span><small>Çıkabilecek en çok</small>${fmt(maks)} ${esc(k.birim)}</span></div></div>
+      <div style="padding:12px 18px;display:grid;grid-template-columns:minmax(150px,200px) 1fr auto;gap:14px;align-items:center">
+        <label class="f" style="margin:0">Çıkan miktar (${esc(k.birim)})<input class="num" type="number" step="any" min="0" value="${x.miktar}" data-cd="${i}" ${x.sil?'disabled':''}></label>
+        <div>${u3Kutu(k, x.miktar, k.birim)}</div>
+        <button type="button" class="btn ${x.sil?'ghost':'danger'} sm" data-cdsil="${i}">${x.sil?'Geri al':'Satırı sil'}</button>
+      </div></div>`;}).join('')}</div>` : '<div class="empty">Bu irsaliyede kalem yok</div>';
+}
+$('#cd-rows').addEventListener('input', e => { const i = e.target.dataset.cd; if (i === undefined) return; cdRows[i].miktar = Number(e.target.value); const kutu = e.target.closest('.skc').querySelector('div[style*="grid"] > div'); if (kutu) kutu.innerHTML = u3Kutu(cdRows[i].k, cdRows[i].miktar, cdRows[i].k.birim); });
+$('#cd-rows').addEventListener('click', e => { const b = e.target.closest('[data-cdsil]'); if (!b) return; const x = cdRows[+b.dataset.cdsil]; x.sil = !x.sil; cdRender(); });
+const cdKapat = () => { $('#cd-modal').style.display = 'none'; cdId = null; };
+$('#cd-kapat').onclick = cdKapat;
+$('#cd-modal').addEventListener('mousedown', e => { if (e.target.id === 'cd-modal') cdKapat(); });
+$('#cd-kaydet').onclick = async () => {
+  const r = S.irsaliyeler.find(x=>x.id===cdId); if (!r) return;
+  const aktif = cdRows.filter(x=>!x.sil);
+  for (const x of aktif){
+    if (!(x.miktar > 0)) return toast(`"${x.k.malzeme}" için miktar 0'dan büyük olmalı (silmek için "Satırı sil").`, true);
+    if (x.miktar > Number(x.k.kalan) + x.eski + 1e-9) return toast(`"${x.k.malzeme}" için en çok ${fmt(Number(x.k.kalan)+x.eski)} ${x.k.birim} çıkabilir.`, true);
+  }
+  if (!aktif.length && cdRows.length) return toast('Tüm satırlar silinecekse irsaliyeyi İrsaliyeler listesinden silin.', true);
+  const btn = $('#cd-kaydet'); btn.disabled = true;
+  try {
+    let q = await sb.from('irsaliyeler').update({irsaliye_no:$('#cd-no').value.trim()||null, tarih:$('#cd-tarih').value||null}).eq('id', cdId);
+    if (q.error) throw q.error;
+    for (const x of cdRows){
+      if (x.sil){ q = await sb.from('hareketler').delete().eq('id', x.hid); if (q.error) throw q.error; }
+      else if (Math.abs(x.miktar - x.eski) > 1e-9){ q = await sb.from('hareketler').update({miktar:x.miktar}).eq('id', x.hid); if (q.error) throw q.error; }
+    }
+    cdKapat(); await loadAll(); toast('Çıkış irsaliyesi güncellendi.');
+  } catch(e){ toast('Kaydedilemedi: '+(e.message||e), true); }
+  btn.disabled = false;
+};
 let irsAcikId = null;
 async function irsAc(id){
   const r = S.irsaliyeler.find(x=>x.id===id); if (!r) return;
@@ -2131,7 +2254,7 @@ async function irsAc(id){
   const bilgi = (e, d) => `<div><div class="sub" style="margin:0">${e}</div><b>${d}</b></div>`;
   $('#irs-info').innerHTML = bilgi('Müşteri', esc(r.musteriler?.ad||'—')) + bilgi('İrsaliye no', esc(r.irsaliye_no||'—')) + bilgi('Tarih', fdate(r.tarih))
     + (r.dosya_adi ? bilgi('Dosya', esc(r.dosya_adi)) : bilgi('Kayıt', 'Manuel girildi'));
-  $('#irs-yaz').style.display = ''; $('#irs-duzenle').style.display = giris ? '' : 'none';
+  $('#irs-yaz').style.display = ''; $('#irs-duzenle').style.display = ''; $('#irs-duzenle').textContent = giris ? 'İş emrini düzenle' : 'Çıkışı düzenle';
   $('#irs-modal').style.display = 'flex';
   if (giris){
     const k = S.kalemler.filter(x=>x.giris_irsaliye_id===id);
@@ -2149,7 +2272,7 @@ async function irsAc(id){
 const irsKapat = () => { $('#irs-modal').style.display = 'none'; irsAcikId = null; };
 $('#irs-kapat').onclick = irsKapat;
 $('#irs-yaz').onclick = () => { if (irsAcikId) printIsEmri(irsAcikId); };
-$('#irs-duzenle').onclick = () => { const id = irsAcikId; irsKapat(); if (id) ieAc(id); };
+$('#irs-duzenle').onclick = () => { const id = irsAcikId; irsKapat(); if (id) irsDuzenle(id); };
 $('#irs-modal').addEventListener('mousedown', e => { if (e.target.id === 'irs-modal') irsKapat(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape'){ irsKapat(); if ($('#ie-modal').style.display !== 'none') ieKapat(); } });
 
