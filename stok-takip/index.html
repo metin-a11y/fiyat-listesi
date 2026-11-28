@@ -177,6 +177,14 @@ table.mini td.pb{padding:4px 3px;font-size:12px;width:62px;min-width:62px;max-wi
 #stok-tablo td:nth-child(13) .u3{margin-top:6px;line-height:1.35}
 #ie-body td:nth-child(3){max-width:150px}#ie-body td:nth-child(4){max-width:110px;overflow-wrap:anywhere}
 @media(max-width:800px){.view table.mini td.pb,.view table.mini th.pb1{width:50px!important;min-width:50px!important;max-width:50px!important}.view table.mini td.il{min-width:64px!important;max-width:90px!important}.view table.mini td.mm{min-width:70px!important}}
+#c-ie .cie-w{margin:4px 0 14px}.cie-h{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.cie{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.cie-k{border:1.5px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;background:#fff;transition:all .18s}
+.cie-k:hover{border-color:var(--brand);transform:translateY(-1px)}
+.cie-k.on{border-color:var(--brand);background:#f0f5ff;box-shadow:0 4px 14px rgba(47,107,255,.2)}
+.cie-t{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}.cie-t span{color:var(--muted);font-size:12.5px}
+.cie-c{margin-left:auto;font-weight:600;color:var(--brand)!important;font-size:12.5px}
+.cie-m{font-size:13.5px;padding:4px 0;border-top:1px solid #edf0f6}.cie-m small{display:block;color:var(--muted);font-size:12px}
 table.mini{width:100%;border-collapse:collapse;font-size:13.5px;min-width:0}table.mini td{border:1px solid #e3e8f2;padding:5px 7px}table.mini td.mm{background:#fff;font-weight:500;min-width:110px;white-space:normal}
 @media(max-width:800px){.view table.mini thead{display:none!important}.view table.mini{display:table!important}.view table.mini tbody{display:table-row-group!important}.view table.mini tbody tr{display:table-row!important;border:0!important;padding:0!important}.view table.mini tbody td{display:table-cell!important;padding:4px 4px!important;font-size:12px;text-align:right!important;white-space:normal!important}.view table.mini td.mm{text-align:left!important;white-space:normal!important}.view table.mini td::before{display:none!important}}
 .pb1{background:#fffcd2}.pb2{background:#e0f8d4}.pb3{background:#d6f7f6}
@@ -360,6 +368,7 @@ td input.num{width:100%;max-width:110px}
           <label class="f">İrsaliye no<input id="c-no"></label>
           <label class="f">Tarih<input type="date" id="c-tarih"></label>
         </div>
+        <div id="c-ie"></div>
         <table>
           <thead><tr><th>İrsaliyedeki malzeme</th><th class="right">Miktar</th><th>Birim</th><th>Stoktaki kalem</th><th></th></tr></thead>
           <tbody id="c-rows"></tbody>
@@ -821,6 +830,7 @@ const noktaliMi = ad => String(ad||'').trim().startsWith('.');
 const kkey = ad => (noktaliMi(ad)?'.':'') + norm(dimNorm(ad));
 const S = {islemler:{}, katIdx:new Map(),  musteriler:[], kalemler:[], irsaliyeler:[], katalog:[] };
 let girisRows = [], cikisRows = [], girisFile = '', cikisFile = '';
+let cikisIE = new Set(), cikisIEMus = null; // çıkışın eşlendiği iş emirleri (giriş irsaliyesi id)
 
 function toast(msg, err){
   const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err?' err':'');
@@ -1231,7 +1241,7 @@ async function handleUpload(file, tip){
       $('#g-musteri').value = h.musteri; $('#g-no').value = h.no; $('#g-tarih').value = h.tarih || new Date().toISOString().slice(0,10);
       $('#g-raw').textContent = text; $('#giris-form').style.display = 'block'; renderGiris();
     } else {
-      cikisFile = file.name; cikisRows = items.length ? items : [{malzeme:'',miktar:'',birim:'adet',kalemId:''}];
+      cikisIE = new Set(); cikisIEMus = null; cikisFile = file.name; cikisRows = items.length ? items : [{malzeme:'',miktar:'',birim:'adet',kalemId:''}];
       $('#c-musteri').value = h.musteri; $('#c-no').value = h.no; $('#c-tarih').value = h.tarih || new Date().toISOString().slice(0,10);
       cikisManuel = false; $('#c-raw').textContent = text; $('#cikis-form').style.display = 'block'; automatch(); renderCikis();
     }
@@ -1330,7 +1340,27 @@ function cikisMusteriId(){
 }
 function acikKalemler(){
   const id = cikisMusteriId();
-  return id ? S.kalemler.filter(k=>k.musteri_id===id && k.kalan>0) : [];
+  if (!id) return [];
+  if (id !== cikisIEMus){ cikisIE = new Set(); cikisIEMus = id; }
+  return S.kalemler.filter(k=>k.musteri_id===id && k.kalan>0 && (!cikisIE.size || cikisIE.has(k.giris_irsaliye_id)));
+}
+// müşterinin devam eden iş emirleri (açık kalemi olanlar): seçilirse eşleme yalnızca bunlar arasında yapılır
+function renderCikisIE(){
+  const el = $('#c-ie'), id = cikisMusteriId();
+  if (!id){ el.innerHTML = ''; return; }
+  acikKalemler(); // müşteri değiştiyse seçimi sıfırlar
+  const m = new Map();
+  for (const k of S.kalemler) if (k.musteri_id === id && k.kalan > 0 && k.giris_irsaliye_id){
+    if (!m.has(k.giris_irsaliye_id)) m.set(k.giris_irsaliye_id, {irs:S.irsaliyeler.find(x=>x.id===k.giris_irsaliye_id), k:[]});
+    m.get(k.giris_irsaliye_id).k.push(k);
+  }
+  const l = [...m.entries()].sort((a,b)=>(a[1].irs?.is_emri_no||0)-(b[1].irs?.is_emri_no||0));
+  if (!l.length){ el.innerHTML = '<div class="hint" style="margin:6px 0 12px">Bu müşterinin devam eden iş emri yok.</div>'; return; }
+  el.innerHTML = `<div class="cie-w"><div class="cie-h"><b>Devam eden iş emirleri</b><span class="sub" style="margin:0">Çıkış hangi iş emrinden yapılıyorsa seçin; malzemeler yalnızca seçilen iş emrinin kalemleriyle eşlenir.</span>${cikisIE.size?'<button type="button" class="btn ghost sm" data-cie-temizle="1">Seçimi temizle</button>':''}</div>
+  <div class="cie">${l.map(([gid, g])=>`<div class="cie-k ${cikisIE.has(gid)?'on':''}" data-cie="${gid}">
+    <div class="cie-t"><b>${ieNo(g.irs?.is_emri_no)||'İş emri'}</b><span>${esc(g.irs?.irsaliye_no||'—')} · ${fdate(g.irs?.tarih)}</span><span class="cie-c">${cikisIE.has(gid)?'✓ Seçili':'Seç'}</span></div>
+    ${g.k.map(k=>`<div class="cie-m">${esc(k.malzeme)}<small>kalan: ${u3Str(k,k.kalan,k.birim)||fmt(k.kalan)+' '+esc(k.birim)}</small></div>`).join('')}
+  </div>`).join('')}</div></div>`;
 }
 function automatch(){
   const list = acikKalemler();
@@ -1338,6 +1368,7 @@ function automatch(){
 }
 function renderCikis(){
   const list = acikKalemler();
+  renderCikisIE();
   $('#c-rows').innerHTML = cikisRows.map((r,i)=>{
     const k = list.find(x=>x.id===r.kalemId), cv = k ? cikisCevir(r,k) : null;
     const over = k && cv.ok && cv.q > k.kalan + 1e-9;
@@ -1403,7 +1434,7 @@ async function saveCikis(){
     const {error: e2} = await sb.from('hareketler').insert(rows.map(r=>({kalem_id:r.kalemId, irsaliye_id:irs.id, miktar:r._q})));
     if (e2){ await sb.from('irsaliyeler').delete().eq('id', irs.id); throw e2; }
     toast(`${rows.length} kalem stoktan düşüldü.`);
-    $('#cikis-form').style.display = 'none'; cikisRows = []; cikisManuel = false;
+    $('#cikis-form').style.display = 'none'; cikisRows = []; cikisManuel = false; cikisIE = new Set(); cikisIEMus = null;
     await loadAll(); go('stok');
   } catch(e){ toast('Kaydedilemedi: '+(e.message||e), true); }
   btn.disabled = false;
@@ -1517,7 +1548,7 @@ $('#c-rows').addEventListener('click', e => {
 });
 let cikisManuel = false;
 $('#c-manuel').onclick = () => {
-  cikisManuel = true; cikisFile = null;
+  cikisManuel = true; cikisFile = null; cikisIE = new Set(); cikisIEMus = null;
   cikisRows = [{malzeme:'', miktar:'', birim:'adet', kalemId:''}];
   $('#c-musteri').value = ''; $('#c-no').value = ''; $('#c-tarih').value = new Date().toISOString().slice(0,10);
   $('#c-raw').textContent = '(manuel çıkış)'; $('#cikis-form').style.display = 'block';
@@ -1535,6 +1566,12 @@ $('#c-stok').addEventListener('click', e => {
 $('#c-add').onclick = () => { cikisRows.push({malzeme:'',miktar:'',birim:'adet',kalemId:''}); renderCikis(); };
 $('#c-musteri').addEventListener('change', () => { automatch(); renderCikis(); });
 $('#c-musteri').addEventListener('input', () => { if (cikisMusteriId()){ automatch(); renderCikis(); } });
+$('#c-ie').addEventListener('click', e => {
+  if (e.target.closest('[data-cie-temizle]')){ cikisIE = new Set(); automatch(); renderCikis(); return; }
+  const c = e.target.closest('[data-cie]'); if (!c) return;
+  const id = c.dataset.cie; cikisIE.has(id) ? cikisIE.delete(id) : cikisIE.add(id);
+  automatch(); renderCikis();
+});
 $('#c-save').onclick = saveCikis;
 
 $('#irs-body').addEventListener('click', async e => {
